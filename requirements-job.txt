@@ -1,0 +1,7 @@
+# التشغيل اليومي على GitHub Actions فقط (بدون Streamlit وPlotly عشان يخلص أسرع)
+pandas>=2.2
+numpy>=1.26
+requests>=2.31
+pyyaml>=6.0
+tzdata
+yfinance>=0.2.54

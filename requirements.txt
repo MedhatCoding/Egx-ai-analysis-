@@ -1,0 +1,9 @@
+# للوحة Streamlit (وStreamlit Cloud بيقراه من هنا) وللتشغيل اليومي كمان
+pandas>=2.2
+numpy>=1.26
+requests>=2.31
+pyyaml>=6.0
+tzdata
+yfinance>=0.2.54
+streamlit>=1.40
+plotly>=5.24
