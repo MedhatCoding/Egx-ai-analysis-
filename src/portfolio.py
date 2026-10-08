@@ -35,7 +35,7 @@ def recommend_fund(score: float | None, trend: str, regime: str) -> tuple[str, s
         return "INCREASE", "اتجاه الفئة قوي وبيئة السوق تسمح بزيادة انتقائية."
     return "HOLD", "الاتجاه مقبول لكن شروط زيادة المركز ليست قوية بما يكفي."
 
-def evaluate(holdings: list[dict], table: pd.DataFrame | None, funds: dict, regime: str) -> pd.DataFrame:
+def evaluate(holdings: list[dict], table: pd.DataFrame | None, funds: dict, regime: str, max_single_position_pct: float = 25.0) -> pd.DataFrame:
     rows = []
     table_map = {}
     if table is not None and not table.empty:
@@ -69,7 +69,16 @@ def evaluate(holdings: list[dict], table: pd.DataFrame | None, funds: dict, regi
                 "القيمة": None, "الربح/الخسارة %": None,
                 "النقاط": item.get("score"), "القرار": ACTIONS[action], "reason": reason,
             })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if not df.empty and "القيمة" in df.columns:
+        total = float(pd.to_numeric(df["القيمة"], errors="coerce").fillna(0).sum())
+        if total > 0:
+            for i, rr in df.iterrows():
+                weight = float(rr.get("القيمة") or 0) / total * 100
+                if weight > max_single_position_pct and rr["القرار"] == "زيادة":
+                    df.at[i, "القرار"] = ACTIONS["HOLD"]
+                    df.at[i, "reason"] = f"المركز يمثل نحو {weight:.1f}% من المحفظة، أعلى من سقف التركيز {max_single_position_pct:.0f}%. الاحتفاظ أفضل من زيادة التركيز."
+    return df
 
 def totals(df: pd.DataFrame) -> dict:
     if df is None or df.empty:
