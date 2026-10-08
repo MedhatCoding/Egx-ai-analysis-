@@ -17,7 +17,7 @@ from .data_fetch import fetch_benchmark, fetch_market_indices, fetch_oanor_marke
 from .report import build_report, compose_alert
 from .signals import analyze, build_result, classify, latest_table
 from .telegram import send_message
-from .funds import build_fund_overlay
+from .funds import build_fund_overlay, _score
 from .track_record import load_history, log_signals, save_history, summarize, update_history
 from .universe import build_universe
 
@@ -116,6 +116,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     bench = fetch_benchmark(cfg, state, offline=offline)
     market_indices = fetch_market_indices(cfg, state, offline=offline)
     live_market = fetch_oanor_market() if not offline else None
+    funds = build_fund_overlay(bench, cfg, state=state)
     cov = refresh_all(cfg, codes, state, offline=offline)
     prices = load_prices(codes, cfg, now)
     if len(prices) < max(5, int(0.5 * len(codes))):
@@ -133,7 +134,9 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         panel = pd.concat(sharia_parts, axis=1).sort_index()
         daily = panel.pct_change().mean(axis=1).fillna(0.0)
         sharia_close = (1.0 + daily).cumprod() * 100.0
-    result["funds"] = build_fund_overlay(bench, cfg, sharia_close=sharia_close, state=state)
+    result["funds"] = funds
+    if sharia_close is not None:
+        result["funds"]["sharia_equity"].update(_score(sharia_close))
     result["market_indices"] = market_indices
     result["live_market"] = live_market
     result["generated_at"] = now.isoformat(timespec="seconds")
