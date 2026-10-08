@@ -86,4 +86,4 @@ telegram:
   max_picks: 5
   max_watch: 5
 
-# build: 2026-10-08 reliability/news/ml upgrade
+# build: 2026-10-08 reliability/news/ml upgrade + tests
