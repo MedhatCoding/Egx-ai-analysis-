@@ -255,7 +255,7 @@ def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFra
         if token and _eodhd_budget(state, cfg) > 0:
             state["eodhd"]["calls"] += 1
             try:
-                add = fetch_eodhd(eodhd_sym.replace(".INDX", ""), token, date.today() - timedelta(days=int(cfg["data"]["history_years"] * 365.25)))
+                add = fetch_eodhd_index(eodhd_sym, token, cfg["data"]["history_years"])
                 if add is not None and len(add) > 60:
                     add[COLS].round(4).to_csv(p)
                     return add
