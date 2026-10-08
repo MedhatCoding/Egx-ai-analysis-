@@ -89,6 +89,14 @@ def build_payload(result: dict, track: dict | None) -> dict:
             "market": [{"title": x.get("title"), "source": x.get("source")} for x in (result.get("news", {}).get("market") or [])[:6]],
             "companies": [{"code": x.get("code"), "title": x.get("title"), "source": x.get("source")} for x in (result.get("news", {}).get("companies") or [])[:10]],
         },
+        "portfolio": {
+            "summary": result.get("portfolio", {}).get("summary", {}),
+            "decisions": [
+                {"النوع": x.get("النوع"), "الأصل": x.get("الأصل"), "القرار": x.get("القرار"),
+                 "الربح/الخسارة %": x.get("الربح/الخسارة %"), "النقاط": x.get("النقاط"), "reason": x.get("reason")}
+                for x in (result.get("portfolio", {}).get("decisions") or [])
+            ],
+        },
     }
 
 
@@ -324,6 +332,16 @@ def compose_message(result: dict, notes: dict, track: dict | None, cfg: dict, wa
             reason = (p.get("why_not_buy") or [""])[0]
             rows.append(f"• <b>{esc(p['code'])}</b> ({p['score']:.0f})" + (f" — {esc(reason)}" if reason else ""))
         paras.append("👀 <b>قائمة المراقبة</b>\n" + esc(notes["watch_view"]) + "\n" + "\n".join(rows))
+
+    portfolio = result.get("portfolio") or {}
+    decisions = portfolio.get("decisions") or []
+    if decisions:
+        rows = []
+        for x in decisions:
+            pnl = x.get("الربح/الخسارة %")
+            pnl_txt = f" | P/L {float(pnl):+.1f}%" if pnl is not None else ""
+            rows.append(f"• <b>{esc(x.get('الأصل',''))}</b>: <b>{esc(x.get('القرار',''))}</b>{pnl_txt} — {esc(x.get('reason',''))}")
+        paras.append("💼 <b>قرارات محفظتك</b>\n" + "\n".join(rows))
 
     news = result.get("news") or {}
     market_news = news.get("market") or []
