@@ -126,15 +126,33 @@ def numbers_ok(text: str, allowed: set[str]) -> bool:
 
 # ------------------------------------------------------------------ استدعاء النموذج
 def _extract_json(text: str) -> dict | None:
-    text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
-    i, j = text.find("{"), text.rfind("}")
-    if i < 0 or j <= i:
+    """استخراج JSON من Gemini حتى لو أضاف Markdown أو نصًا حوله."""
+    if not isinstance(text, str):
         return None
+    text = text.strip()
+    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.I)
+    text = re.sub(r"\s*```$", "", text).strip()
     try:
-        return json.loads(text[i : j + 1])
-    except json.JSONDecodeError:
+        obj = json.loads(text)
+        return obj if isinstance(obj, dict) else None
+    except Exception:
+        pass
+    decoder = json.JSONDecoder()
+    for i, ch in enumerate(text):
+        if ch != "{":
+            continue
+        try:
+            obj, _ = decoder.raw_decode(text[i:])
+            if isinstance(obj, dict):
+                return obj
+        except Exception:
+            continue
+    try:
+        import ast
+        obj = ast.literal_eval(text)
+        return obj if isinstance(obj, dict) else None
+    except Exception:
         return None
-
 
 def call_llm(payload: dict, cfg: dict, post=requests.post, env=os.environ) -> tuple[dict | None, dict]:
     """يرجع (تعليقات أو None، معلومات عن التشغيلة). أي فشل = None والتقرير يكمل بالنص الجاهز."""
@@ -174,13 +192,22 @@ def call_llm(payload: dict, cfg: dict, post=requests.post, env=os.environ) -> tu
                 params={"key": key},
                 json={"systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
                       "contents": [{"role": "user", "parts": [{"text": user}]}],
-                      "generationConfig": {"maxOutputTokens": l["max_tokens"], "responseMimeType": "application/json"}},
+                      "generationConfig": {"maxOutputTokens": max(int(l["max_tokens"]), 3000), "responseMimeType": "application/json"}},
                 timeout=l["timeout"],
             )
             if r.status_code != 200:
                 meta["error"] = f"HTTP {r.status_code}"
                 return None, meta
-            text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            body = r.json()
+            candidates = body.get("candidates") or []
+            if not candidates:
+                meta["error"] = "Gemini لم يُرجع candidates"
+                return None, meta
+            parts = (candidates[0].get("content") or {}).get("parts") or []
+            text = "".join(str(part.get("text", "")) for part in parts if part.get("text"))
+            if not text:
+                meta["error"] = "Gemini بلا نص (finishReason=%s)" % candidates[0].get("finishReason", "unknown")
+                return None, meta
         else:
             meta["error"] = f"provider غير معروف: {provider}"
             return None, meta
