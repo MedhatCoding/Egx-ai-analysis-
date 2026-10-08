@@ -84,6 +84,10 @@ def build_payload(result: dict, track: dict | None) -> dict:
         "track_record": (track or {}).get("stats"),
         "funds": result.get("funds", {}),
         "ml": result.get("ml", {}),
+        "news": {
+            "market": [{"title": x.get("title"), "source": x.get("source")} for x in (result.get("news", {}).get("market") or [])[:6]],
+            "companies": [{"code": x.get("code"), "title": x.get("title"), "source": x.get("source")} for x in (result.get("news", {}).get("companies") or [])[:10]],
+        },
     }
 
 
@@ -319,6 +323,24 @@ def compose_message(result: dict, notes: dict, track: dict | None, cfg: dict, wa
             reason = (p.get("why_not_buy") or [""])[0]
             rows.append(f"• <b>{esc(p['code'])}</b> ({p['score']:.0f})" + (f" — {esc(reason)}" if reason else ""))
         paras.append("👀 <b>قائمة المراقبة</b>\n" + esc(notes["watch_view"]) + "\n" + "\n".join(rows))
+
+    news = result.get("news") or {}
+    market_news = news.get("market") or []
+    if market_news:
+        rows = []
+        for x in market_news[:4]:
+            title = esc(x.get("title", ""))
+            source = esc(x.get("source", ""))
+            rows.append(f"• {title}" + (f" — {source}" if source else ""))
+        paras.append("📰 <b>أهم أخبار السوق</b>\n" + "\n".join(rows))
+
+    company_news = news.get("companies") or []
+    if company_news:
+        rows = []
+        for x in company_news[:6]:
+            code = esc(x.get("code", ""))
+            rows.append(f"• <b>{code}</b> {esc(x.get('title', ''))}")
+        paras.append("🏢 <b>أخبار مرتبطة بالفرص</b>\n" + "\n".join(rows))
 
     if track and track.get("closed"):
         s = track["stats"]
