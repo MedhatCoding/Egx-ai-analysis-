@@ -17,6 +17,7 @@ from .data_fetch import fetch_benchmark, load_prices, refresh_all
 from .report import build_report, compose_alert
 from .signals import analyze, build_result, classify, latest_table
 from .telegram import send_message
+from .funds import build_fund_overlay
 from .track_record import load_history, log_signals, save_history, summarize, update_history
 from .universe import build_universe
 
@@ -119,10 +120,11 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         raise DataError(f"بيانات غير كافية: {len(prices)} سهم فقط من {len(codes)} وصلت بيانات كافية (Yahoo/EODHD).")
 
     frames, regime_df, _panel = analyze(prices, bench, cfg)
-    latest = latest_table(frames, names, cfg)
+    latest = latest_table(frames, names, cfg, regime_df.attrs.get("ml_probs", {}))
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
     result = build_result(frames, regime_df, cls, len(codes), cfg)
+    result["funds"] = build_fund_overlay(bench, cfg)
     result["generated_at"] = now.isoformat(timespec="seconds")
 
     # ---- ملاحظات جودة البيانات
