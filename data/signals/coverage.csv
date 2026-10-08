@@ -4,19 +4,19 @@ ABUK,yahoo,1216,2026-10-07,
 ACAMD,yahoo,1216,2026-10-07,
 ACGC,yahoo,1216,2026-10-07,
 ADIB,yahoo,1219,2026-10-07,
-ADRI,eodhd,244,2026-10-07,من EODHD فقط (سنة تاريخ)
+ADRI,cache,244,2026-10-07,Yahoo فشل، استخدمنا الكاش
 AFMC,yahoo,1216,2026-10-07,
 AIFI,yahoo,1219,2026-10-07,
 AJWA,yahoo,1216,2026-10-07,
 AMES,yahoo,1217,2026-10-07,
 AMOC,yahoo,1216,2026-10-07,
 AMPI,yahoo,1218,2026-10-07,
-APPC,eodhd,187,2026-10-07,من EODHD فقط (سنة تاريخ)
+APPC,cache,187,2026-10-07,Yahoo فشل، استخدمنا الكاش
 APSW,yahoo,1216,2026-10-07,
 ARCC,yahoo,1216,2026-10-07,
 ATLC,yahoo,1216,2026-10-07,
 ATQA,yahoo,1216,2026-10-07,
-AUTO,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+AUTO,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 AXPH,yahoo,1217,2026-10-07,
 BIDI,yahoo,1218,2026-10-07,
 BIGP,yahoo,1216,2026-10-07,
@@ -26,8 +26,8 @@ CLHO,yahoo,1216,2026-10-07,
 COPR,yahoo,1216,2026-10-07,
 COSG,yahoo,1216,2026-10-07,
 CPCI,yahoo,1216,2026-10-07,
-CRST,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
-DGTZ,eodhd,242,2026-10-07,من EODHD فقط (سنة تاريخ)
+CRST,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
+DGTZ,cache,242,2026-10-07,Yahoo فشل، استخدمنا الكاش
 EALR,yahoo,1216,2026-10-07,
 ECAP,yahoo,1216,2026-10-07,
 EDFM,yahoo,1216,2026-10-07,
@@ -36,24 +36,24 @@ EFIH,yahoo,1210,2026-10-07,
 EGAL,yahoo,1216,2026-10-07,
 EGAS,yahoo,1217,2026-10-07,
 EHDR,yahoo,1216,2026-10-07,
-EITP,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+EITP,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 ELNA,yahoo,1216,2026-10-07,
 EMFD,yahoo,1216,2026-10-07,
 ETEL,yahoo,1216,2026-10-07,
 ETRS,yahoo,1216,2026-10-07,
 FAIT,yahoo,1216,2026-10-07,
 FAITA,yahoo,1216,2026-10-07,
-FCMD,eodhd,245,2026-10-07,من EODHD فقط (سنة تاريخ)
+FCMD,cache,245,2026-10-07,Yahoo فشل، استخدمنا الكاش
 FIRE,yahoo,1217,2026-10-07,
 FNAR,yahoo,1216,2026-10-07,
 FWRY,yahoo,1216,2026-10-07,
 GIHD,yahoo,1216,2026-10-07,
 GMCI,yahoo,1217,2026-10-07,
-GOUR,eodhd,171,2026-10-07,من EODHD فقط (سنة تاريخ)
-GPIM,eodhd,245,2026-10-07,من EODHD فقط (سنة تاريخ)
-GTHE,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+GOUR,cache,171,2026-10-07,Yahoo فشل، استخدمنا الكاش
+GPIM,cache,245,2026-10-07,Yahoo فشل، استخدمنا الكاش
+GTHE,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 ICFC,yahoo,1216,2026-10-07,
-IEEC,yahoo,629,2026-10-07,
+IEEC,yahoo,34,2026-10-07,
 IFAP,yahoo,1216,2026-10-07,
 INEG,yahoo,1216,2026-10-07,
 INFI,yahoo,1216,2026-10-07,
@@ -73,14 +73,14 @@ MILS,yahoo,1216,2026-10-07,
 MISR,yahoo,1221,2026-10-07,
 MKIT,yahoo,1178,2026-08-12,
 MMAT,yahoo,1218,2026-10-07,
-MNHD,none,0,,لا بيانات (Yahoo وEODHD)
+MNHD,none,0,,لا بيانات
 MOED,yahoo,1216,2026-10-07,
 MOSC,yahoo,1217,2026-10-07,
 MPCI,yahoo,1216,2026-10-07,
 MPCO,yahoo,1216,2026-10-07,
 MTIE,yahoo,1219,2026-10-07,
 NCCW,yahoo,1216,2026-10-07,
-NCGC,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+NCGC,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 NEDA,yahoo,1216,2026-10-07,
 NINH,yahoo,1218,2026-10-07,
 OBRI,yahoo,1216,2026-10-07,
@@ -90,9 +90,9 @@ OLFI,yahoo,1216,2026-10-07,
 ORAS,yahoo,1221,2026-10-07,
 ORHD,yahoo,1216,2026-10-07,
 ORWE,yahoo,1216,2026-10-07,
-PACH,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+PACH,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 PHDC,yahoo,1216,2026-10-07,
-PHGC,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+PHGC,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 POUL,yahoo,1216,2026-10-07,
 PRCL,yahoo,1216,2026-10-07,
 RACC,yahoo,1216,2026-10-07,
@@ -109,11 +109,11 @@ SMFR,yahoo,1216,2026-10-07,
 SPIN,yahoo,1216,2026-10-07,
 SPMD,yahoo,1216,2026-10-07,
 SWDY,yahoo,1216,2026-10-07,
-TAMD,none,0,,لا بيانات (Yahoo وEODHD)
-TANM,eodhd,243,2026-10-07,من EODHD فقط (سنة تاريخ)
+TAMD,none,0,,لا بيانات
+TANM,cache,243,2026-10-07,Yahoo فشل، استخدمنا الكاش
 TMGH,yahoo,1216,2026-10-07,
 UEFM,yahoo,1216,2026-10-07,
-UPMS,eodhd,245,2026-10-07,من EODHD فقط (سنة تاريخ)
+UPMS,cache,245,2026-10-07,Yahoo فشل، استخدمنا الكاش
 VERT,none,0,,لا بيانات
 WKOL,yahoo,1216,2026-10-07,
 ZEOT,yahoo,1216,2026-10-07,

@@ -1,5 +1,5 @@
 signal_date,code,name,score,comp_trend,comp_momentum,comp_rs,comp_volume,comp_setup,setup,regime,entry_ref,stop,t1,t2,status,entry,exit,exit_date,reason,r_net,ret_pct,days,last_close
 2026-10-07,EFIH,E-finance For Digital and Financial Investments,86.3085,0.8,0.9726,0.7143,0.9138,1.0,breakout,neutral,25.23,22.6266,30.4368,33.0403,pending,,,,,,,,25.23
 2026-10-07,MBSC,مصر بني سويف للاسمنت,85.817,1.0,0.8014,0.918,0.8282,0.5,trend,neutral,377.0,298.469,534.0619,612.5929,pending,,,,,,,,377.0
-2026-10-07,ATQA,مصر الوطنية للصلب - عتاقة,71.0661,1.0,0.6068,0.4875,0.9335,0.85,pullback,up,12.25,10.8558,15.0384,16.4326,pending,,,,,,,,
-2026-10-07,INEG,المجموعة المتكاملة للأعمال الهندسية,71.0521,1.0,0.5652,0.5944,0.9217,0.85,pullback,up,0.726,0.6304,0.9173,1.0129,pending,,,,,,,,
+2026-10-07,ATQA,مصر الوطنية للصلب - عتاقة,71.0661,1.0,0.6068,0.4875,0.9335,0.85,pullback,up,12.25,10.8558,15.0384,16.4326,pending,,,,,,,,12.25
+2026-10-07,INEG,المجموعة المتكاملة للأعمال الهندسية,71.0521,1.0,0.5652,0.5944,0.9217,0.85,pullback,up,0.726,0.6304,0.9173,1.0129,pending,,,,,,,,0.726
