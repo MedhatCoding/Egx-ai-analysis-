@@ -1,0 +1,52 @@
+name: EGX Daily Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force a full run now"
+        required: false
+        default: true
+        type: boolean
+  schedule:
+    - cron: "30 5 * * 0-4"
+
+permissions:
+  contents: write
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements-job.txt
+
+      - name: Run daily report
+        run: python run_daily.py --force
+
+      - name: Commit generated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No generated data changes."
+          else
+            git commit -m "chore: update EGX daily report"
+            git push
+          fi
