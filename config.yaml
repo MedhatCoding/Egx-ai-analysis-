@@ -73,3 +73,4 @@ telegram:
   enabled: true
   max_picks: 5
   max_watch: 5
+# اختبار التشغيل التلقائي
