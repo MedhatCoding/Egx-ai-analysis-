@@ -26,7 +26,7 @@ GOLD_FUNDS = [
 def _gold_series(years: int = 5, state: dict | None = None, cfg: dict | None = None) -> pd.Series | None:
     """ذهب: Yahoo أولًا ثم EODHD XAUUSD.FOREX كاحتياطي."""
     try:
-        raw = yf.Ticker("XAUUSD=X").history(start=(date.today() - timedelta(days=int(years * 365.25))).isoformat(), auto_adjust=True, actions=False)
+        raw = yf.Ticker("GC=F").history(start=(date.today() - timedelta(days=int(years * 365.25))).isoformat(), auto_adjust=True, actions=False)
         if raw is not None and not raw.empty:
             s = raw["Close"].dropna()
             s.index = pd.to_datetime(s.index).tz_localize(None).normalize()
