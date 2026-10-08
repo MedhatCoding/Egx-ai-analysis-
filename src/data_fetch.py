@@ -128,10 +128,32 @@ def fetch_oanor_market() -> dict | None:
             out["screener"] = r.json()
         else:
             print(f"  [OANOR] screener HTTP {r.status_code}")
-        return out or None
+        if out:
+            out["source"] = "OANOR"
+            return out
+        return fetch_egidegypt_market()
     except Exception as e:
         print(f"  [OANOR] تعذر جلب لقطة السوق: {e}")
-        return None
+        return fetch_egidegypt_market()
+
+def fetch_egidegypt_market() -> dict | None:
+    """Fallback من Feed البورصة المصرية/EGI عند تعذر OANOR."""
+    base = "https://ticker.egidegypt.com"
+    endpoints = {
+        "indices": "/api/Feed/GetEGXINDICESDETAILS",
+        "summary": "/api/Feed/GetMarketSummary",
+        "market_watch": "/api/Feed/GetEGXMarketWatch",
+        "statistics": "/api/Feed/GetEGXStatistics",
+    }
+    out = {"source": "EGI Feed"}
+    for name, path in endpoints.items():
+        try:
+            r = requests.get(base + path, timeout=20)
+            if r.status_code == 200:
+                out[name] = r.json()
+        except Exception as e:
+            print(f"  [EGI] {name}: {e}")
+    return out if len(out) > 1 else None
 
 def fetch_eodhd_index(symbol: str, token: str, years: int) -> pd.DataFrame | None:
     """EODHD index symbols already contain .INDX; لا نضيف .EGX إليها."""
