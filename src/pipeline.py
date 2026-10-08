@@ -126,7 +126,14 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
     result = build_result(frames, regime_df, cls, len(codes), cfg)
-    result["funds"] = build_fund_overlay(bench, cfg)
+    sharia_codes = uni.loc[uni["in_egx33"], "code"].tolist()
+    sharia_parts = [prices[c]["close"].rename(c) for c in sharia_codes if c in prices]
+    sharia_close = None
+    if len(sharia_parts) >= 5:
+        panel = pd.concat(sharia_parts, axis=1).sort_index()
+        daily = panel.pct_change().mean(axis=1).fillna(0.0)
+        sharia_close = (1.0 + daily).cumprod() * 100.0
+    result["funds"] = build_fund_overlay(bench, cfg, sharia_close=sharia_close, state=state)
     result["market_indices"] = market_indices
     result["live_market"] = live_market
     result["generated_at"] = now.isoformat(timespec="seconds")
