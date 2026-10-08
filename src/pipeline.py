@@ -152,7 +152,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         holdings = load_for_daily()
         result["portfolio"] = {"holdings": holdings, "enabled": bool(holdings)}
         if holdings:
-            pdf = evaluate(holdings, latest, funds, result["regime"]["label"])
+            pdf = evaluate(holdings, latest, funds, result["regime"]["label"], float(cfg.get("portfolio", {}).get("max_single_position_pct", 25)))
             result["portfolio"]["summary"] = risk_summary(pdf)
             result["portfolio"]["decisions"] = pdf.to_dict("records")
     except Exception as e:
