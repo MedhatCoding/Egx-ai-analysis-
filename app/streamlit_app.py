@@ -327,7 +327,8 @@ with tabs[4]:
     st.markdown(ui.section("محفظتي", "أدخل المراكز التي تملكها، والنظام يراجعها مع كل تحديث للبيانات ويعطيك: بيع / احتفاظ / زيادة."), unsafe_allow_html=True)
 
     if "portfolio" not in st.session_state:
-        st.session_state.portfolio = []
+        persisted = load_json(ROOT / "data" / "portfolio.json")
+        st.session_state.portfolio = persisted if isinstance(persisted, list) else []
 
     up = st.file_uploader("استيراد محفظة محفوظة CSV", type=["csv"], key="portfolio_upload")
     if up is not None:
