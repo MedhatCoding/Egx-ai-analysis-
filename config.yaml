@@ -15,7 +15,7 @@ data:
   benchmark_symbol: "^CASE30"
   min_bars: 150
   max_stale_days: 4
-  eodhd_daily_budget: 15
+  eodhd_daily_budget: 20
   request_sleep: 0.3
 filters:
   min_avg_value_egp: 1500000
