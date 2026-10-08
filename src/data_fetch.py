@@ -104,7 +104,7 @@ def _eodhd_budget(state: dict, cfg: dict) -> int:
 
 # ---------------------------------------------------------------- OANOR (بيانات لحظية للسوق المصري)
 def oanor_key() -> str:
-    return os.environ.get("OANOR_API_KEY") or os.environ.get("OANOR_KEY") or ""
+    return (os.environ.get("OANOR_API_KEY") or os.environ.get("OANOR_API_TOKEN") or os.environ.get("OANOR_KEY") or "").strip().strip('"').strip("'")
 
 def fetch_oanor_market() -> dict | None:
     """لقطة لحظية للسوق من OANOR؛ نجرب المفتاح ثم الاختبار العام عند 401/403."""
