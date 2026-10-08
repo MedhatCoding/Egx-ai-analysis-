@@ -118,7 +118,13 @@ def fetch_oanor_market() -> dict | None:
         r = requests.get(f"{base}/index", headers=headers, timeout=20)
         if r.status_code == 200:
             out["index"] = r.json()
-        r = requests.get(f"{base}/screener", headers=headers, timeout=20)
+        time.sleep(1.1)
+        r = requests.get(
+            f"{base}/screener",
+            params={"sort": "change", "order": "desc", "limit": 20},
+            headers=headers,
+            timeout=20,
+        )
         if r.status_code == 200:
             out["screener"] = r.json()
         return out or None
