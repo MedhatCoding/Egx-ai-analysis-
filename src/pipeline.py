@@ -125,7 +125,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         raise DataError(f"بيانات غير كافية: {len(prices)} سهم فقط من {len(codes)} وصلت بيانات كافية (Yahoo/EODHD).")
 
     frames, regime_df, _panel = analyze(prices, bench, cfg)
-    latest = latest_table(frames, names, cfg, regime_df.attrs.get("ml_probs", {}))
+    latest = latest_table(frames, names, cfg, regime_df.attrs.get("ml_probs", {}), regime_df.attrs.get("ml_meta", {}))
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
     result = build_result(frames, regime_df, cls, len(codes), cfg)
