@@ -52,8 +52,8 @@ def compute_regime(bench_close: pd.Series | None, close_panel: pd.DataFrame, cfg
     for d in idx:
         m = int(d.month)
         avg, n = float(month_avg.get(m, 0.0)), int(month_count.get(m, 0))
-        season_ret.loc[d] = avg * 100.0 if n >= 2 else np.nan
-        season_raw.loc[d] = 0.5 + 0.30 * np.tanh(avg / 0.06) if n >= 2 else 0.5
+        season_ret.loc[d] = avg * 100.0 if n >= min_month_obs else np.nan
+        season_raw.loc[d] = 0.5 + 0.30 * np.tanh(avg / 0.06) if n >= min_month_obs else 0.5
 
     season_w = float(cfg["regime"].get("seasonality_weight", 0.0))
     total_w = float(sum(w.values())) + season_w
