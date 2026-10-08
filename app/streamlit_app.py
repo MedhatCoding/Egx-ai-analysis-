@@ -398,6 +398,20 @@ with tabs[4]:
 
             exp = pd.DataFrame(holdings).to_csv(index=False).encode("utf-8-sig")
             st.download_button("حفظ المحفظة CSV", exp, "my_egx_portfolio.csv", "text/csv")
+            blob = json.dumps(holdings, ensure_ascii=False, indent=2).encode("utf-8")
+            st.download_button("تصدير ملف التشغيل اليومي", blob, "portfolio.json", "application/json",
+                               help="ضع الملف باسم data/portfolio.json في المستودع ليقرأه التقرير اليومي تلقائيًا.")
+            ps = latest.get("portfolio") or {}
+            sm = ps.get("summary") or {}
+            if sm:
+                st.markdown(ui.section("مخاطر المحفظة", "سقف تركيز المركز يمنع النظام من اقتراح زيادة مركز كبير."), unsafe_allow_html=True)
+                st.markdown(ui.stat_grid([
+                    ("مراكز", ui.bdi(sm.get("positions", 0))),
+                    ("بيع", ui.bdi(sm.get("sell", 0))),
+                    ("احتفاظ", ui.bdi(sm.get("hold", 0))),
+                    ("زيادة", ui.bdi(sm.get("increase", 0))),
+                    ("أكبر تركيز", ui.bdi(f"{sm.get('concentration', 0):.1f}%")),
+                ]), unsafe_allow_html=True)
 
         if st.button("مسح المحفظة من هذا الجهاز", type="secondary"):
             st.session_state.portfolio = []
