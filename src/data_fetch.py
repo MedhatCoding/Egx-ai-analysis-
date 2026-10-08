@@ -107,26 +107,27 @@ def oanor_key() -> str:
     return os.environ.get("OANOR_API_KEY") or os.environ.get("OANOR_KEY") or ""
 
 def fetch_oanor_market() -> dict | None:
-    """لقطة لحظية للسوق: EGX30 + screener. لا تدخل في التاريخ الفني."""
+    """لقطة لحظية للسوق من OANOR؛ نجرب المفتاح ثم الاختبار العام عند 401/403."""
     key = oanor_key()
-    if not key:
-        return None
-    headers = {"x-oanor-key": key}
+    headers = {"x-oanor-key": key} if key else {}
     base = "https://api.oanor.com/egx-api/v1"
     out = {}
     try:
         r = requests.get(f"{base}/index", headers=headers, timeout=20)
+        if r.status_code in (401, 403) and headers:
+            r = requests.get(f"{base}/index", timeout=20)
         if r.status_code == 200:
             out["index"] = r.json()
+        else:
+            print(f"  [OANOR] index HTTP {r.status_code}")
         time.sleep(1.1)
-        r = requests.get(
-            f"{base}/screener",
-            params={"sort": "change", "order": "desc", "limit": 20},
-            headers=headers,
-            timeout=20,
-        )
+        r = requests.get(f"{base}/screener", params={"sort": "change", "order": "desc", "limit": 20}, headers=headers, timeout=20)
+        if r.status_code in (401, 403) and headers:
+            r = requests.get(f"{base}/screener", params={"sort": "change", "order": "desc", "limit": 20}, timeout=20)
         if r.status_code == 200:
             out["screener"] = r.json()
+        else:
+            print(f"  [OANOR] screener HTTP {r.status_code}")
         return out or None
     except Exception as e:
         print(f"  [OANOR] تعذر جلب لقطة السوق: {e}")
