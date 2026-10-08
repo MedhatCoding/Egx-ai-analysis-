@@ -177,6 +177,18 @@ with tabs[1]:
         elif oscr:
             wide(st.json, oscr)
 
+    news = latest.get("news") or {}
+    market_news = news.get("market") or []
+    company_news = news.get("companies") or []
+    if market_news or company_news:
+        st.markdown(ui.section("أخبار السوق", "عناوين حديثة للسياق فقط؛ لا تدخل الأخبار وحدها في قرار الشراء."), unsafe_allow_html=True)
+        news_rows = [{"الخبر": x.get("title"), "المصدر": x.get("source", "")} for x in market_news[:8]]
+        if news_rows:
+            wide(st.dataframe, pd.DataFrame(news_rows), hide_index=True)
+        if company_news:
+            st.markdown(ui.section("أخبار مرتبطة بالفرص"), unsafe_allow_html=True)
+            wide(st.dataframe, pd.DataFrame([{"الرمز": x.get("code"), "الخبر": x.get("title"), "المصدر": x.get("source", "")} for x in company_news[:10]]), hide_index=True)
+
     st.markdown(ui.section("خريطة السوق", "حجم المربع = متوسط قيمة التداول اليومي، واللون = تغير آخر جلسة"), unsafe_allow_html=True)
     if table is not None and len(table):
         wide(st.plotly_chart, charts.market_map(table), config={"displayModeBar": False})
