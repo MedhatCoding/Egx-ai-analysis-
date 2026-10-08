@@ -82,6 +82,8 @@ def build_payload(result: dict, track: dict | None) -> dict:
         "picks": [slim(p) for p in result["picks"]],
         "watch": [slim(p) for p in result["watch"][:5]],
         "track_record": (track or {}).get("stats"),
+        "funds": result.get("funds", {}),
+        "ml": result.get("ml", {}),
     }
 
 
