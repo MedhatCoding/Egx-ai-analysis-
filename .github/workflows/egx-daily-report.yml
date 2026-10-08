@@ -1,19 +1,17 @@
 name: EGX Daily Report
 
 on:
-  # اختبار تلقائي مرة عند تحديث ملف الـWorkflow فقط.
-  # لا يتكرر عند تحديث data/ الذي ينتجه التقرير.
+  # اختبار حقيقي بعد تعديل إعدادات التقرير فقط.
   push:
     paths:
-      - ".github/workflows/egx-daily-report.yml"
+      - "config.yaml"
 
   # تشغيل تلقائي يوميًا في أيام التداول.
-  # موعدين UTC لأن توقيت القاهرة يتغير بين الصيف والشتاء.
+  # 06:00 UTC = 09:00 القاهرة صيفًا، و07:00 UTC = 09:00 القاهرة شتاءً.
   schedule:
     - cron: "0 6 * * 0-4"
     - cron: "0 7 * * 0-4"
 
-  # تشغيل يدوي اختياري للاختبار أو الطوارئ.
   workflow_dispatch:
     inputs:
       force:
@@ -50,7 +48,7 @@ jobs:
 
       - name: Run daily report
         run: |
-          if [ "${{ inputs.force }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.force }}" = "true" ]; then
             python run_daily.py --force
           else
             python run_daily.py
