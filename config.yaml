@@ -87,3 +87,8 @@ telegram:
   max_watch: 5
 
 # build: 2026-10-08 reliability/news/ml upgrade + tests
+
+portfolio:
+  enabled: true
+  file: "data/portfolio.json"
+  max_single_position_pct: 25
