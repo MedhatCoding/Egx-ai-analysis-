@@ -1,15 +1,21 @@
 name: EGX Daily Report
 
 on:
+  # تشغيل تلقائي يوميًا في أيام التداول.
+  # نستخدم موعدين UTC لأن توقيت القاهرة يتغير بين الصيف والشتاء،
+  # وrun_daily.py نفسه يمنع التشغيل خارج نافذة 08:30-10:45 بتوقيت القاهرة.
+  schedule:
+    - cron: "0 6 * * 0-4"
+    - cron: "0 7 * * 0-4"
+
+  # تشغيل يدوي اختياري للاختبار أو الطوارئ.
   workflow_dispatch:
     inputs:
       force:
         description: "Force a full run now"
         required: false
-        default: true
+        default: false
         type: boolean
-  schedule:
-    - cron: "30 5 * * 0-4"
 
 permissions:
   contents: write
@@ -19,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      EODHD_API_TOKEN: ${{ secrets.EODHD_API_TOKEN }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
@@ -37,7 +44,12 @@ jobs:
         run: pip install -r requirements-job.txt
 
       - name: Run daily report
-        run: python run_daily.py --force
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            python run_daily.py --force
+          else
+            python run_daily.py
+          fi
 
       - name: Commit generated data
         run: |
