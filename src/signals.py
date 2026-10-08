@@ -9,6 +9,7 @@ import pandas as pd
 from .indicators import compute_indicators
 from .regime import REGIME_AR, compute_regime
 from .scoring import compute_scores
+from .ml_model import train_predict
 
 SETUP_AR = {
     "breakout": "اختراق",
@@ -59,12 +60,17 @@ def analyze(prices: dict[str, pd.DataFrame], bench_df: pd.DataFrame | None, cfg:
         f = compute_scores(ind, rs_rank[code], regime_df["bench_ret60"], cfg)
         f["regime_ok"] = regime_ok.reindex(f.index).fillna(False)
         frames[code] = f
+    ml_probs, ml_meta = train_predict(frames, cfg)
+    regime_df.attrs["ml_probs"] = ml_probs
+    regime_df.attrs["ml_meta"] = ml_meta
     return frames, regime_df, close_panel
 
 
 # --------------------------------------------------------------------------- آخر شمعة لكل سهم
-def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: dict) -> pd.DataFrame:
+def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: dict, ml_probs: dict[str, float] | None = None) -> pd.DataFrame:
     market_last = max(f.index[-1] for f in frames.values())
+    ml_probs = ml_probs or {}
+    ml_weight = float(cfg.get("ml", {}).get("score_weight", 0.20))
     rows = []
     for code, f in frames.items():
         r = f.iloc[-1]
@@ -76,7 +82,9 @@ def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: di
                 "date": d,
                 "stale": (market_last - d).days > cfg["data"]["max_stale_days"],
                 "close": r["close"],
-                "score": r["score"],
+                "technical_score": r["score"],
+                "ml_prob": ml_probs.get(code, 0.5),
+                "score": (1.0 - ml_weight) * r["score"] + ml_weight * (ml_probs.get(code, 0.5) * 100.0),
                 "comp_trend": r["comp_trend"],
                 "comp_momentum": r["comp_momentum"],
                 "comp_rs": r["comp_rs"],
@@ -224,6 +232,8 @@ def pick_dict(r: pd.Series, cfg: dict) -> dict:
         "name": r["name"],
         "signal": r["signal"],
         "score": r["score"],
+        "technical_score": r.get("technical_score", r["score"]),
+        "ml_prob": r.get("ml_prob", 0.5),
         "comp_trend": r["comp_trend"],
         "comp_momentum": r["comp_momentum"],
         "comp_rs": r["comp_rs"],
@@ -273,6 +283,8 @@ def market_summary(latest: pd.DataFrame, regime_df: pd.DataFrame, cfg: dict) -> 
         "bench_ret20": clean((last["bench_close"] / regime_df["bench_close"].iloc[-21] - 1) * 100)
         if len(regime_df) > 21
         else None,
+        "seasonality_score": clean(last.get("seasonality_score", np.nan) * 100),
+        "seasonality_month_return": clean(last.get("seasonality_month_return", np.nan)),
         "bench_above_sma50": bool(last["bench_close"] > last["bench_sma50"]) if pd.notna(last["bench_sma50"]) else None,
         "bench_above_sma200": bool(last["bench_close"] > last["bench_sma200"]) if pd.notna(last["bench_sma200"]) else None,
         "breadth50": clean(last["breadth50"] * 100) if pd.notna(last["breadth50"]) else None,
@@ -306,8 +318,11 @@ def build_result(frames, regime_df, latest_cls: pd.DataFrame, universe_size: int
             "label_ar": REGIME_AR[label],
             "score": clean(last["regime_score"] * 100),
             "max_buys": int(max_buys),
+            "seasonality_score": clean(last.get("seasonality_score", np.nan) * 100),
+            "seasonality_month_return": clean(last.get("seasonality_month_return", np.nan)),
         },
         "market": market_summary(latest_cls, regime_df, cfg),
         "picks": [pick_dict(r, cfg) for _, r in buys.iterrows()],
         "watch": [pick_dict(r, cfg) for _, r in watch.iterrows()],
+        "ml": regime_df.attrs.get("ml_meta", {}),
     }
