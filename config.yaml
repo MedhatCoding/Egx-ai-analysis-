@@ -98,3 +98,5 @@ telegram:
 # 2026-10-08: OANOR public fallback integration test
 
 # 2026-10-08: EGI official feed fallback
+
+# 2026-10-08: OANOR secret normalization + gold fallback
