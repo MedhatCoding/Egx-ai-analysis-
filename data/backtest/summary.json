@@ -1,0 +1,42 @@
+{
+  "strategy": {
+    "trades": 1556,
+    "win_rate": 43.2,
+    "avg_r": 0.112,
+    "median_r": -0.359,
+    "profit_factor": 1.21,
+    "avg_ret_pct": 0.66,
+    "avg_days": 11.0,
+    "max_losing_streak": 42,
+    "max_drawdown_r": -103.01,
+    "pct_target": 29.4,
+    "pct_stop": 43.2,
+    "pct_time": 27.4
+  },
+  "baseline": {
+    "trades": 4364,
+    "win_rate": 47.5,
+    "avg_r": 0.215,
+    "median_r": -0.141,
+    "profit_factor": 1.41,
+    "avg_ret_pct": 1.71,
+    "avg_days": 11.4,
+    "max_losing_streak": 104,
+    "max_drawdown_r": -206.9,
+    "pct_target": 31.4,
+    "pct_stop": 39.2,
+    "pct_time": 29.4
+  },
+  "period": {
+    "from": "2023-10-09",
+    "to": "2026-10-07"
+  },
+  "assumptions": {
+    "entry": "افتتاح الجلسة التالية",
+    "max_hold_days": 20,
+    "round_trip_cost_pct": 0.5,
+    "target_r": 2.0
+  },
+  "generated_at": "2026-10-08T13:05:20+03:00",
+  "stocks": 100
+}
