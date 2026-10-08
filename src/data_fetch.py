@@ -102,6 +102,86 @@ def _eodhd_budget(state: dict, cfg: dict) -> int:
     return max(0, cfg["data"]["eodhd_daily_budget"] - e["calls"])
 
 
+# ---------------------------------------------------------------- OANOR (بيانات لحظية للسوق المصري)
+def oanor_key() -> str:
+    return os.environ.get("OANOR_API_KEY") or os.environ.get("OANOR_KEY") or ""
+
+def fetch_oanor_market() -> dict | None:
+    """لقطة لحظية للسوق: EGX30 + screener. لا تدخل في التاريخ الفني."""
+    key = oanor_key()
+    if not key:
+        return None
+    headers = {"x-oanor-key": key}
+    base = "https://api.oanor.com/egx-api/v1"
+    out = {}
+    try:
+        r = requests.get(f"{base}/index", headers=headers, timeout=20)
+        if r.status_code == 200:
+            out["index"] = r.json()
+        r = requests.get(f"{base}/screener", headers=headers, timeout=20)
+        if r.status_code == 200:
+            out["screener"] = r.json()
+        return out or None
+    except Exception as e:
+        print(f"  [OANOR] تعذر جلب لقطة السوق: {e}")
+        return None
+
+def fetch_eodhd_index(symbol: str, token: str, years: int) -> pd.DataFrame | None:
+    """EODHD index symbols already contain .INDX; لا نضيف .EGX إليها."""
+    try:
+        r = requests.get(
+            f"https://eodhd.com/api/eod/{symbol}",
+            params={"api_token": token, "fmt": "json",
+                    "from": (date.today() - timedelta(days=int(years * 365.25))).isoformat()},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            return None
+        rows = r.json()
+        if not rows:
+            return None
+        df = pd.DataFrame(rows)
+        df["date"] = pd.to_datetime(df["date"])
+        df = df.set_index("date")
+        return _clean(df)
+    except Exception as e:
+        print(f"  [EODHD] فشل المؤشر {symbol}: {e}")
+        return None
+
+def fetch_market_indices(cfg: dict, state: dict, offline: bool = False) -> dict:
+    """يجرب المؤشرات الرئيسية، ويحفظ ما ينجح منها بدون اختلاق بيانات."""
+    names = {
+        "EGX30": "EGX30.INDX",
+        "EGX70 EWI": "EGX70EWI.INDX",
+        "EGX100 EWI": "EGX100EWI.INDX",
+        "EGX50 EWI": "EGX50EWI.INDX",
+        "EGX30 Capped": "EGX30CAPPED.INDX",
+    }
+    token = _eodhd_token()
+    result = {}
+    for name, symbol in names.items():
+        p = PRICES / f"_INDEX_{name.replace(' ', '_')}.csv"
+        df = None
+        if not offline and token and _eodhd_budget(state, cfg) > 0:
+            state["eodhd"]["calls"] += 1
+            df = fetch_eodhd_index(symbol, token, cfg["data"]["history_years"])
+            if df is not None and len(df) >= 20:
+                write_cache(f"_INDEX_{name.replace(' ', '_')}", df)
+        if df is None:
+            try:
+                df = read_cache(f"_INDEX_{name.replace(' ', '_')}")
+            except Exception:
+                df = None
+        if df is not None and len(df):
+            last = df.iloc[-1]
+            prev = df.iloc[-2]["close"] if len(df) > 1 else None
+            result[name] = {
+                "symbol": symbol, "close": float(last["close"]),
+                "change_pct": float((last["close"] / prev - 1) * 100) if prev else None,
+                "date": str(df.index[-1].date()),
+            }
+    return result
+
 # ---------------------------------------------------------------- التحديث الكامل
 def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False) -> pd.DataFrame:
     """يحدّث الكاش لكل الرموز ويرجع جدول التغطية."""
