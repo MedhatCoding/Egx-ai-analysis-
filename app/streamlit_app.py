@@ -162,10 +162,19 @@ with tabs[1]:
     if live:
         st.markdown(ui.section("السوق الآن", "OANOR — بيانات لحظية عند توفر المفتاح"), unsafe_allow_html=True)
         oi = live.get("index") or {}
-        if oi:
+        idx_data = oi.get("data", {}) if isinstance(oi, dict) else {}
+        idx_rows = idx_data.get("indices") or []
+        if idx_rows:
+            wide(st.dataframe, pd.DataFrame(idx_rows), hide_index=True)
+        else:
             wide(st.json, oi)
+
         oscr = live.get("screener") or {}
-        if oscr:
+        scr_data = oscr.get("data", {}) if isinstance(oscr, dict) else {}
+        scr_rows = scr_data.get("results") or []
+        if scr_rows:
+            wide(st.dataframe, pd.DataFrame(scr_rows), hide_index=True)
+        elif oscr:
             wide(st.json, oscr)
 
     st.markdown(ui.section("خريطة السوق", "حجم المربع = متوسط قيمة التداول اليومي، واللون = تغير آخر جلسة"), unsafe_allow_html=True)
