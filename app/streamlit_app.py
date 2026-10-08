@@ -143,6 +143,31 @@ with tabs[0]:
 
 # ================================================================== خريطة السوق
 with tabs[1]:
+    st.markdown(ui.section("السوق والمؤشرات", "بيانات المؤشرات تُجلب من مزودي البيانات المتاحين، والبيانات اللحظية من OANOR عند ضبط المفتاح."), unsafe_allow_html=True)
+
+    idxs = latest.get("market_indices") or {}
+    live = latest.get("live_market") or {}
+    if idxs:
+        rows = []
+        for name, x in idxs.items():
+            rows.append({"المؤشر": name, "القيمة": x.get("close"), "اليوم %": x.get("change_pct"), "التاريخ": x.get("date")})
+        iv = pd.DataFrame(rows)
+        wide(st.dataframe, iv, hide_index=True, column_config={
+            "القيمة": st.column_config.NumberColumn(format="%.2f"),
+            "اليوم %": st.column_config.NumberColumn(format="%.2f"),
+        })
+    else:
+        st.info("لم تتوفر بيانات تاريخية للمؤشرات من EODHD في آخر تشغيل. بعد إضافة OANOR_API_KEY وإعادة تشغيل التقرير ستظهر اللقطة اللحظية المتاحة.")
+
+    if live:
+        st.markdown(ui.section("السوق الآن", "OANOR — بيانات لحظية عند توفر المفتاح"), unsafe_allow_html=True)
+        oi = live.get("index") or {}
+        if oi:
+            wide(st.json, oi)
+        oscr = live.get("screener") or {}
+        if oscr:
+            wide(st.json, oscr)
+
     st.markdown(ui.section("خريطة السوق", "حجم المربع = متوسط قيمة التداول اليومي، واللون = تغير آخر جلسة"), unsafe_allow_html=True)
     if table is not None and len(table):
         wide(st.plotly_chart, charts.market_map(table), config={"displayModeBar": False})
