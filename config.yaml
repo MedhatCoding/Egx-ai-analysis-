@@ -10,7 +10,7 @@ market:
 universe:
   mode: "union"
 data:
-  history_years: 3
+  history_years: 5
   yahoo_suffix: ".CA"
   benchmark_symbol: "^CASE30"
   min_bars: 150
@@ -25,6 +25,7 @@ regime:
     bench_above_sma50: 0.25
     bench_above_sma200: 0.15
     bench_sma50_rising: 0.10
+  seasonality_weight: 0.10
     breadth_above_sma50: 0.30
     breadth_above_sma200: 0.20
   strong_up: 0.80
@@ -63,6 +64,15 @@ risk:
 backtest:
   refresh_every_days: 7
   baseline_every_n_bars: 5
+ml:
+  enabled: true
+  score_weight: 0.20
+  horizon_days: 10
+  positive_return: 0.03
+  min_samples: 500
+  min_auc: 0.52
+  rf_trees: 120
+  rf_depth: 6
 llm:
   provider: "gemini"
   anthropic_model: "claude-haiku-4-5-20251001"
