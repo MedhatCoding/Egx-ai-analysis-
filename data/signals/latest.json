@@ -1,11 +1,11 @@
 {
   "data_date": "2026-10-07",
   "universe_size": 118,
-  "analyzed": 100,
+  "analyzed": 99,
   "signal_counts": {
-    "AVOID": 34,
-    "WATCH": 28,
-    "NEUTRAL": 23,
+    "AVOID": 31,
+    "NEUTRAL": 27,
+    "WATCH": 26,
     "ILLIQUID": 12,
     "BUY": 2,
     "STALE": 1
@@ -13,22 +13,26 @@
   "regime": {
     "label": "neutral",
     "label_ar": "محايد",
-    "score": 43.8776,
-    "max_buys": 2
+    "score": 46.7726,
+    "max_buys": 2,
+    "seasonality_score": 75.7228,
+    "seasonality_month_return": 7.7013
   },
   "market": {
     "bench_name": "مؤشر داخلي",
-    "bench_close": 551.2908,
-    "bench_change_1d": -0.2305,
-    "bench_ret20": -7.8043,
+    "bench_close": 770.2129,
+    "bench_change_1d": -0.2084,
+    "bench_ret20": -7.7726,
+    "seasonality_score": 75.7228,
+    "seasonality_month_return": 7.7013,
     "bench_above_sma50": false,
     "bench_above_sma200": true,
     "breadth50": 29.5918,
     "breadth200": null,
     "advancers": 36,
-    "decliners": 54,
+    "decliners": 53,
     "unchanged": 9,
-    "median_ret20": -8.1874,
+    "median_ret20": -8.0702,
     "top_gainers": [
       {
         "code": "SIPC",
@@ -69,10 +73,12 @@
       "code": "EFIH",
       "name": "E-finance For Digital and Financial Investments",
       "signal": "BUY",
-      "score": 86.3085,
+      "score": 79.3474,
+      "technical_score": 86.3931,
+      "ml_prob": 0.5116,
       "comp_trend": 0.8,
       "comp_momentum": 0.9726,
-      "comp_rs": 0.7143,
+      "comp_rs": 0.7186,
       "comp_volume": 0.9138,
       "comp_setup": 1.0,
       "setup": "breakout",
@@ -89,7 +95,7 @@
       "ret5": 13.5464,
       "ret20": 5.2127,
       "vol_ratio": 1.7757,
-      "rs_pct": 59.1919,
+      "rs_pct": 59.7959,
       "avg_value_m": 63.6029,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -105,10 +111,12 @@
       "code": "MBSC",
       "name": "مصر بني سويف للاسمنت",
       "signal": "BUY",
-      "score": 85.817,
+      "score": 78.6934,
+      "technical_score": 85.8574,
+      "ml_prob": 0.5004,
       "comp_trend": 1.0,
       "comp_momentum": 0.8014,
-      "comp_rs": 0.918,
+      "comp_rs": 0.92,
       "comp_volume": 0.8282,
       "comp_setup": 0.5,
       "setup": "trend",
@@ -125,12 +133,12 @@
       "ret5": 29.9418,
       "ret20": -11.2461,
       "vol_ratio": 1.7948,
-      "rs_pct": 88.2828,
+      "rs_pct": 88.5714,
       "avg_value_m": 74.1963,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 55 وMACD إيجابي",
-        "قوة نسبية أعلى من 88% من الأسهم المحللة",
+        "قوة نسبية أعلى من 89% من الأسهم المحللة",
         "حجم التداول 1.8 ضعف المتوسط",
         "استمرار الاتجاه الصاعد"
       ],
@@ -147,10 +155,12 @@
       "code": "SIPC",
       "name": "سبأ الدولية للأدوية",
       "signal": "WATCH",
-      "score": 93.7115,
+      "score": 83.134,
+      "technical_score": 93.762,
+      "ml_prob": 0.4062,
       "comp_trend": 1.0,
       "comp_momentum": 0.9745,
-      "comp_rs": 0.9675,
+      "comp_rs": 0.97,
       "comp_volume": 1.0,
       "comp_setup": 0.5,
       "setup": "trend",
@@ -167,12 +177,12 @@
       "ret5": 24.0,
       "ret20": 1.6393,
       "vol_ratio": 3.3843,
-      "rs_pct": 95.3535,
+      "rs_pct": 95.7143,
       "avg_value_m": 51.064,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 64 وMACD إيجابي",
-        "قوة نسبية أعلى من 95% من الأسهم المحللة",
+        "قوة نسبية أعلى من 96% من الأسهم المحللة",
         "حجم التداول 3.4 ضعف المتوسط",
         "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
         "استمرار الاتجاه الصاعد"
@@ -191,10 +201,12 @@
       "code": "RUBX",
       "name": "رووبكس",
       "signal": "WATCH",
-      "score": 90.8386,
+      "score": 82.2208,
+      "technical_score": 90.959,
+      "ml_prob": 0.4727,
       "comp_trend": 1.0,
       "comp_momentum": 0.9632,
-      "comp_rs": 0.8897,
+      "comp_rs": 0.8957,
       "comp_volume": 0.931,
       "comp_setup": 0.5,
       "setup": "trend",
@@ -211,12 +223,12 @@
       "ret5": 25.856,
       "ret20": 36.13,
       "vol_ratio": 1.0959,
-      "rs_pct": 84.2424,
+      "rs_pct": 85.102,
       "avg_value_m": 90.836,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 66 وMACD إيجابي",
-        "قوة نسبية أعلى من 84% من الأسهم المحللة",
+        "قوة نسبية أعلى من 85% من الأسهم المحللة",
         "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
         "استمرار الاتجاه الصاعد"
       ],
@@ -233,10 +245,12 @@
       "code": "AMOC",
       "name": "الاسكندرية للزيوت المعدنية",
       "signal": "WATCH",
-      "score": 84.829,
+      "score": 77.8057,
+      "technical_score": 84.8244,
+      "ml_prob": 0.4973,
       "comp_trend": 1.0,
       "comp_momentum": 0.7088,
-      "comp_rs": 0.9774,
+      "comp_rs": 0.9771,
       "comp_volume": 0.7041,
       "comp_setup": 0.7,
       "setup": "near_high",
@@ -253,7 +267,7 @@
       "ret5": 8.9541,
       "ret20": 0.6254,
       "vol_ratio": 1.7196,
-      "rs_pct": 96.7677,
+      "rs_pct": 96.7347,
       "avg_value_m": 138.8143,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -270,91 +284,15 @@
       ]
     },
     {
-      "code": "INEG",
-      "name": "المجموعة المتكاملة للأعمال الهندسية",
-      "signal": "WATCH",
-      "score": 84.5607,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.5652,
-      "comp_rs": 0.9053,
-      "comp_volume": 0.9217,
-      "comp_setup": 0.85,
-      "setup": "pullback",
-      "setup_ar": "تصحيح داخل اتجاه",
-      "close": 0.726,
-      "entry_low": 0.7028,
-      "entry_high": 0.7376,
-      "stop": 0.6304,
-      "t1": 0.9173,
-      "t2": 1.0129,
-      "risk_pct": 13.1744,
-      "position_pct": 7.5905,
-      "rsi": 58.2612,
-      "ret5": 4.7619,
-      "ret20": 23.2598,
-      "vol_ratio": 1.421,
-      "rs_pct": 86.4646,
-      "avg_value_m": 41.0927,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 58",
-        "قوة نسبية أعلى من 86% من الأسهم المحللة",
-        "حجم التداول 1.4 ضعف المتوسط",
-        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
-        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
-      ],
-      "cautions": [
-        "تذبذب يومي مرتفع (متوسط المدى 6.4% من السعر)",
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": []
-    },
-    {
-      "code": "ATQA",
-      "name": "مصر الوطنية للصلب - عتاقة",
-      "signal": "WATCH",
-      "score": 83.5146,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.6068,
-      "comp_rs": 0.7921,
-      "comp_volume": 0.9335,
-      "comp_setup": 0.85,
-      "setup": "pullback",
-      "setup_ar": "تصحيح داخل اتجاه",
-      "close": 12.25,
-      "entry_low": 11.9791,
-      "entry_high": 12.3855,
-      "stop": 10.8558,
-      "t1": 15.0384,
-      "t2": 16.4326,
-      "risk_pct": 11.3811,
-      "position_pct": 8.7865,
-      "rsi": 52.84,
-      "ret5": 9.767,
-      "ret20": -5.7692,
-      "vol_ratio": 0.753,
-      "rs_pct": 70.303,
-      "avg_value_m": 77.2368,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 53",
-        "قوة نسبية أعلى من 70% من الأسهم المحللة",
-        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
-        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
-      ],
-      "cautions": [
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": []
-    },
-    {
       "code": "CPCI",
       "name": "شركة القاهرة للأدوية",
       "signal": "WATCH",
-      "score": 82.8909,
+      "score": 77.5334,
+      "technical_score": 82.8739,
+      "ml_prob": 0.5617,
       "comp_trend": 1.0,
       "comp_momentum": 0.5824,
-      "comp_rs": 0.9166,
+      "comp_rs": 0.9157,
       "comp_volume": 1.0,
       "comp_setup": 0.5,
       "setup": "trend",
@@ -371,7 +309,7 @@
       "ret5": 4.6138,
       "ret20": 11.9446,
       "vol_ratio": 0.9633,
-      "rs_pct": 88.0808,
+      "rs_pct": 87.9592,
       "avg_value_m": 3.8302,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -389,13 +327,97 @@
       ]
     },
     {
+      "code": "ATQA",
+      "name": "مصر الوطنية للصلب - عتاقة",
+      "signal": "WATCH",
+      "score": 76.3014,
+      "technical_score": 83.5293,
+      "ml_prob": 0.4739,
+      "comp_trend": 1.0,
+      "comp_momentum": 0.6068,
+      "comp_rs": 0.7929,
+      "comp_volume": 0.9335,
+      "comp_setup": 0.85,
+      "setup": "pullback",
+      "setup_ar": "تصحيح داخل اتجاه",
+      "close": 12.25,
+      "entry_low": 11.9791,
+      "entry_high": 12.3855,
+      "stop": 10.8558,
+      "t1": 15.0384,
+      "t2": 16.4326,
+      "risk_pct": 11.3811,
+      "position_pct": 8.7865,
+      "rsi": 52.84,
+      "ret5": 9.767,
+      "ret20": -5.7692,
+      "vol_ratio": 0.753,
+      "rs_pct": 70.4082,
+      "avg_value_m": 77.2368,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 53",
+        "قوة نسبية أعلى من 70% من الأسهم المحللة",
+        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
+        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
+      ],
+      "cautions": [
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": []
+    },
+    {
+      "code": "INEG",
+      "name": "المجموعة المتكاملة للأعمال الهندسية",
+      "signal": "WATCH",
+      "score": 75.8408,
+      "technical_score": 84.5985,
+      "ml_prob": 0.4081,
+      "comp_trend": 1.0,
+      "comp_momentum": 0.5652,
+      "comp_rs": 0.9071,
+      "comp_volume": 0.9217,
+      "comp_setup": 0.85,
+      "setup": "pullback",
+      "setup_ar": "تصحيح داخل اتجاه",
+      "close": 0.726,
+      "entry_low": 0.7028,
+      "entry_high": 0.7376,
+      "stop": 0.6304,
+      "t1": 0.9173,
+      "t2": 1.0129,
+      "risk_pct": 13.1744,
+      "position_pct": 7.5905,
+      "rsi": 58.2612,
+      "ret5": 4.7619,
+      "ret20": 23.2598,
+      "vol_ratio": 1.421,
+      "rs_pct": 86.7347,
+      "avg_value_m": 41.0927,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 58",
+        "قوة نسبية أعلى من 87% من الأسهم المحللة",
+        "حجم التداول 1.4 ضعف المتوسط",
+        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
+        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
+      ],
+      "cautions": [
+        "تذبذب يومي مرتفع (متوسط المدى 6.4% من السعر)",
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": []
+    },
+    {
       "code": "ETEL",
       "name": "المصرية للاتصالات",
       "signal": "WATCH",
-      "score": 80.1426,
+      "score": 74.7306,
+      "technical_score": 80.183,
+      "ml_prob": 0.5292,
       "comp_trend": 1.0,
       "comp_momentum": 0.688,
-      "comp_rs": 0.918,
+      "comp_rs": 0.92,
       "comp_volume": 0.9055,
       "comp_setup": 0.1,
       "setup": "extended",
@@ -412,12 +434,12 @@
       "ret5": 10.4478,
       "ret20": 17.4696,
       "vol_ratio": 0.4126,
-      "rs_pct": 88.2828,
+      "rs_pct": 88.5714,
       "avg_value_m": 280.7029,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 72 وMACD إيجابي",
-        "قوة نسبية أعلى من 88% من الأسهم المحللة",
+        "قوة نسبية أعلى من 89% من الأسهم المحللة",
         "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)"
       ],
       "cautions": [
@@ -433,10 +455,12 @@
       "code": "ABUK",
       "name": "أبو قير للأسمدة",
       "signal": "WATCH",
-      "score": 79.1863,
+      "score": 72.56,
+      "technical_score": 79.2674,
+      "ml_prob": 0.4573,
       "comp_trend": 1.0,
       "comp_momentum": 0.6559,
-      "comp_rs": 0.6974,
+      "comp_rs": 0.7014,
       "comp_volume": 0.6894,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -453,7 +477,7 @@
       "ret5": 4.9196,
       "ret20": -4.7619,
       "vol_ratio": 1.0116,
-      "rs_pct": 56.7677,
+      "rs_pct": 57.3469,
       "avg_value_m": 94.7354,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -471,10 +495,12 @@
       "code": "ICFC",
       "name": "الدولية للأسمدة والكيماويات",
       "signal": "WATCH",
-      "score": 78.7795,
+      "score": 71.899,
+      "technical_score": 78.8184,
+      "ml_prob": 0.4422,
       "comp_trend": 1.0,
       "comp_momentum": 0.6887,
-      "comp_rs": 0.9109,
+      "comp_rs": 0.9129,
       "comp_volume": 0.3229,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -491,12 +517,12 @@
       "ret5": 11.9691,
       "ret20": -3.1315,
       "vol_ratio": 0.5961,
-      "rs_pct": 87.2727,
+      "rs_pct": 87.551,
       "avg_value_m": 24.6434,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 57",
-        "قوة نسبية أعلى من 87% من الأسهم المحللة",
+        "قوة نسبية أعلى من 88% من الأسهم المحللة",
         "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
       ],
       "cautions": [
@@ -508,54 +534,15 @@
       ]
     },
     {
-      "code": "AJWA",
-      "name": "اجواء للصناعات الغذائية - مصر",
-      "signal": "WATCH",
-      "score": 78.5491,
-      "comp_trend": 0.8,
-      "comp_momentum": 0.8228,
-      "comp_rs": 0.7638,
-      "comp_volume": 0.9136,
-      "comp_setup": 0.5,
-      "setup": "trend",
-      "setup_ar": "استمرار اتجاه",
-      "close": 196.16,
-      "entry_low": 193.2086,
-      "entry_high": 197.6357,
-      "stop": 178.4517,
-      "t1": 231.5767,
-      "t2": 249.285,
-      "risk_pct": 9.0275,
-      "position_pct": 10.0,
-      "rsi": 73.0898,
-      "ret5": 8.9354,
-      "ret20": 9.6172,
-      "vol_ratio": 2.2371,
-      "rs_pct": 66.2626,
-      "avg_value_m": 19.0351,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 73 وMACD إيجابي",
-        "حجم التداول 2.2 ضعف المتوسط",
-        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
-        "استمرار الاتجاه الصاعد"
-      ],
-      "cautions": [
-        "RSI مرتفع (73) وقد يحدث تهدئة",
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": [
-        "المقاومة قريبة من السعر"
-      ]
-    },
-    {
       "code": "COPR",
       "name": "كوبر للاستثمار التجاري والتطوير العقاري",
       "signal": "WATCH",
-      "score": 76.8227,
+      "score": 70.7924,
+      "technical_score": 76.9428,
+      "ml_prob": 0.4619,
       "comp_trend": 1.0,
       "comp_momentum": 0.6524,
-      "comp_rs": 0.8883,
+      "comp_rs": 0.8943,
       "comp_volume": 0.2832,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -572,12 +559,12 @@
       "ret5": 4.0948,
       "ret20": 0.2075,
       "vol_ratio": 0.5699,
-      "rs_pct": 84.0404,
+      "rs_pct": 84.898,
       "avg_value_m": 25.278,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
         "RSI 50 وMACD إيجابي",
-        "قوة نسبية أعلى من 84% من الأسهم المحللة",
+        "قوة نسبية أعلى من 85% من الأسهم المحللة",
         "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
       ],
       "cautions": [
@@ -586,13 +573,59 @@
       "why_not_buy": []
     },
     {
+      "code": "AJWA",
+      "name": "اجواء للصناعات الغذائية - مصر",
+      "signal": "WATCH",
+      "score": 69.0008,
+      "technical_score": 72.6437,
+      "ml_prob": 0.5443,
+      "comp_trend": 0.8,
+      "comp_momentum": 0.8228,
+      "comp_rs": 0.4686,
+      "comp_volume": 0.9136,
+      "comp_setup": 0.5,
+      "setup": "trend",
+      "setup_ar": "استمرار اتجاه",
+      "close": 196.16,
+      "entry_low": 193.2086,
+      "entry_high": 197.6357,
+      "stop": 178.4517,
+      "t1": 231.5767,
+      "t2": 249.285,
+      "risk_pct": 9.0275,
+      "position_pct": 10.0,
+      "rsi": 73.0898,
+      "ret5": 8.9354,
+      "ret20": 9.6172,
+      "vol_ratio": 2.2371,
+      "rs_pct": 66.9388,
+      "avg_value_m": 19.0351,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 73 وMACD إيجابي",
+        "حجم التداول 2.2 ضعف المتوسط",
+        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
+        "استمرار الاتجاه الصاعد"
+      ],
+      "cautions": [
+        "RSI مرتفع (73) وقد يحدث تهدئة",
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": [
+        "النقاط 69 أقل من حد الشراء 70",
+        "المقاومة قريبة من السعر"
+      ]
+    },
+    {
       "code": "ATLC",
       "name": "التوفيق للتأجير التمويلي",
       "signal": "WATCH",
-      "score": 75.1369,
+      "score": 68.2874,
+      "technical_score": 75.2318,
+      "ml_prob": 0.4051,
       "comp_trend": 1.0,
       "comp_momentum": 0.4422,
-      "comp_rs": 0.7653,
+      "comp_rs": 0.77,
       "comp_volume": 0.685,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -609,7 +642,7 @@
       "ret5": 13.3094,
       "ret20": -11.3924,
       "vol_ratio": 0.3357,
-      "rs_pct": 66.4646,
+      "rs_pct": 67.1429,
       "avg_value_m": 12.4442,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -619,16 +652,20 @@
       "cautions": [
         "تذبذب يومي مرتفع (متوسط المدى 7.9% من السعر)"
       ],
-      "why_not_buy": []
+      "why_not_buy": [
+        "النقاط 68 أقل من حد الشراء 70"
+      ]
     },
     {
       "code": "FAIT",
       "name": "بنك فيصل الإسلامي - بالجنيه",
       "signal": "WATCH",
-      "score": 72.4883,
+      "score": 66.9583,
+      "technical_score": 72.5908,
+      "ml_prob": 0.4443,
       "comp_trend": 1.0,
       "comp_momentum": 0.6355,
-      "comp_rs": 0.802,
+      "comp_rs": 0.8071,
       "comp_volume": 0.1373,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -645,7 +682,7 @@
       "ret5": 4.7324,
       "ret20": -5.4149,
       "vol_ratio": 0.7399,
-      "rs_pct": 71.7172,
+      "rs_pct": 72.449,
       "avg_value_m": 3.1078,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -657,54 +694,59 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": [
+        "النقاط 67 أقل من حد الشراء 70",
         "المقاومة قريبة من السعر"
       ]
     },
     {
-      "code": "MPCO",
-      "name": "المنصورة للدواجن",
+      "code": "ARCC",
+      "name": "العربية للاسمنت",
       "signal": "WATCH",
-      "score": 71.5675,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.3612,
-      "comp_rs": 0.8317,
-      "comp_volume": 0.7269,
-      "comp_setup": 0.5,
-      "setup": "trend",
-      "setup_ar": "استمرار اتجاه",
-      "close": 2.39,
-      "entry_low": 2.3098,
-      "entry_high": 2.4301,
-      "stop": 2.1974,
-      "t1": 2.7752,
-      "t2": 2.9678,
-      "risk_pct": 8.0579,
-      "position_pct": 10.0,
-      "rsi": 46.8967,
-      "ret5": 0.0,
-      "ret20": 4.3668,
-      "vol_ratio": 0.3875,
-      "rs_pct": 75.9596,
-      "avg_value_m": 189.6363,
+      "score": 66.7039,
+      "technical_score": 70.7318,
+      "ml_prob": 0.5059,
+      "comp_trend": 0.8,
+      "comp_momentum": 0.7464,
+      "comp_rs": 0.8386,
+      "comp_volume": 0.1867,
+      "comp_setup": 0.85,
+      "setup": "pullback",
+      "setup_ar": "تصحيح داخل اتجاه",
+      "close": 71.07,
+      "entry_low": 69.4365,
+      "entry_high": 71.8867,
+      "stop": 61.2692,
+      "t1": 90.6715,
+      "t2": 100.4723,
+      "risk_pct": 13.7903,
+      "position_pct": 7.2515,
+      "rsi": 52.3212,
+      "ret5": 13.476,
+      "ret20": -6.4868,
+      "vol_ratio": 0.6977,
+      "rs_pct": 76.9388,
+      "avg_value_m": 28.7818,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 47",
-        "قوة نسبية أعلى من 76% من الأسهم المحللة",
-        "استمرار الاتجاه الصاعد"
+        "RSI 52 وMACD إيجابي",
+        "قوة نسبية أعلى من 77% من الأسهم المحللة",
+        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
       ],
-      "cautions": [
-        "تذبذب يومي مرتفع (متوسط المدى 6.7% من السعر)"
-      ],
-      "why_not_buy": []
+      "cautions": [],
+      "why_not_buy": [
+        "النقاط 67 أقل من حد الشراء 70"
+      ]
     },
     {
       "code": "MFPC",
       "name": "موبكو",
       "signal": "WATCH",
-      "score": 71.0153,
+      "score": 65.2862,
+      "technical_score": 71.0981,
+      "ml_prob": 0.4204,
       "comp_trend": 1.0,
       "comp_momentum": 0.6182,
-      "comp_rs": 0.7059,
+      "comp_rs": 0.71,
       "comp_volume": 0.1962,
       "comp_setup": 0.85,
       "setup": "pullback",
@@ -721,7 +763,7 @@
       "ret5": 3.5635,
       "ret20": -2.6382,
       "vol_ratio": 0.2838,
-      "rs_pct": 57.9798,
+      "rs_pct": 58.5714,
       "avg_value_m": 98.2602,
       "why": [
         "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
@@ -731,10 +773,82 @@
       "cautions": [
         "المقاومة قريبة نسبيًا من السعر"
       ],
-      "why_not_buy": []
+      "why_not_buy": [
+        "النقاط 65 أقل من حد الشراء 70"
+      ]
     }
   ],
-  "generated_at": "2026-10-08T13:05:20+03:00",
+  "ml": {
+    "enabled": true,
+    "samples": 100269,
+    "auc": 0.5584,
+    "model_used": true,
+    "model": "RandomForest + MLP(32,16)",
+    "horizon_days": 10,
+    "positive_return": 0.03
+  },
+  "funds": {
+    "sharia_equity": {
+      "reference": "EGX33",
+      "score": null,
+      "ret20": null,
+      "ret60": null,
+      "trend": "غير متاح",
+      "funds": [
+        {
+          "name": "مصر مؤشر شريعة إكويتي – CI",
+          "category": "sharia_equity",
+          "proxy": "EGX33"
+        },
+        {
+          "name": "بلتون وفرة – EGX33",
+          "category": "sharia_equity",
+          "proxy": "EGX33"
+        },
+        {
+          "name": "كنز شريعة EGX33 – AAIH",
+          "category": "sharia_equity",
+          "proxy": "EGX33"
+        },
+        {
+          "name": "AZ فرص الشريعة",
+          "category": "sharia_equity",
+          "proxy": "EGX33"
+        }
+      ]
+    },
+    "gold": {
+      "reference": "XAUUSD",
+      "score": null,
+      "ret20": null,
+      "ret60": null,
+      "trend": "غير متاح",
+      "funds": [
+        {
+          "name": "سبيكة – Beltone Evolve Gold",
+          "category": "gold",
+          "proxy": "XAUUSD"
+        },
+        {
+          "name": "Gold Misr – CI",
+          "category": "gold",
+          "proxy": "XAUUSD"
+        },
+        {
+          "name": "AZ Gold",
+          "category": "gold",
+          "proxy": "XAUUSD"
+        },
+        {
+          "name": "EFG Hermes Gold Fund",
+          "category": "gold",
+          "proxy": "XAUUSD"
+        }
+      ]
+    },
+    "note": "درجات الفئات مرجعية وليست NAV للصندوق. عند توفر تاريخ NAV موثوق يمكن استبدال المرجع بتحليل الصندوق نفسه."
+  },
+  "generated_at": "2026-10-08T13:18:00+03:00",
   "universe": {
     "mode": "union",
     "total": 118,
