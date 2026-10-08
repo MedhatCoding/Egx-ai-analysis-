@@ -54,6 +54,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-job.txt
 
+      - name: Run offline engine tests
+        run: python tests/test_engine.py
+
       - name: Run daily report
         run: |
           if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.force }}" = "true" ]; then
