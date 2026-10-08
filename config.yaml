@@ -26,6 +26,10 @@ regime:
     bench_above_sma200: 0.15
     bench_sma50_rising: 0.10
   seasonality_weight: 0.10
+  weights:
+    bench_above_sma50: 0.25
+    bench_above_sma200: 0.15
+    bench_sma50_rising: 0.10
     breadth_above_sma50: 0.30
     breadth_above_sma200: 0.20
   strong_up: 0.80
