@@ -20,6 +20,7 @@ from .telegram import send_message
 from .funds import build_fund_overlay, _score
 from .track_record import load_history, log_signals, save_history, summarize, update_history
 from .universe import build_universe
+from .news import fetch_news
 
 
 class DataError(RuntimeError):
@@ -139,6 +140,11 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         result["funds"]["sharia_equity"].update(_score(sharia_close))
     result["market_indices"] = market_indices
     result["live_market"] = live_market
+    try:
+        result["news"] = fetch_news(result["picks"])
+    except Exception as e:
+        print(f"  [NEWS] تعذر جلب الأخبار: {type(e).__name__}")
+        result["news"] = {"market": [], "companies": [], "error": type(e).__name__}
     result["generated_at"] = now.isoformat(timespec="seconds")
 
     # ---- ملاحظات جودة البيانات
@@ -155,6 +161,8 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         warnings.append(f"{n_cache} سهم اتحلل ببيانات محفوظة لأن Yahoo فشل معها.")
     if bench is None or len(bench) < 60:
         warnings.append("لم تتوفر سلسلة EGX30 التاريخية من المزود؛ التحليل استخدم مؤشرًا داخليًا متساوي الأوزان من الأسهم المحللة.")
+    if not result.get("news", {}).get("market"):
+        warnings.append("مصدر الأخبار غير متاح؛ لم تُستخدم الأخبار في أي قرار رقمي.")
     n_stale = int(result["signal_counts"].get("STALE", 0))
     if n_stale:
         warnings.append(f"{n_stale} سهم بيانات آخر شمعة له قديمة (موقوف أو متأخر).")
