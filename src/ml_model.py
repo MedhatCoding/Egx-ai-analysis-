@@ -28,10 +28,11 @@ def _dataset(frames: dict[str, pd.DataFrame], horizon: int, threshold: float) ->
         z = x[cols].replace([np.inf, -np.inf], np.nan).copy()
         z["target"] = (future >= threshold).astype(float)
         z["code"] = code
+        z["date"] = x.index
         z = z.loc[future.notna()].dropna()
         if len(z):
             rows.append(z)
-    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+    return pd.concat(rows, ignore_index=True).sort_values("date").reset_index(drop=True) if rows else pd.DataFrame()
 
 def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str, float], dict]:
     mcfg = cfg.get("ml", {})
