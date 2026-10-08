@@ -113,10 +113,10 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     names = dict(zip(uni["code"], uni["name"]))
     print(f"الأسهم المحللة: {len(codes)} (قائمتك {int(uni['in_list'].sum())} | EGX33 {int(uni['in_egx33'].sum())} | وضع الدمج: {cfg['universe']['mode']})")
 
-    cov = refresh_all(cfg, codes, state, offline=offline)
     bench = fetch_benchmark(cfg, state, offline=offline)
-    live_market = fetch_oanor_market() if not offline else None
     market_indices = fetch_market_indices(cfg, state, offline=offline)
+    live_market = fetch_oanor_market() if not offline else None
+    cov = refresh_all(cfg, codes, state, offline=offline)
     prices = load_prices(codes, cfg, now)
     if len(prices) < max(5, int(0.5 * len(codes))):
         raise DataError(f"بيانات غير كافية: {len(prices)} سهم فقط من {len(codes)} وصلت بيانات كافية (Yahoo/EODHD).")
