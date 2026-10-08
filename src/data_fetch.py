@@ -106,7 +106,7 @@ def _eodhd_budget(state: dict, cfg: dict) -> int:
 def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False) -> pd.DataFrame:
     """يحدّث الكاش لكل الرموز ويرجع جدول التغطية."""
     d = cfg["data"]
-    token = os.environ.get("EODHD_API_TOKEN", "")
+    token = _eodhd_token()
     report = []
 
     for i, code in enumerate(codes, 1):
@@ -154,21 +154,37 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
     return pd.DataFrame(report)
 
 
-def fetch_benchmark(cfg: dict, offline: bool = False) -> pd.DataFrame | None:
-    """مؤشر المقارنة (EGX30). لو فشل نرجع None ونستخدم مؤشرًا داخليًا."""
-    sym = cfg["data"].get("benchmark_symbol")
-    if not sym:
-        return None
+def _eodhd_token() -> str:
+    return os.environ.get("EODHD_API_TOKEN") or os.environ.get("EODHD_API_KEY") or ""
+
+def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFrame | None:
+    """EGX30: Yahoo أولًا، ثم EODHD كاحتياطي، ثم آخر كاش صالح."""
+    sym = cfg["data"].get("benchmark_symbol", "^CASE30")
     p = PRICES / "_BENCH.csv"
-    df = None
     if not offline:
         df = fetch_yahoo(sym, cfg["data"]["history_years"])
         if df is not None and len(df) > 60:
             df.index.name = "date"
             df[COLS].round(4).to_csv(p)
-    if df is None and p.exists():
-        df = pd.read_csv(p, parse_dates=["date"], index_col="date")[COLS]
-    return df
+            return df
+        token = _eodhd_token()
+        if token and _eodhd_budget(state, cfg) > 0:
+            state["eodhd"]["calls"] += 1
+            try:
+                add = fetch_eodhd("EGX30.INDX", token, date.today() - timedelta(days=int(cfg["data"]["history_years"] * 365.25)))
+                if add is not None and len(add) > 60:
+                    add[COLS].round(4).to_csv(p)
+                    return add
+            except Exception as e:
+                print(f"  [EODHD] تعذر جلب EGX30: {e}")
+    if p.exists():
+        try:
+            df = pd.read_csv(p, parse_dates=["date"], index_col="date")[COLS]
+            if len(df) > 60:
+                return df
+        except Exception:
+            pass
+    return None
 
 
 def drop_incomplete_bar(df: pd.DataFrame, now: datetime, close_hour: int) -> pd.DataFrame:
