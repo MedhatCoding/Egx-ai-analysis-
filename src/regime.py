@@ -45,6 +45,8 @@ def compute_regime(bench_close: pd.Series | None, close_panel: pd.DataFrame, cfg
     monthly = bench.resample("ME").last().pct_change().dropna()
     month_avg = monthly.groupby(monthly.index.month).mean()
     month_count = monthly.groupby(monthly.index.month).count()
+    season_w = float(cfg["regime"].get("seasonality_weight", 0.0))
+    min_month_obs = int(cfg["regime"].get("seasonality_min_observations", 4))
     season_raw = pd.Series(index=idx, dtype=float)
     season_ret = pd.Series(index=idx, dtype=float)
     for d in idx:
