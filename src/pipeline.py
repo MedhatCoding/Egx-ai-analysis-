@@ -151,7 +151,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     if n_cache:
         warnings.append(f"{n_cache} سهم اتحلل ببيانات محفوظة لأن Yahoo فشل معها.")
     if bench is None or len(bench) < 60:
-        warnings.append("تعذر جلب EGX30 فاستخدمنا مؤشرًا داخليًا متساوي الأوزان من الأسهم المحللة.")
+        warnings.append("لم تتوفر سلسلة EGX30 التاريخية من المزود؛ التحليل استخدم مؤشرًا داخليًا متساوي الأوزان من الأسهم المحللة.")
     n_stale = int(result["signal_counts"].get("STALE", 0))
     if n_stale:
         warnings.append(f"{n_stale} سهم بيانات آخر شمعة له قديمة (موقوف أو متأخر).")
