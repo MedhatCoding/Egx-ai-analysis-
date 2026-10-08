@@ -13,7 +13,7 @@ import pandas as pd
 
 from . import config as C
 from .backtest import run_backtest
-from .data_fetch import fetch_benchmark, load_prices, refresh_all
+from .data_fetch import fetch_benchmark, fetch_market_indices, fetch_oanor_market, load_prices, refresh_all
 from .report import build_report, compose_alert
 from .signals import analyze, build_result, classify, latest_table
 from .telegram import send_message
@@ -115,6 +115,8 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
 
     cov = refresh_all(cfg, codes, state, offline=offline)
     bench = fetch_benchmark(cfg, state, offline=offline)
+    live_market = fetch_oanor_market() if not offline else None
+    market_indices = fetch_market_indices(cfg, state, offline=offline)
     prices = load_prices(codes, cfg, now)
     if len(prices) < max(5, int(0.5 * len(codes))):
         raise DataError(f"بيانات غير كافية: {len(prices)} سهم فقط من {len(codes)} وصلت بيانات كافية (Yahoo/EODHD).")
@@ -125,6 +127,8 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
     result = build_result(frames, regime_df, cls, len(codes), cfg)
     result["funds"] = build_fund_overlay(bench, cfg)
+    result["market_indices"] = market_indices
+    result["live_market"] = live_market
     result["generated_at"] = now.isoformat(timespec="seconds")
 
     # ---- ملاحظات جودة البيانات
