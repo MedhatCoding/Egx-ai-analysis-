@@ -315,18 +315,19 @@ def test_llm_notes_are_validated():
     import json
 
     env = {"ANTHROPIC_API_KEY": "k"}
-    data, meta = report.call_llm(payload, CFG, post=fake(json.dumps(good, ensure_ascii=False)), env=env)
+    cfg_an = {**CFG, "llm": {**CFG["llm"], "provider": "anthropic"}}
+    data, meta = report.call_llm(payload, cfg_an, post=fake(json.dumps(good, ensure_ascii=False)), env=env)
     assert meta["ok"] and data["market_view"].startswith("السوق")
     merged, dropped = report.merge_notes(data, fb, payload)
     assert merged["market_view"] == good["market_view"] and merged["picks"][p0] == good["picks"][p0] and dropped == 0
 
-    data, meta = report.call_llm(payload, CFG, post=fake("```json\n" + json.dumps(bad, ensure_ascii=False) + "\n```"), env=env)
+    data, meta = report.call_llm(payload, cfg_an, post=fake("```json\n" + json.dumps(bad, ensure_ascii=False) + "\n```"), env=env)
     merged, dropped = report.merge_notes(data, fb, payload)
     assert dropped == 2 and merged["market_view"] == fb["market_view"] and merged["picks"][p0] == fb["picks"][p0]
 
     # فشل الخدمة أو مفتاح ناقص = رجوع للنص الجاهز بدون كسر
-    assert report.call_llm(payload, CFG, post=lambda *a, **k: _Resp(500), env=env)[0] is None
-    assert report.call_llm(payload, CFG, post=fake("مش JSON"), env=env)[0] is None
+    assert report.call_llm(payload, cfg_an, post=lambda *a, **k: _Resp(500), env=env)[0] is None
+    assert report.call_llm(payload, cfg_an, post=fake("مش JSON"), env=env)[0] is None
     assert report.call_llm(payload, CFG, env={})[0] is None
 
     gem = {"candidates": [{"content": {"parts": [{"text": json.dumps(good, ensure_ascii=False)}]}}]}
