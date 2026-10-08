@@ -114,7 +114,7 @@ def fetch_oanor_market() -> dict | None:
     out = {}
     try:
         r = requests.get(f"{base}/index", headers=headers, timeout=20)
-        if r.status_code in (401, 403) and headers:
+        if r.status_code in (401, 402, 403) and headers:
             r = requests.get(f"{base}/index", timeout=20)
         if r.status_code == 200:
             out["index"] = r.json()
@@ -122,7 +122,7 @@ def fetch_oanor_market() -> dict | None:
             print(f"  [OANOR] index HTTP {r.status_code}")
         time.sleep(1.1)
         r = requests.get(f"{base}/screener", params={"sort": "change", "order": "desc", "limit": 20}, headers=headers, timeout=20)
-        if r.status_code in (401, 403) and headers:
+        if r.status_code in (401, 402, 403) and headers:
             r = requests.get(f"{base}/screener", params={"sort": "change", "order": "desc", "limit": 20}, timeout=20)
         if r.status_code == 200:
             out["screener"] = r.json()
