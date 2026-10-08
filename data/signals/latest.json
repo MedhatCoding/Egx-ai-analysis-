@@ -3,9 +3,9 @@
   "universe_size": 118,
   "analyzed": 115,
   "signal_counts": {
-    "AVOID": 33,
-    "NEUTRAL": 32,
-    "WATCH": 27,
+    "AVOID": 39,
+    "WATCH": 30,
+    "NEUTRAL": 23,
     "ILLIQUID": 18,
     "BUY": 4,
     "STALE": 1
@@ -73,9 +73,9 @@
       "code": "EFIH",
       "name": "E-finance For Digital and Financial Investments",
       "signal": "BUY",
-      "score": 74.0067,
+      "score": 80.3725,
       "technical_score": 80.3725,
-      "ml_prob": 0.4854,
+      "ml_prob": 0.5206,
       "comp_trend": 0.8,
       "comp_momentum": 0.9726,
       "comp_rs": 0.4175,
@@ -111,9 +111,9 @@
       "code": "MBSC",
       "name": "مصر بني سويف للاسمنت",
       "signal": "BUY",
-      "score": 71.9073,
+      "score": 79.5661,
       "technical_score": 79.5661,
-      "ml_prob": 0.4127,
+      "ml_prob": 0.4634,
       "comp_trend": 1.0,
       "comp_momentum": 0.8014,
       "comp_rs": 0.6054,
@@ -150,51 +150,12 @@
       "why_not_buy": []
     },
     {
-      "code": "ATQA",
-      "name": "مصر الوطنية للصلب - عتاقة",
-      "signal": "BUY",
-      "score": 71.071,
-      "technical_score": 77.4231,
-      "ml_prob": 0.4566,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.6068,
-      "comp_rs": 0.4875,
-      "comp_volume": 0.9335,
-      "comp_setup": 0.85,
-      "setup": "pullback",
-      "setup_ar": "تصحيح داخل اتجاه",
-      "close": 12.25,
-      "entry_low": 11.9791,
-      "entry_high": 12.3855,
-      "stop": 10.8558,
-      "t1": 15.0384,
-      "t2": 16.4326,
-      "risk_pct": 11.3811,
-      "position_pct": 8.7865,
-      "rsi": 52.84,
-      "ret5": 9.767,
-      "ret20": -5.7692,
-      "vol_ratio": 0.753,
-      "rs_pct": 69.6491,
-      "avg_value_m": 77.2368,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 53",
-        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
-        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
-      ],
-      "cautions": [
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": []
-    },
-    {
       "code": "INEG",
       "name": "المجموعة المتكاملة للأعمال الهندسية",
       "signal": "BUY",
-      "score": 71.0664,
+      "score": 78.3434,
       "technical_score": 78.3434,
-      "ml_prob": 0.4196,
+      "ml_prob": 0.3972,
       "comp_trend": 1.0,
       "comp_momentum": 0.5652,
       "comp_rs": 0.5944,
@@ -229,6 +190,45 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": []
+    },
+    {
+      "code": "ATQA",
+      "name": "مصر الوطنية للصلب - عتاقة",
+      "signal": "BUY",
+      "score": 77.4231,
+      "technical_score": 77.4231,
+      "ml_prob": 0.4914,
+      "comp_trend": 1.0,
+      "comp_momentum": 0.6068,
+      "comp_rs": 0.4875,
+      "comp_volume": 0.9335,
+      "comp_setup": 0.85,
+      "setup": "pullback",
+      "setup_ar": "تصحيح داخل اتجاه",
+      "close": 12.25,
+      "entry_low": 11.9791,
+      "entry_high": 12.3855,
+      "stop": 10.8558,
+      "t1": 15.0384,
+      "t2": 16.4326,
+      "risk_pct": 11.3811,
+      "position_pct": 8.7865,
+      "rsi": 52.84,
+      "ret5": 9.767,
+      "ret20": -5.7692,
+      "vol_ratio": 0.753,
+      "rs_pct": 69.6491,
+      "avg_value_m": 77.2368,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 53",
+        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
+        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
+      ],
+      "cautions": [
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": []
     }
   ],
   "watch": [
@@ -236,9 +236,9 @@
       "code": "SIPC",
       "name": "سبأ الدولية للأدوية",
       "signal": "WATCH",
-      "score": 78.9287,
+      "score": 87.5515,
       "technical_score": 87.5515,
-      "ml_prob": 0.4444,
+      "ml_prob": 0.488,
       "comp_trend": 1.0,
       "comp_momentum": 0.9745,
       "comp_rs": 0.6595,
@@ -282,9 +282,9 @@
       "code": "RUBX",
       "name": "رووبكس",
       "signal": "WATCH",
-      "score": 76.4729,
+      "score": 84.5885,
       "technical_score": 84.5885,
-      "ml_prob": 0.4401,
+      "ml_prob": 0.437,
       "comp_trend": 1.0,
       "comp_momentum": 0.9632,
       "comp_rs": 0.5772,
@@ -326,9 +326,9 @@
       "code": "ADRI",
       "name": "اراب للتنمية والاستثمار العقاري",
       "signal": "WATCH",
-      "score": 73.3076,
+      "score": 80.5793,
       "technical_score": 80.5793,
-      "ml_prob": 0.4422,
+      "ml_prob": 0.4737,
       "comp_trend": 1.0,
       "comp_momentum": 0.955,
       "comp_rs": 0.5981,
@@ -369,9 +369,9 @@
       "code": "AMOC",
       "name": "الاسكندرية للزيوت المعدنية",
       "signal": "WATCH",
-      "score": 71.9928,
+      "score": 78.643,
       "technical_score": 78.643,
-      "ml_prob": 0.4539,
+      "ml_prob": 0.4852,
       "comp_trend": 1.0,
       "comp_momentum": 0.7088,
       "comp_rs": 0.6681,
@@ -411,9 +411,9 @@
       "code": "CPCI",
       "name": "شركة القاهرة للأدوية",
       "signal": "WATCH",
-      "score": 70.9413,
+      "score": 76.5702,
       "technical_score": 76.5702,
-      "ml_prob": 0.4843,
+      "ml_prob": 0.5371,
       "comp_trend": 1.0,
       "comp_momentum": 0.5824,
       "comp_rs": 0.6005,
@@ -454,9 +454,9 @@
       "code": "GPIM",
       "name": "جي بي آي للنمو العمراني",
       "signal": "WATCH",
-      "score": 69.7061,
+      "score": 76.309,
       "technical_score": 76.309,
-      "ml_prob": 0.4329,
+      "ml_prob": 0.3777,
       "comp_trend": 1.0,
       "comp_momentum": 0.7269,
       "comp_rs": 0.6668,
@@ -489,7 +489,6 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": [
-        "النقاط 70 أقل من حد الشراء 70",
         "السهم متمدد بعيدًا عن متوسطه",
         "المقاومة قريبة من السعر"
       ]
@@ -498,9 +497,9 @@
       "code": "ETEL",
       "name": "المصرية للاتصالات",
       "signal": "WATCH",
-      "score": 68.3129,
+      "score": 73.8917,
       "technical_score": 73.8917,
-      "ml_prob": 0.46,
+      "ml_prob": 0.5176,
       "comp_trend": 1.0,
       "comp_momentum": 0.688,
       "comp_rs": 0.6054,
@@ -533,18 +532,58 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": [
-        "النقاط 68 أقل من حد الشراء 70",
         "السهم متمدد بعيدًا عن متوسطه",
         "المقاومة قريبة من السعر"
       ]
     },
     {
+      "code": "CRST",
+      "name": "كريستمارك للمقاولات والتطوير العمراني",
+      "signal": "WATCH",
+      "score": 73.5321,
+      "technical_score": 73.5321,
+      "ml_prob": 0.3452,
+      "comp_trend": 1.0,
+      "comp_momentum": 0.4243,
+      "comp_rs": 0.6939,
+      "comp_volume": 0.9365,
+      "comp_setup": 0.5,
+      "setup": "trend",
+      "setup_ar": "استمرار اتجاه",
+      "close": 3.1,
+      "entry_low": 2.9498,
+      "entry_high": 3.1751,
+      "stop": 2.1989,
+      "t1": 4.9023,
+      "t2": 5.8034,
+      "risk_pct": 29.0687,
+      "position_pct": 3.4401,
+      "rsi": 47.9423,
+      "ret5": 13.1387,
+      "ret20": 0.0,
+      "vol_ratio": 0.3715,
+      "rs_pct": 99.1228,
+      "avg_value_m": 300.51,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 48",
+        "قوة نسبية أعلى من 99% من الأسهم المحللة",
+        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
+        "استمرار الاتجاه الصاعد"
+      ],
+      "cautions": [
+        "تذبذب يومي مرتفع (متوسط المدى 9.7% من السعر)",
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": []
+    },
+    {
       "code": "ABUK",
       "name": "أبو قير للأسمدة",
       "signal": "WATCH",
-      "score": 67.5692,
+      "score": 73.1967,
       "technical_score": 73.1967,
-      "ml_prob": 0.4506,
+      "ml_prob": 0.4739,
       "comp_trend": 1.0,
       "comp_momentum": 0.6559,
       "comp_rs": 0.3979,
@@ -575,7 +614,48 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": [
-        "النقاط 68 أقل من حد الشراء 70",
+        "المقاومة قريبة من السعر"
+      ]
+    },
+    {
+      "code": "ICFC",
+      "name": "الدولية للأسمدة والكيماويات",
+      "signal": "WATCH",
+      "score": 72.5473,
+      "technical_score": 72.5473,
+      "ml_prob": 0.4785,
+      "comp_trend": 1.0,
+      "comp_momentum": 0.6887,
+      "comp_rs": 0.5993,
+      "comp_volume": 0.3229,
+      "comp_setup": 0.85,
+      "setup": "pullback",
+      "setup_ar": "تصحيح داخل اتجاه",
+      "close": 23.2,
+      "entry_low": 22.5789,
+      "entry_high": 23.5106,
+      "stop": 19.4732,
+      "t1": 30.6536,
+      "t2": 34.3804,
+      "risk_pct": 16.0639,
+      "position_pct": 6.2252,
+      "rsi": 56.9348,
+      "ret5": 11.9691,
+      "ret20": -3.1315,
+      "vol_ratio": 0.5961,
+      "rs_pct": 85.614,
+      "avg_value_m": 24.6434,
+      "why": [
+        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
+        "RSI 57",
+        "قوة نسبية أعلى من 86% من الأسهم المحللة",
+        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
+      ],
+      "cautions": [
+        "تذبذب يومي مرتفع (متوسط المدى 5.4% من السعر)",
+        "المقاومة قريبة نسبيًا من السعر"
+      ],
+      "why_not_buy": [
         "المقاومة قريبة من السعر"
       ]
     },
@@ -583,9 +663,9 @@
       "code": "AJWA",
       "name": "اجواء للصناعات الغذائية - مصر",
       "signal": "WATCH",
-      "score": 67.0245,
+      "score": 72.4091,
       "technical_score": 72.4091,
-      "ml_prob": 0.4549,
+      "ml_prob": 0.5089,
       "comp_trend": 0.8,
       "comp_momentum": 0.8228,
       "comp_rs": 0.4568,
@@ -619,103 +699,16 @@
         "المقاومة قريبة نسبيًا من السعر"
       ],
       "why_not_buy": [
-        "النقاط 67 أقل من حد الشراء 70",
         "المقاومة قريبة من السعر"
-      ]
-    },
-    {
-      "code": "ICFC",
-      "name": "الدولية للأسمدة والكيماويات",
-      "signal": "WATCH",
-      "score": 66.6227,
-      "technical_score": 72.5473,
-      "ml_prob": 0.4292,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.6887,
-      "comp_rs": 0.5993,
-      "comp_volume": 0.3229,
-      "comp_setup": 0.85,
-      "setup": "pullback",
-      "setup_ar": "تصحيح داخل اتجاه",
-      "close": 23.2,
-      "entry_low": 22.5789,
-      "entry_high": 23.5106,
-      "stop": 19.4732,
-      "t1": 30.6536,
-      "t2": 34.3804,
-      "risk_pct": 16.0639,
-      "position_pct": 6.2252,
-      "rsi": 56.9348,
-      "ret5": 11.9691,
-      "ret20": -3.1315,
-      "vol_ratio": 0.5961,
-      "rs_pct": 85.614,
-      "avg_value_m": 24.6434,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 57",
-        "قوة نسبية أعلى من 86% من الأسهم المحللة",
-        "تصحيح نحو المتوسط 20 داخل اتجاه صاعد"
-      ],
-      "cautions": [
-        "تذبذب يومي مرتفع (متوسط المدى 5.4% من السعر)",
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": [
-        "النقاط 67 أقل من حد الشراء 70",
-        "المقاومة قريبة من السعر"
-      ]
-    },
-    {
-      "code": "CRST",
-      "name": "كريستمارك للمقاولات والتطوير العمراني",
-      "signal": "WATCH",
-      "score": 66.011,
-      "technical_score": 73.5321,
-      "ml_prob": 0.3593,
-      "comp_trend": 1.0,
-      "comp_momentum": 0.4243,
-      "comp_rs": 0.6939,
-      "comp_volume": 0.9365,
-      "comp_setup": 0.5,
-      "setup": "trend",
-      "setup_ar": "استمرار اتجاه",
-      "close": 3.1,
-      "entry_low": 2.9498,
-      "entry_high": 3.1751,
-      "stop": 2.1989,
-      "t1": 4.9023,
-      "t2": 5.8034,
-      "risk_pct": 29.0687,
-      "position_pct": 3.4401,
-      "rsi": 47.9423,
-      "ret5": 13.1387,
-      "ret20": 0.0,
-      "vol_ratio": 0.3715,
-      "rs_pct": 99.1228,
-      "avg_value_m": 300.51,
-      "why": [
-        "اتجاه صاعد: السعر فوق المتوسط 50 والمتوسط 50 فوق 200",
-        "RSI 48",
-        "قوة نسبية أعلى من 99% من الأسهم المحللة",
-        "أحجام أيام الصعود أكبر من أيام الهبوط (تجميع)",
-        "استمرار الاتجاه الصاعد"
-      ],
-      "cautions": [
-        "تذبذب يومي مرتفع (متوسط المدى 9.7% من السعر)",
-        "المقاومة قريبة نسبيًا من السعر"
-      ],
-      "why_not_buy": [
-        "النقاط 66 أقل من حد الشراء 70"
       ]
     },
     {
       "code": "COPR",
       "name": "كوبر للاستثمار التجاري والتطوير العقاري",
       "signal": "WATCH",
-      "score": 65.5569,
+      "score": 70.5764,
       "technical_score": 70.5764,
-      "ml_prob": 0.4548,
+      "ml_prob": 0.4814,
       "comp_trend": 1.0,
       "comp_momentum": 0.6524,
       "comp_rs": 0.576,
@@ -746,17 +739,15 @@
       "cautions": [
         "تذبذب يومي مرتفع (متوسط المدى 5.0% من السعر)"
       ],
-      "why_not_buy": [
-        "النقاط 66 أقل من حد الشراء 70"
-      ]
+      "why_not_buy": []
     },
     {
       "code": "ATLC",
       "name": "التوفيق للتأجير التمويلي",
       "signal": "WATCH",
-      "score": 63.9602,
+      "score": 69.116,
       "technical_score": 69.116,
-      "ml_prob": 0.4334,
+      "ml_prob": 0.4425,
       "comp_trend": 1.0,
       "comp_momentum": 0.4422,
       "comp_rs": 0.4642,
@@ -787,16 +778,16 @@
         "تذبذب يومي مرتفع (متوسط المدى 7.9% من السعر)"
       ],
       "why_not_buy": [
-        "النقاط 64 أقل من حد الشراء 70"
+        "النقاط 69 أقل من حد الشراء 70"
       ]
     },
     {
       "code": "NCCW",
       "name": "النصر للاعمال المدنية",
       "signal": "WATCH",
-      "score": 62.5376,
+      "score": 68.1539,
       "technical_score": 68.1539,
-      "ml_prob": 0.4007,
+      "ml_prob": 0.3711,
       "comp_trend": 1.0,
       "comp_momentum": 0.389,
       "comp_rs": 0.4163,
@@ -827,16 +818,16 @@
         "تذبذب يومي مرتفع (متوسط المدى 7.0% من السعر)"
       ],
       "why_not_buy": [
-        "النقاط 63 أقل من حد الشراء 70"
+        "النقاط 68 أقل من حد الشراء 70"
       ]
     },
     {
       "code": "TANM",
       "name": "تنمية للاستثمار العقاري",
       "signal": "WATCH",
-      "score": 61.983,
+      "score": 67.3469,
       "technical_score": 67.3469,
-      "ml_prob": 0.4053,
+      "ml_prob": 0.3826,
       "comp_trend": 1.0,
       "comp_momentum": 0.3585,
       "comp_rs": 0.4605,
@@ -868,14 +859,14 @@
         "تذبذب يومي مرتفع (متوسط المدى 7.8% من السعر)"
       ],
       "why_not_buy": [
-        "النقاط 62 أقل من حد الشراء 70"
+        "النقاط 67 أقل من حد الشراء 70"
       ]
     }
   ],
   "ml": {
     "enabled": true,
     "samples": 102423,
-    "auc": 0.561,
+    "auc": 0.5353,
     "model_used": true,
     "model": "RandomForest + MLP(32,16)",
     "horizon_days": 10,
@@ -944,7 +935,78 @@
   },
   "market_indices": {},
   "live_market": null,
-  "generated_at": "2026-10-08T14:35:49+03:00",
+  "news": {
+    "market": [
+      {
+        "title": "قيمة تداولات الأسهم في البورصة المصرية نحو 7.63 مليار جنيه عبر تداول نحو 1.64 مليار سهم خلال تداولات الأربعاء - CNBC عربية",
+        "source": "CNBC عربية",
+        "published": "2026-10-08T09:21:55+00:00",
+        "url": "https://news.google.com/rss/articles/CBMijgZBVV95cUxQSUtCNzRJdWgtN05ybmJ5bkFSVGh2NEw3SjZTbHBJVnV2bElMblJ6eGJVRnNnNWhidUZjR1JrU0otdFZNa21LaGFfSW1Wa1pOTkRieDRjcl9scGN3clFObUliUGZ6RFNjdU00RU5PY25tWFpHckJmYnZnS0pwRW9USVQ2THpmR3ZNM0pSazJLV1IxMmF3cFhSRmQxOHEweWlQd3FHR3g0MlBmZ3dKOW5xeWpzTXJsS0NiR05yQjJQT1pUeFZDR1lVSHpySVJZZHFJVVNEZDh5WHlBbENQSzRjbDdDZFd2UHZ6T29Nb1BjYmNQUXNJb1RpVTJvMHRwSTVIX0ZEeUdIUXl0b3RQU0Vrd0RET2Q4SVYwR2dJVmNaWFlJVVhGd25DWlYyOHcxS2FkSktraXgzaUtUNUFEVjJkQjVLLW5NMklmNVZjaFRMVC03MThOelpBR3dQM0FiNGQzRERkVUZoSzBnUDZqbWtYTUkxSDhYSnJxSy1wNTRKRjUzdm1GY2t4bUFDUXdWTEpmRXJDbG10MGMxanZoODFlTmpuaGYzR2h3VWw0cG1GQlVUbUlhYUlQcV9oV1ZGdzZpdEpmeVhWR0VjNFVNNFY0RGYtYXhvbW53VWlqR3BNeXZsOXFwdUNSTE92dGdtVElHSjhLSGF6alZoRlY1ZDYxYXU0X1NhOTdMNlRvcjF2eHhuQmxsZVVwbmJHRkJfaGFLTnc1QjlDdGFKdHAtZzhMMFhReGFnSm82X3RibjljUF9qV0ZyeVJmVkZkdzRwTFFUVjJPVEpPSnJOZ0hNeTdyS3dSZUdoU2d3RnhsU0diRWNTX3NkNHhoQUhUWUp3Z1QtSV9Rdldqdlg2bi1jQVFTZWQ4UXM3TnZobnFqUjRCa3dEOVZZSWVOX09lSVhvQXU0bkxvWjAxRURvSHc2YTB6M3p2Q0YzS3J5d2FLdDY4dkVLX0JzMkZjN1hpejU3cF9FeWg4WDhDWUJxa2hXNUJUWVZ0NkdDQlU0alhFcmM4OTZPbEoyalVlWXRvM2VsZw?oc=5"
+      },
+      {
+        "title": "ثورة الأسهم الواعدة.. كيف خطف مؤشر تميز الأضواء من عمالقة البورصة؟ - اليوم السابع",
+        "source": "اليوم السابع",
+        "published": "2026-10-07T20:00:00+00:00",
+        "url": "https://news.google.com/rss/articles/CBMi1gNBVV95cUxNYWMxRVlONFgyVWZuNkVpa0lSVmctSzFnSENhSUxXMTd2WWMyYllQcWotNjQ2UWpBdFg3VjVBT3k0YkxZOW9sTXBRUUVERzdzOTlhRHAxOGY1OUZ0bTVDYlZ4U2NjVEQ5VVVjYThkZUxhdjZzMlpzNURMYTBuOFVrU1o3THRwc181am9ZUmpMT0tXTEE4cGMzZDhjOWN4b3RxckNpTkx6TkMzMmRZSVdXckZJNl8zVm5GTUl0Z2hOakNWTkxOcFdpNTZULXh2QWkwaEZ4dXhpWjRVWjhnWjE2OEpJSTNudXIzTWxYazJncE81Y1JQcV9NSUJfaHQ0TURjOHVsc1B4UnMzRmRRZDZDa3lFNnphQWc1Qll3M2hCYXljMHFmODNYbmNwOFNLa0JWUHBOYnRCOXhtQm9BVWlYNTA5dVk0REpESFdyTnNxb083dTA0Ml9fcGFRUGJxczBJU3hISXBfdjZYb1N2cGpxQWY5Wk9qdE9fSkNOa0l1aDJ6TG16OXFYOE81Nl95UEp1RnlLQVQ1allUQmJUWlpvcVJpZkNocUtfa29LcF96RGkxYzNuYndlTEtKcGNMQkhFX1NCZEp5MnVSY0JSRGtzaGtZbmpfQdIB0ANBVV95cUxNTmxpWkFnWm44M3VrOG5YOElPejN5WVpjNF9JcW8yNGpuQWRYbUxtNmJZR3FwWFFBVjlLUE9sMmJzNU4yenFKeXZmeHBac3ZPZ0RheUhzOVRRcmxPY21vNDN5X1UyTEZ6cXo0WWprNEZDUWlJd0pTZTVPWGtJWC1taGxpMENpX0ZWbTFUSDU1TDZsLTZ4Q1ZGcEFQMHBwVGtpNUxmUFNmQUV5VDI5YmdfVGRnSC1zck8ydlhRalpBVVJfcHE0ckQ3Z2N4ZzAwQl9jc2hUblkwdTgxV2RkVVU1T1Y2bmVWQWxjdXRBUUhRYUNuZGItWmRjZWlxXy1FSnpBWVo4WjY4Ylh3TjlZV2dKOFV3NDNKMWFYNVlnNTExcDc5bUs1c2Q5RmQyYnRGVTIzUmhweWJ6eWhaamhQaHkyWkphcTdtUzhRYUZ1bHp0bER2RFpwR3F6R1l2MFJ4b0xtQXZDdFJLUS1JNWtZWUxqNGtyUEVoTTdnS25zX0xrN3RydnJiYzNNU1VMWGZRTEtDZmF4c3U5dzU4a2lWRThSZFdRZ2RIZ0VoYWNlQU5jdjc1SkJCOFZNNVpra1dad25pbzRQajVfWFJhSmtUOElxeQ?oc=5"
+      },
+      {
+        "title": "«بورصة مصر» تربح 18 مليار جنيه في 4 جلسات - بوابة التكنولوجيا المالية",
+        "source": "بوابة التكنولوجيا المالية",
+        "published": "2026-10-08T07:42:02+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiREFVX3lxTE5wZVRSdGhVRFFRU2dKMWlieXczSnhFOXhIbHNWMVh1aEZqVjFzcjI5Z1R2R0VRSkI4c1ZleDBac2NfeFhH?oc=5"
+      },
+      {
+        "title": "البورصة المصرية تغلق أبوابها اليوم احتفالاً بانتصار أكتوبر - معلومات مباشر",
+        "source": "معلومات مباشر",
+        "published": "2026-10-08T06:15:45+00:00",
+        "url": "https://news.google.com/rss/articles/CBMi6wNBVV95cUxOT0Q4TnotMFFRN2dDWDJJUGVzbGExNlJ4d28xOW5aMl9PTW5BellNX1M5b19ja2tacHZGZmZqZS1wQmlsM0w1MlZvSUEtdERvSVhHYzlvV1JBbjFqTlBFb2FlbjNlYXQ5LXNHck4xZTV4RE9lQmo1NkxUNTRmZmo0eDZzMmhXRnhaSjBRRDd0T0REd3laS2pKZVlHZ213MHN2TlRaQlRHMzR3UUZsYWwxSXl2cExVU3VGYk45aUFnNjV0Ym1heTJ6OXNhZFo1QjZmZ2k2aVdRa21jQm9rX3doVlM2YUFVMXlQYWtvM1ZDdTNKZl9iN3JQTTVIaWxGWEhDeVcwZXBWV2ZPUmZ6SVpWeWpqVXYyd3BsZWtsRXNHNmVuWmRrLUZjVU9RSVo1Q0ZDUUpydmlxT0cydVFyd0lrTURPMlNodTNHY01QTHQtMTh6UUI5N3BrZS1aSTk4WDRVaU1haGM1bVBnSDZHTUQ2SUVSdVdkUTJVb0tkelJWLUYyZ19nRUQzM2tfRW1aN0RWWnVSMEZWdG8wSVBNSTBtdHMyclhOclV2SUNRbndYOWZkMm9QcVFDVzdPMm5takI4bjRWSU9sQkUxSlptMXE5eno3a0NYX3lzN1ZGZzlTdzRrdnZpV1F5WHhMNA?oc=5"
+      },
+      {
+        "title": "3 شركات تدفع البورصة المصرية لتعزيز حضورها بمؤشرات الأسواق الناشئة - جريدة البورصة",
+        "source": "جريدة البورصة",
+        "published": "2026-10-08T09:21:02+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1STjZUNXFCUHBiRzZOZjZIV2lRclBtdzBQa00wZko2Uk5SZ19YTXRYeFNrUzJJZ1hMdVdiRHV1VElEdFZRazJVa3BCNkVUTkdFN0xqWkszVjZBcU0?oc=5"
+      },
+      {
+        "title": "كيف تتحرك سيولة المستثمرين في البورصة منذ بداية أكتوبر الجاري؟ - المصري اليوم",
+        "source": "المصري اليوم",
+        "published": "2026-10-08T10:03:00+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFByNEcyNEowZFZxU0JLTHNRUXQ2REdTeWVPSEdOX3dFT2V1cHRhZldtUnpZVFdTZmZyT2FEUUpCUE1YY0d0a2Y2RTJkTVctX3o0dkRyS1hWS0lxNndSUU1n?oc=5"
+      }
+    ],
+    "companies": [
+      {
+        "title": "تراجع جماعي لمؤشرات البورصة بختام التعاملات والثلاثيني ينخفض 0.48% - جريدة حابي",
+        "source": "جريدة حابي",
+        "published": "2026-10-06T12:24:31+00:00",
+        "url": "https://news.google.com/rss/articles/CBMi0wJBVV95cUxPYkxnY2FyOVFNaW5pV1BhVGx6WWZfMW45bnZYS0YwZGZ3ZTVPVmxvMWk4Y0p3N0pFLUZvenZ3QTFPeG5KczIzOUJxaEd5Q01vU1BuNThMWjRHZE1mOURtc1dGU0hLT29GSlVIX2s4eHJyRlFpRUc2WUJOMGNDVlFOdHIyLTl5N2xMRS1GdldzbTZiTGYzUjh4R0tONHBKNkdpc18yR3BINkZuMF9IVTJjT0RpRlZ4cVlMUlQ5aXRYakUxcDV6X1hzbHllRlpXbERsdG9uSlltaUFraFU0dWoyS0hlTW0zTDE0Nlo0RTlZbnVORFgyNXd4SU12cGRrTEY5VEJDRXJLZ25SRC1DTHJOcHJtekdjV25vRlFpR0VteG83YzZ0OGZUSGhIekUzQjRXa24tUE0xTHUzbjJ2VkFsUktoUXJkVWNfM1Y4N0RzWkN0SU0?oc=5",
+        "code": "MBSC"
+      },
+      {
+        "title": "أسعار الأسهم بالبورصة المصرية اليوم الثلاثاء 6-10-2026 - اليوم السابع",
+        "source": "اليوم السابع",
+        "published": "2026-10-06T19:30:00+00:00",
+        "url": "https://news.google.com/rss/articles/CBMipgNBVV95cUxQTE1UWlVuTnBtR0s5T19rZF95RGMzVFpYY0ZOZXM5U0JsY1JnM2Y3bVMzdWRDSUNPVXFQMlUybERVcVBxbmtaSkZBNk5wNS1EREhmUkt5dFhyMkxMQ2xSSXpjby1ibFNKdEZFM0pDN1dHUG82QTVKV3Q0M0ZZUmwtUHBqcEs0ay1oRFFMTHkxOFlZV3dnazJJTDFnVTFwS1ZYRnpFY2p6VVlDczlJS2JVWjhwTngtV3AtVGRIUkR4bXdmcDY0OTAxSW8tSFkxSHplRFZlMEVzUDBWYko1TkdpNnBRS2tyWjY4NEZrMm1DMDZJZkY2V3VYWkJoNkRJT1czQjJ2elhvSjFqb1hUVzJtYTF2VmNocjFxSTgwMG9lODBJcndTRUMzTGkyaHhqdnBoRVlrS0d1RlNoUXlyM1BYU1o5d2dKR1ZNR0toQVFGMGFGTm5hVE5nSFJRdHhvNmpBbTdITWFZdFZGNGJneDBfWl8zTnFCbEtzWl9fRVZaS21FWXRfZDJNYUhWVUtnWkJaWnFfSHZCT19fQkV5S3RCcDNSNEl2d9IBoANBVV95cUxQemU5MXl3ajg1SHItRWF0ZnRxTXAzYWlDTkNTUDA2ZjFuRWE3aDNCVFRoRnZmeDJtLTZrdC1oMTBnSWc3eWNHOWx0MzNCVEJRdUpya05Mb2dIc0RFZXQ5a1h5VHFlS0V3Yk5tTVZLUWNGeE9QVkIta1ppUEMyRWhMdXMwUFhRcGRXVTB0NS10RktieTlkLXEwOGNuQjF5bzNnTnNIQXhmZFNHVEF5LUJDVS1JM2JBZ2VNcE5ZYWhKV0F4MFdQdEJSb2hCM0Z2eDczOFdPckJHYmJ1cHZ4eDB2WE5CSGVPVWNvZnhnQmRud0NjY2pZaVlyeXFlMkFFZTd4TlBEZHhFRlNha25GcGJQN2dsOU9PeFlRemV1eHdmWjJsSlJqdjgyT0hsSmVoMWxaWUE4VG84RW1CamFCNF9FQnFoZE9EQzgyaHhfUlpUX1EyNl9BQXJaQWtIeGdRZThRVzNVSjQ4Z2oyb1ZRbGJEaUFvMGlhYVlaS3ZXTVF5b0RUZWNJUmNWTkQ3bFZwVERiZ2t1REhMVW5BLXBXOEVvMA?oc=5",
+        "code": "MBSC"
+      },
+      {
+        "title": "عمومية المتكاملة للأعمال الهندسية تقر زيادة رأسمالها إلى 90 مليون جنيه - جريدة المال",
+        "source": "جريدة المال",
+        "published": "2026-10-08T05:54:34+00:00",
+        "url": "https://news.google.com/rss/articles/CBMivgNBVV95cUxQSzltOU41U21qbGh0dUtRUWxaUVJXamxWMmhjUHFqVFFMc1l0UWFKTUJ5UjlSSlBkcldKOGpuYUtWUlBpS0VjenEyaF9POWdOYUpkT1hiY2dyUFA2Z0F4LXNrTmxibjRhRmM0Y0dwV2JWRkNzckVQdTBxOW5mVG5vZjZHZGJqd25PV0lkWFRsYS1BUmRxaG8yTUYtbGFVdDFLWXNOakI1bWpMbHVKTFRzMV9pYkx6ODZUNXh1S0Q5RTJUNUNyaHMtSDFuUkdHbDNLcXVDVHMxUFZ3R1htSzdMWHJBdDZ2TS03TlQxYlRBeHFQT2pqaG4tSXk5dXgtNkFUb3E5bW90STBIR1dGOVZnNHI0eXhSRGJXTmFFS05lNVVyTDJkMmdsVlNGOXZRNmRCakxJdklCajU5MU9VbnJuQXE4LWZPcXotM3FZbWxzV21tT2UwS3RmeF95LUI1UktkaXppREViQnlPV1pEcGpSV3Q5X2dzbURmN0loblFfclZ2TkJldXpib1poQlFmQ1dZTVVQYk9qSjVxZklwRVA3b2E4S29yV3dyb3JucUtLN0FoSTlfZUN4ZEN6LVNIZw?oc=5",
+        "code": "INEG"
+      },
+      {
+        "title": "الجمعية العامة العادية لشركة المجموعة المتكاملة للأعمال الهندسية - المصري اليوم",
+        "source": "المصري اليوم",
+        "published": "2026-10-07T01:28:03+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE0wakhxS2IwWVdKVm1MZGViY3VaQ192TEVGUC1GUVVELTY0S19mNEZLWWQzcm1mTWxER0JYODViN0k2S01FaWNlV1VUbkJGcDM2SDY0?oc=5",
+        "code": "INEG"
+      }
+    ],
+    "generated_at": "2026-10-08T11:56:29.723290+00:00"
+  },
+  "generated_at": "2026-10-08T14:54:50+03:00",
   "universe": {
     "mode": "union",
     "total": 118,
