@@ -12,7 +12,8 @@ universe:
 data:
   history_years: 5
   yahoo_suffix: ".CA"
-  benchmark_symbol: "^CASE30"
+  benchmark_yahoo_symbol: "^CASE30"
+  benchmark_eodhd_symbol: "CASE30.INDX"
   min_bars: 150
   max_stale_days: 4
   eodhd_daily_budget: 20
@@ -84,3 +85,5 @@ telegram:
   max_picks: 5
   max_watch: 5
 # اختبار التشغيل التلقائي
+
+# 2026-10-08: full integration review trigger
