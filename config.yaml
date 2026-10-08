@@ -5,7 +5,7 @@
 market:
   timezone: "Africa/Cairo"
   trading_weekdays: [6, 0, 1, 2, 3]
-  report_window: ["08:30", "10:45"]
+  report_window: ["08:55", "09:10"]
   session_close_hour: 15
 universe:
   mode: "union"
