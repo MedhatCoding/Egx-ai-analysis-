@@ -79,3 +79,19 @@ def totals(df: pd.DataFrame) -> dict:
     cost = float((stocks["الكمية"].fillna(0) * stocks["متوسط التكلفة"].fillna(0)).sum())
     pnl = value - cost
     return {"value": value, "cost": cost, "pnl": pnl, "pnl_pct": pnl / cost * 100 if cost else None}
+
+
+def risk_summary(df: pd.DataFrame) -> dict:
+    if df is None or df.empty:
+        return {"positions": 0, "sell": 0, "hold": 0, "increase": 0, "concentration": 0.0}
+    actions = df["القرار"].value_counts().to_dict()
+    values = pd.to_numeric(df["القيمة"], errors="coerce").fillna(0)
+    total = float(values.sum())
+    top = float(values.max()) if len(values) else 0.0
+    return {
+        "positions": int(len(df)),
+        "sell": int(actions.get("بيع", 0)),
+        "hold": int(actions.get("احتفاظ", 0)),
+        "increase": int(actions.get("زيادة", 0)),
+        "concentration": (top / total * 100.0) if total else 0.0,
+    }
