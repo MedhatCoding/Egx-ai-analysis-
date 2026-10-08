@@ -29,6 +29,7 @@ regime:
     breadth_above_sma50: 0.30
     breadth_above_sma200: 0.20
   seasonality_weight: 0.10
+  seasonality_min_observations: 4
   strong_up: 0.80
   up: 0.60
   neutral: 0.40
@@ -84,19 +85,3 @@ telegram:
   enabled: true
   max_picks: 5
   max_watch: 5
-# اختبار التشغيل التلقائي
-
-# 2026-10-08: full integration review trigger
-
-# 2026-10-08: benchmark endpoint integration test
-
-# 2026-10-08: final integration pass after full review
-
-# 2026-10-08: OANOR resilient integration
-
-# 2026-10-08: gold quota priority verification
-# 2026-10-08: OANOR public fallback integration test
-
-# 2026-10-08: EGI official feed fallback
-
-# 2026-10-08: OANOR secret normalization + gold fallback
