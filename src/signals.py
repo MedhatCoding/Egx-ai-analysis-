@@ -67,10 +67,14 @@ def analyze(prices: dict[str, pd.DataFrame], bench_df: pd.DataFrame | None, cfg:
 
 
 # --------------------------------------------------------------------------- آخر شمعة لكل سهم
-def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: dict, ml_probs: dict[str, float] | None = None) -> pd.DataFrame:
+def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: dict, ml_probs: dict[str, float] | None = None, ml_meta: dict | None = None) -> pd.DataFrame:
     market_last = max(f.index[-1] for f in frames.values())
     ml_probs = ml_probs or {}
-    ml_weight = float(cfg.get("ml", {}).get("score_weight", 0.20))
+    ml_meta = ml_meta or {}
+    base_ml_weight = float(cfg.get("ml", {}).get("score_weight", 0.20))
+    auc = float(ml_meta.get("auc") or 0.5)
+    quality = max(0.0, min(1.0, (auc - 0.50) / 0.10))
+    ml_weight = base_ml_weight * quality if ml_meta.get("model_used") else 0.0
     rows = []
     for code, f in frames.items():
         r = f.iloc[-1]
@@ -84,6 +88,7 @@ def latest_table(frames: dict[str, pd.DataFrame], names: dict[str, str], cfg: di
                 "close": r["close"],
                 "technical_score": r["score"],
                 "ml_prob": ml_probs.get(code, 0.5),
+                "ml_weight": ml_weight,
                 "score": (1.0 - ml_weight) * r["score"] + ml_weight * (ml_probs.get(code, 0.5) * 100.0),
                 "comp_trend": r["comp_trend"],
                 "comp_momentum": r["comp_momentum"],
