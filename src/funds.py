@@ -5,7 +5,9 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
+import os
 import pandas as pd
+import requests
 import yfinance as yf
 
 SHARIA_FUNDS = [
@@ -21,19 +23,38 @@ GOLD_FUNDS = [
     {"name": "EFG Hermes Gold Fund", "category": "gold", "proxy": "XAUUSD"},
 ]
 
-def _gold_series(years: int = 5) -> pd.Series | None:
+def _gold_series(years: int = 5, state: dict | None = None, cfg: dict | None = None) -> pd.Series | None:
+    """ذهب: Yahoo أولًا ثم EODHD XAUUSD.FOREX كاحتياطي."""
     try:
-        raw = yf.Ticker("XAUUSD=X").history(
-            start=(date.today() - timedelta(days=int(years * 365.25))).isoformat(),
-            auto_adjust=True, actions=False,
-        )
-        if raw is None or raw.empty:
-            return None
-        s = raw["Close"].dropna()
-        s.index = pd.to_datetime(s.index).tz_localize(None).normalize()
-        return s
+        raw = yf.Ticker("XAUUSD=X").history(start=(date.today() - timedelta(days=int(years * 365.25))).isoformat(), auto_adjust=True, actions=False)
+        if raw is not None and not raw.empty:
+            s = raw["Close"].dropna()
+            s.index = pd.to_datetime(s.index).tz_localize(None).normalize()
+            if len(s) >= 220:
+                return s
     except Exception:
-        return None
+        pass
+    token = os.environ.get("EODHD_API_TOKEN") or os.environ.get("EODHD_API_KEY") or ""
+    if token and state is not None and cfg is not None:
+        e = state.setdefault("eodhd", {})
+        today = date.today().isoformat()
+        if e.get("date") != today:
+            e["date"], e["calls"] = today, 0
+        budget = int(cfg.get("data", {}).get("eodhd_daily_budget", 20))
+        if e.get("calls", 0) < budget:
+            try:
+                e["calls"] += 1
+                r = requests.get("https://eodhd.com/api/eod/XAUUSD.FOREX", params={"api_token": token, "fmt": "json", "from": (date.today() - timedelta(days=int(years * 365.25))).isoformat()}, timeout=30)
+                if r.status_code == 200:
+                    rows = r.json()
+                    if rows:
+                        df = pd.DataFrame(rows)
+                        s = pd.Series(df["close"].astype(float).values, index=pd.to_datetime(df["date"]))
+                        s.index = s.index.tz_localize(None).normalize()
+                        return s.sort_index()
+            except Exception:
+                pass
+    return None
 
 def _score(s: pd.Series | None) -> dict:
     if s is None or len(s) < 220:
@@ -50,9 +71,9 @@ def _score(s: pd.Series | None) -> dict:
         "trend": "صاعد" if score >= 70 else "محايد" if score >= 50 else "ضعيف",
     }
 
-def build_fund_overlay(bench: pd.Series | None, cfg: dict) -> dict:
-    gold = _gold_series(int(cfg.get("data", {}).get("history_years", 5)))
-    sh = _score(bench)
+def build_fund_overlay(bench: pd.Series | None, cfg: dict, sharia_close: pd.Series | None = None, state: dict | None = None) -> dict:
+    gold = _gold_series(int(cfg.get("data", {}).get("history_years", 5)), state, cfg)
+    sh = _score(sharia_close if sharia_close is not None else bench)
     go = _score(gold)
     return {
         "sharia_equity": {
