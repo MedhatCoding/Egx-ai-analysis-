@@ -87,3 +87,5 @@ telegram:
 # اختبار التشغيل التلقائي
 
 # 2026-10-08: full integration review trigger
+
+# 2026-10-08: benchmark endpoint integration test
