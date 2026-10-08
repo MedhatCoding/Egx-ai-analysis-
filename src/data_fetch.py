@@ -157,11 +157,8 @@ def fetch_eodhd_index(symbol: str, token: str, years: int) -> pd.DataFrame | Non
 def fetch_market_indices(cfg: dict, state: dict, offline: bool = False) -> dict:
     """يجرب المؤشرات الرئيسية، ويحفظ ما ينجح منها بدون اختلاق بيانات."""
     names = {
-        "EGX30": "EGX30.INDX",
-        "EGX70 EWI": "EGX70EWI.INDX",
-        "EGX100 EWI": "EGX100EWI.INDX",
-        "EGX50 EWI": "EGX50EWI.INDX",
-        "EGX30 Capped": "EGX30CAPPED.INDX",
+        "EGX30": "CASE30.INDX",
+        "EGX70": "CCSI.INDX",
     }
     token = _eodhd_token()
     result = {}
@@ -245,7 +242,8 @@ def _eodhd_token() -> str:
 
 def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFrame | None:
     """EGX30: Yahoo أولًا، ثم EODHD كاحتياطي، ثم آخر كاش صالح."""
-    sym = cfg["data"].get("benchmark_symbol", "^CASE30")
+    sym = cfg["data"].get("benchmark_yahoo_symbol", "^CASE30")
+    eodhd_sym = cfg["data"].get("benchmark_eodhd_symbol", "CASE30.INDX")
     p = PRICES / "_BENCH.csv"
     if not offline:
         df = fetch_yahoo(sym, cfg["data"]["history_years"])
@@ -257,7 +255,7 @@ def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFra
         if token and _eodhd_budget(state, cfg) > 0:
             state["eodhd"]["calls"] += 1
             try:
-                add = fetch_eodhd("EGX30.INDX", token, date.today() - timedelta(days=int(cfg["data"]["history_years"] * 365.25)))
+                add = fetch_eodhd(eodhd_sym.replace(".INDX", ""), token, date.today() - timedelta(days=int(cfg["data"]["history_years"] * 365.25)))
                 if add is not None and len(add) > 60:
                     add[COLS].round(4).to_csv(p)
                     return add
