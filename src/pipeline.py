@@ -141,7 +141,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     result["market_indices"] = market_indices
     result["live_market"] = live_market
     try:
-        result["news"] = fetch_news(result["picks"])
+        result["news"] = fetch_news(result["picks"]) if not offline else {"market": [], "companies": [], "offline": True}
     except Exception as e:
         print(f"  [NEWS] تعذر جلب الأخبار: {type(e).__name__}")
         result["news"] = {"market": [], "companies": [], "error": type(e).__name__}
