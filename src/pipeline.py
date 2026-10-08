@@ -21,6 +21,7 @@ from .funds import build_fund_overlay, _score
 from .track_record import load_history, log_signals, save_history, summarize, update_history
 from .universe import build_universe
 from .news import fetch_news
+from .portfolio import evaluate, risk_summary
 
 
 class DataError(RuntimeError):
@@ -145,6 +146,18 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     except Exception as e:
         print(f"  [NEWS] تعذر جلب الأخبار: {type(e).__name__}")
         result["news"] = {"market": [], "companies": [], "error": type(e).__name__}
+    # تحليل المحفظة المحفوظة (إن وُجدت) حتى يدخل في تقرير الصباح تلقائيًا.
+    try:
+        from .portfolio_store import load_for_daily
+        holdings = load_for_daily()
+        result["portfolio"] = {"holdings": holdings, "enabled": bool(holdings)}
+        if holdings:
+            pdf = evaluate(holdings, latest, funds, result["regime"]["label"])
+            result["portfolio"]["summary"] = risk_summary(pdf)
+            result["portfolio"]["decisions"] = pdf.to_dict("records")
+    except Exception as e:
+        print(f"  [PORTFOLIO] تعذر تحميل المحفظة: {type(e).__name__}")
+        result["portfolio"] = {"holdings": [], "enabled": False, "error": type(e).__name__}
     result["generated_at"] = now.isoformat(timespec="seconds")
 
     # ---- ملاحظات جودة البيانات
