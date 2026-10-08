@@ -21,6 +21,7 @@ from src.data_fetch import read_cache  # noqa: E402
 from src.indicators import compute_indicators  # noqa: E402
 from src.signals import SETUP_AR, SIGNAL_AR  # noqa: E402
 from src.track_record import HISTORY, load_history, summarize  # noqa: E402
+from src.portfolio import evaluate, totals  # noqa: E402
 
 st.set_page_config(page_title="مستشار البورصة | EGX Advisor", page_icon="📈", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(ui.CSS, unsafe_allow_html=True)
@@ -91,7 +92,7 @@ notes = report.get("notes") or {}
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
 st.markdown(ui.verdict_html(latest, notes.get("market_view", ""), report.get("warnings") or []), unsafe_allow_html=True)
 
-tabs = st.tabs(["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "الأداء", "عن النظام"])
+tabs = st.tabs(["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "محفظتي", "الأداء", "عن النظام"])
 
 # ================================================================== فرص اليوم
 with tabs[0]:
@@ -274,8 +275,91 @@ with tabs[3]:
                     unsafe_allow_html=True,
                 )
 
-# ================================================================== الأداء
+
+# ================================================================== محفظتي
 with tabs[4]:
+    st.markdown(ui.section("محفظتي", "أدخل المراكز التي تملكها، والنظام يراجعها مع كل تحديث للبيانات ويعطيك: بيع / احتفاظ / زيادة."), unsafe_allow_html=True)
+
+    if "portfolio" not in st.session_state:
+        st.session_state.portfolio = []
+
+    up = st.file_uploader("استيراد محفظة محفوظة CSV", type=["csv"], key="portfolio_upload")
+    if up is not None:
+        try:
+            imported = pd.read_csv(up)
+            required = {"type", "key", "quantity", "avg_cost"}
+            if required.issubset(imported.columns):
+                st.session_state.portfolio = imported.fillna("").to_dict("records")
+                st.success("تم استيراد المحفظة.")
+            else:
+                st.error("ملف CSV لازم يحتوي: type, key, quantity, avg_cost")
+        except Exception:
+            st.error("تعذر قراءة ملف المحفظة.")
+
+    if table is None or table.empty:
+        st.warning("لا توجد بيانات سوق كافية لتقييم المحفظة الآن.")
+    else:
+        stock_options = table["code"].astype(str).tolist()
+        stock_names = dict(zip(table["code"].astype(str), table["name"].astype(str)))
+        funds_data = latest.get("funds") or {}
+        fund_options = []
+        for cat in ("sharia_equity", "gold"):
+            fund_options += [f["name"] for f in (funds_data.get(cat) or {}).get("funds", [])]
+
+        ac1, ac2 = st.columns([1, 2])
+        asset_type = ac1.selectbox("نوع الاستثمار", ["stock", "fund"], format_func=lambda x: "سهم" if x == "stock" else "صندوق")
+        options = stock_options if asset_type == "stock" else fund_options
+        if options:
+            selected = ac2.selectbox(
+                "الأصل", options,
+                format_func=lambda x: f"{x} — {stock_names.get(x, '')}" if asset_type == "stock" else x,
+                key="portfolio_asset",
+            )
+            q1, q2 = st.columns(2)
+            qty = q1.number_input("الكمية / عدد الوثائق", min_value=0.0, value=0.0, step=1.0, key="portfolio_qty")
+            avg = q2.number_input("متوسط تكلفة الشراء", min_value=0.0, value=0.0, step=0.01, key="portfolio_avg")
+            if st.button("إضافة إلى المحفظة", type="primary"):
+                item = {"type": asset_type, "key": selected, "quantity": qty, "avg_cost": avg}
+                st.session_state.portfolio = [x for x in st.session_state.portfolio if not (x.get("type") == asset_type and x.get("key") == selected)]
+                st.session_state.portfolio.append(item)
+                st.rerun()
+
+    holdings = st.session_state.portfolio
+    if holdings:
+        dfp = evaluate(holdings, table, funds_data, latest["regime"]["label"])
+        t = totals(dfp)
+        st.markdown(
+            ui.stat_grid([
+                ("قيمة الأسهم الحالية", ui.bdi(f"{t['value']:,.0f} ج.م")),
+                ("تكلفة الأسهم", ui.bdi(f"{t['cost']:,.0f} ج.م")),
+                ("ربح/خسارة الأسهم", ui.change_html(t["pnl_pct"]) if t["pnl_pct"] is not None else "-"),
+                ("عدد المراكز", ui.bdi(len(holdings))),
+            ]),
+            unsafe_allow_html=True,
+        )
+        if not dfp.empty:
+            view = dfp[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار"]].copy()
+            wide(st.dataframe, view, hide_index=True, column_config={
+                "متوسط التكلفة": st.column_config.NumberColumn(format="%.2f"),
+                "السعر الحالي": st.column_config.NumberColumn(format="%.2f"),
+                "الربح/الخسارة %": st.column_config.NumberColumn(format="%.2f"),
+                "النقاط": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
+            })
+            for _, rr in dfp.iterrows():
+                st.markdown(ui.section(f"{rr['النوع']}: {rr['الأصل']}", f"قرار: {rr['القرار']}"), unsafe_allow_html=True)
+                st.markdown(f'<div class="note">{ui.e(rr["reason"])}</div>', unsafe_allow_html=True)
+
+            exp = pd.DataFrame(holdings).to_csv(index=False).encode("utf-8-sig")
+            st.download_button("حفظ المحفظة CSV", exp, "my_egx_portfolio.csv", "text/csv")
+
+        if st.button("مسح المحفظة من هذا الجهاز", type="secondary"):
+            st.session_state.portfolio = []
+            st.rerun()
+    else:
+        st.markdown('<div class="empty"><b>المحفظة فارغة.</b><br>أضف الأسهم أو صناديق الشريعة/الذهب التي تملكها.</div>', unsafe_allow_html=True)
+
+# ================================================================== الأداء
+with tabs[5]:
     hist = load_history() if HISTORY.exists() else None
     st.markdown(ui.section("سجل توصياتنا الفعلية", "كل توصية شراء بتتسجل وتتابع بنفس قواعد الاختبار التاريخي: دخول بافتتاح الجلسة التالية"), unsafe_allow_html=True)
     if hist is None or hist.empty:
@@ -360,7 +444,7 @@ with tabs[4]:
         )
 
 # ================================================================== عن النظام
-with tabs[5]:
+with tabs[6]:
     sc, rk = cfg["scoring"], cfg["risk"]
     st.markdown(ui.section("كيف يعمل النظام"), unsafe_allow_html=True)
     st.markdown(
