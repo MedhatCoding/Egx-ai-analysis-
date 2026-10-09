@@ -92,3 +92,5 @@ portfolio:
   enabled: true
   file: "data/portfolio.json"
   max_single_position_pct: 25
+
+# build: encrypted-portfolio-daily-sync-2026-10-09
