@@ -22,7 +22,7 @@ from src.indicators import compute_indicators  # noqa: E402
 from src.signals import SETUP_AR, SIGNAL_AR  # noqa: E402
 from src.track_record import HISTORY, load_history, summarize  # noqa: E402
 from src.portfolio import evaluate, totals, risk_summary  # noqa: E402
-from src.portfolio_store import github_load, github_save, local_load, encrypt, decrypt  # noqa: E402
+from src.portfolio_store import github_load, github_save, local_load, encrypt, decrypt, has_credentials  # noqa: E402
 
 st.set_page_config(page_title="مستشار البورصة | EGX Advisor", page_icon="📈", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(ui.CSS, unsafe_allow_html=True)
@@ -377,7 +377,7 @@ with tabs[4]:
 
     holdings = st.session_state.portfolio
     sc1, sc2 = st.columns([1, 2])
-    if sc1.button("حفظ مشفّر للمزامنة مع التقرير اليومي", type="primary", disabled=not bool(__import__("os").environ.get("PORTFOLIO_ENCRYPTION_KEY") and __import__("os").environ.get("GITHUB_TOKEN"))):
+    if sc1.button("حفظ مشفّر للمزامنة مع التقرير اليومي", type="primary", disabled=not has_credentials()):
         ok, msg = github_save(holdings)
         if ok:
             st.success("تم حفظ المحفظة مشفّرة. ستدخل في التقرير اليومي القادم.")
