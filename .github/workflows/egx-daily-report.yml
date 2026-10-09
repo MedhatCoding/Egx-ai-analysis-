@@ -5,6 +5,12 @@ on:
   push:
     paths:
       - "config.yaml"
+      - ".github/workflows/egx-daily-report.yml"
+      - "src/**"
+      - "app/**"
+      - "tests/**"
+      - "requirements*.txt"
+      - "run_daily.py"
 
   # تشغيل تلقائي يوميًا في أيام التداول.
   # 06:00 UTC = 09:00 القاهرة صيفًا، و07:00 UTC = 09:00 القاهرة شتاءً.
