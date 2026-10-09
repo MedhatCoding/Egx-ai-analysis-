@@ -154,7 +154,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
             pdf = evaluate_portfolio(holdings, ptable, funds, result["regime"]["label"], max_single_position_pct=float(cfg.get("portfolio", {}).get("max_single_position_pct", 25)))
             result["portfolio"] = {
                 "summary": portfolio_risk_summary(pdf),
-                "positions": pdf[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار", "reason"]].where(pd.notna(pdf), None).to_dict("records") if not pdf.empty else [],
+                "decisions": pdf[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار", "reason"]].where(pd.notna(pdf), None).to_dict("records") if not pdf.empty else [],
                 "encrypted_sync": synced,
             }
     except Exception as e:
