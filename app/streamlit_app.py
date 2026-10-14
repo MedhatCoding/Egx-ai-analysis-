@@ -111,51 +111,50 @@ tabs = [st.container() for _ in _SECTION_NAMES]
 
 # ================================================================== فرص اليوم
 if _active_section == _SECTION_NAMES[0]:
-        with tabs[0]:
-        picks, watch = latest["picks"], latest["watch"]
-        st.markdown(ui.section("فرص الشراء", f"{len(picks)} فرصة بعد فلاتر السيولة والاتجاه والمقاومة والتشبّع"), unsafe_allow_html=True)
-        if picks:
-            for p in picks:
-                st.markdown(ui.pick_html(p, (notes.get("picks") or {}).get(p["code"])), unsafe_allow_html=True)
-        else:
-            st.markdown(ui.empty_picks_html(latest), unsafe_allow_html=True)
+    picks, watch = latest["picks"], latest["watch"]
+    st.markdown(ui.section("فرص الشراء", f"{len(picks)} فرصة بعد فلاتر السيولة والاتجاه والمقاومة والتشبّع"), unsafe_allow_html=True)
+    if picks:
+        for p in picks:
+            st.markdown(ui.pick_html(p, (notes.get("picks") or {}).get(p["code"])), unsafe_allow_html=True)
+    else:
+        st.markdown(ui.empty_picks_html(latest), unsafe_allow_html=True)
 
-        if watch:
-            st.markdown(ui.section("قائمة المراقبة", notes.get("watch_view", "")), unsafe_allow_html=True)
-            wdf = pd.DataFrame(
-                [
-                    {
-                        "الرمز": w["code"], "الشركة": w["name"], "النقاط": w["score"], "النموذج": w["setup_ar"],
-                        "RSI": w["rsi"], "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2]),
-                    }
-                    for w in watch
-                ]
-            )
-            wide(
-                st.dataframe, wdf, hide_index=True,
-                column_config={
-                    "النقاط": st.column_config.ProgressColumn("النقاط", min_value=0, max_value=100, format="%.0f"),
-                    "RSI": st.column_config.NumberColumn("RSI", format="%.0f"),
-                },
-            )
+    if watch:
+        st.markdown(ui.section("قائمة المراقبة", notes.get("watch_view", "")), unsafe_allow_html=True)
+        wdf = pd.DataFrame(
+            [
+                {
+                    "الرمز": w["code"], "الشركة": w["name"], "النقاط": w["score"], "النموذج": w["setup_ar"],
+                    "RSI": w["rsi"], "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2]),
+                }
+                for w in watch
+            ]
+        )
+        wide(
+            st.dataframe, wdf, hide_index=True,
+            column_config={
+                "النقاط": st.column_config.ProgressColumn("النقاط", min_value=0, max_value=100, format="%.0f"),
+                "RSI": st.column_config.NumberColumn("RSI", format="%.0f"),
+            },
+        )
 
-        if regime is not None and len(regime) > 60:
-            st.markdown(ui.section("اتجاه المؤشر", "المؤشر مقابل متوسطيه 50 و200 يومًا"), unsafe_allow_html=True)
-            wide(st.plotly_chart, charts.index_chart(regime, latest["market"].get("bench_name", "المؤشر")), config={"displayModeBar": False})
+    if regime is not None and len(regime) > 60:
+        st.markdown(ui.section("اتجاه المؤشر", "المؤشر مقابل متوسطيه 50 و200 يومًا"), unsafe_allow_html=True)
+        wide(st.plotly_chart, charts.index_chart(regime, latest["market"].get("bench_name", "المؤشر")), config={"displayModeBar": False})
 
-        m = latest["market"]
-        if m.get("top_gainers") and m.get("top_losers"):
-            gcol, lcol = st.columns(2)
-            gcol.markdown(
-                ui.section("الأكثر ارتفاعًا")
-                + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_gainers"]]),
-                unsafe_allow_html=True,
-            )
-            lcol.markdown(
-                ui.section("الأكثر انخفاضًا")
-                + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_losers"]]),
-                unsafe_allow_html=True,
-            )
+    m = latest["market"]
+    if m.get("top_gainers") and m.get("top_losers"):
+        gcol, lcol = st.columns(2)
+        gcol.markdown(
+            ui.section("الأكثر ارتفاعًا")
+            + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_gainers"]]),
+            unsafe_allow_html=True,
+        )
+        lcol.markdown(
+            ui.section("الأكثر انخفاضًا")
+            + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_losers"]]),
+            unsafe_allow_html=True,
+        )
 
 # ================================================================== خريطة السوق
 if _active_section == _SECTION_NAMES[1]:
