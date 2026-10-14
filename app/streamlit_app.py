@@ -93,10 +93,17 @@ notes = report.get("notes") or {}
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
 st.markdown(ui.verdict_html(latest, notes.get("market_view", ""), report.get("warnings") or []), unsafe_allow_html=True)
 
-tabs = st.tabs(["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "محفظتي", "الأداء", "عن النظام"])
+section_labels = ["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "محفظتي", "الأداء", "عن النظام"]
+active_section = st.selectbox(
+    "انتقل إلى القسم",
+    section_labels,
+    index=0,
+    key="main_section_navigation",
+)
+
 
 # ================================================================== فرص اليوم
-with tabs[0]:
+if active_section == section_labels[0]:
     picks, watch = latest["picks"], latest["watch"]
     st.markdown(ui.section("فرص الشراء", f"{len(picks)} فرصة بعد فلاتر السيولة والاتجاه والمقاومة والتشبّع"), unsafe_allow_html=True)
     if picks:
@@ -143,7 +150,7 @@ with tabs[0]:
         )
 
 # ================================================================== خريطة السوق
-with tabs[1]:
+if active_section == section_labels[1]:
     st.markdown(ui.section("السوق والمؤشرات", "بيانات المؤشرات تُجلب من مزودي البيانات المتاحين، والبيانات اللحظية من OANOR عند ضبط المفتاح."), unsafe_allow_html=True)
 
     idxs = latest.get("market_indices") or {}
@@ -195,7 +202,7 @@ with tabs[1]:
         wide(st.plotly_chart, charts.market_map(table), config={"displayModeBar": False})
 
 # ================================================================== كل الأسهم
-with tabs[2]:
+if active_section == section_labels[2]:
     st.markdown(ui.section("كل الأسهم المحللة", f"{latest['analyzed']} سهم من {latest['universe_size']} في القائمة"), unsafe_allow_html=True)
     if table is not None:
         c1, c2, c3 = st.columns([2, 1, 1])
@@ -231,7 +238,7 @@ with tabs[2]:
         st.download_button("تنزيل الجدول كملف CSV", table.to_csv(index=False).encode("utf-8-sig"), "egx_signals.csv", "text/csv")
 
 # ================================================================== تحليل سهم
-with tabs[3]:
+if active_section == section_labels[3]:
     if table is None or table.empty:
         st.info("لا توجد بيانات.")
     else:
@@ -324,7 +331,7 @@ with tabs[3]:
 
 
 # ================================================================== محفظتي
-with tabs[4]:
+if active_section == section_labels[4]:
     st.markdown(ui.section("محفظتي", "أدخل المراكز التي تملكها، والنظام يراجعها مع كل تحديث للبيانات ويعطيك: بيع / احتفاظ / زيادة."), unsafe_allow_html=True)
 
     if "portfolio" not in st.session_state:
@@ -432,7 +439,7 @@ with tabs[4]:
         st.markdown('<div class="empty"><b>المحفظة فارغة.</b><br>أضف الأسهم أو صناديق الشريعة/الذهب التي تملكها.</div>', unsafe_allow_html=True)
 
 # ================================================================== الأداء
-with tabs[5]:
+if active_section == section_labels[5]:
     hist = load_history() if HISTORY.exists() else None
     st.markdown(ui.section("سجل توصياتنا الفعلية", "كل توصية شراء بتتسجل وتتابع بنفس قواعد الاختبار التاريخي: دخول بافتتاح الجلسة التالية"), unsafe_allow_html=True)
     if hist is None or hist.empty:
@@ -517,7 +524,7 @@ with tabs[5]:
         )
 
 # ================================================================== عن النظام
-with tabs[6]:
+if active_section == section_labels[6]:
     sc, rk = cfg["scoring"], cfg["risk"]
     st.markdown(ui.section("كيف يعمل النظام"), unsafe_allow_html=True)
     st.markdown(
