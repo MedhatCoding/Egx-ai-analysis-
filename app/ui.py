@@ -90,8 +90,24 @@ bdi{unicode-bidi:isolate;font-variant-numeric:tabular-nums}
 .empty{background:var(--surface);border:1px solid var(--line);border-inline-start:4px solid var(--amber);padding:1rem 1.2rem;line-height:1.9}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1.2rem;font-size:.9rem;margin:.4rem 0}
 .kv span:nth-child(odd){color:var(--muted)}
-.stTabs [data-baseweb="tab-list"]{gap:1.3rem;border-bottom:1px solid var(--line);margin-top:.3rem}
-.stTabs button[role="tab"]{padding:.6rem .1rem;font-weight:600}
+/* Navigation: keep all sections discoverable on phones; allow horizontal swipe */
+.stTabs [data-baseweb="tab-list"]{
+  display:flex!important; flex-wrap:nowrap!important; gap:.85rem!important;
+  overflow-x:auto!important; overflow-y:hidden!important; white-space:nowrap!important;
+  scrollbar-width:thin; -webkit-overflow-scrolling:touch;
+  border-bottom:1px solid var(--line); margin-top:.3rem;
+}
+.stTabs [data-baseweb="tab"]{flex:0 0 auto!important; min-width:max-content!important}
+.stTabs button[role="tab"]{
+  display:flex!important; visibility:visible!important; opacity:1!important;
+  white-space:nowrap!important; padding:.65rem .2rem!important; font-weight:600;
+}
+.stTabs [data-baseweb="tab-highlight"],.stTabs [data-baseweb="tab-border"]{display:block!important}
+@media(max-width:640px){
+  .block-container,[data-testid="stMainBlockContainer"]{padding-left:.65rem!important;padding-right:.65rem!important}
+  .stTabs [data-baseweb="tab-list"]{gap:.7rem!important}
+  .stTabs button[role="tab"]{font-size:.88rem!important}
+}
 .legal{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;line-height:1.9}
 </style>
 """
