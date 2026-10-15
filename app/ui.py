@@ -109,6 +109,76 @@ bdi{unicode-bidi:isolate;font-variant-numeric:tabular-nums}
   .stTabs button[role="tab"]{font-size:.88rem!important}
 }
 .legal{margin-top:2.2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;line-height:1.9}
+
+/* Premium fintech refresh */
+:root{--navy:#102544;--navy-2:#18385f;--paper:#f4f7fb;--surface:#fff;--ink:#14243a;--muted:#63748a;--line:#e2e8f0;--gain:#07966a;--loss:#d9434b;--amber:#b7791f;--radius:18px}
+.stApp{background:radial-gradient(ellipse at 8% 0%,rgba(30,91,151,.07),transparent 32%),var(--paper);color:var(--ink)}
+.block-container,[data-testid="stMainBlockContainer"]{max-width:1320px!important;padding:0 1.35rem 4rem!important}
+.topbar{background:linear-gradient(115deg,#0c1e38 0%,#17385e 60%,#20547a 100%);border-radius:0 0 22px 22px;margin:0 -1.35rem 1.35rem;padding:1.15rem 1.5rem;box-shadow:0 12px 28px rgba(16,37,68,.13)}
+.brand-name{font-size:1.38rem;letter-spacing:-.025em}
+.brand-sub{display:inline-block;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);border-radius:999px;padding:.18rem .55rem;font-size:.72rem;letter-spacing:.04em}
+.asof{color:#dce7f5;font-size:.8rem}
+.verdict{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:1.45rem;margin:0 0 1.25rem;box-shadow:0 5px 20px rgba(20,36,58,.035);grid-template-columns:1.1fr 1fr;gap:1.6rem}
+.v-title{font-size:2.25rem;letter-spacing:-.035em}
+.v-text{font-size:.96rem}
+.stats{border:0;gap:.65rem;grid-template-columns:1fr 1fr}
+.stat{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fff,#fbfcfe);padding:.9rem 1rem}
+.stat-l{font-size:.77rem}
+.stat-v{font-size:1.45rem}
+.sec{display:flex;flex-direction:column;gap:.16rem;margin:1.55rem 0 .8rem;padding-inline-start:.85rem;border-inline-start:3px solid #2c638f}
+.sec h2{font-size:1.12rem;letter-spacing:-.015em}
+.sec p{font-size:.83rem}
+.pick{border:1px solid #e1e8f0;border-inline-start:4px solid var(--gain);border-radius:17px;padding:1.15rem 1.25rem 1.2rem;margin-bottom:.85rem;box-shadow:0 4px 16px rgba(20,36,58,.035);transition:transform .16s ease,box-shadow .16s ease}
+.pick:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(20,36,58,.07)}
+.pick-code{font-size:1.48rem;letter-spacing:-.02em}
+.score b{font-size:1.9rem}
+.score-bar{border-radius:99px;overflow:hidden}
+.score-bar i{border-radius:99px;background:linear-gradient(90deg,#18385f,#4d8db5)}
+.note,.flag,.empty{border-radius:12px}
+.note{background:#edf4fb;border-color:#3973a2}
+.flag{background:#fff8e9;border-radius:12px}
+.plan{border-radius:16px;box-shadow:0 4px 16px rgba(20,36,58,.035)}
+.chip{border-radius:999px;padding:.17rem .65rem;font-size:.76rem}
+.comp .bar{border-radius:99px;overflow:hidden}
+.comp .bar i{border-radius:99px;background:linear-gradient(90deg,#18385f,#5795bb)}
+/* Section navigation: segmented, scrollable on small screens */
+.nav-heading{display:flex;align-items:baseline;gap:.65rem;flex-wrap:wrap;margin:1.2rem 0 .55rem}
+.nav-eyebrow{font:700 .66rem/1.2 system-ui,sans-serif;letter-spacing:.13em;color:#6c829b}
+.nav-title{font-size:1rem;font-weight:700;color:var(--ink)}
+.nav-hint{font-size:.78rem;color:var(--muted)}
+div[data-testid="stRadio"]{margin:0 0 1.25rem;padding:.38rem;background:#e9eef5;border:1px solid #dfe6ef;border-radius:15px;box-shadow:inset 0 1px 2px rgba(16,37,68,.035)}
+div[data-testid="stRadio"]>label{display:none!important}
+div[data-testid="stRadio"] div[role="radiogroup"]{display:flex!important;flex-wrap:nowrap!important;gap:.3rem!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch;padding:.05rem}
+div[data-testid="stRadio"] div[role="radiogroup"]>label{flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:40px;padding:.5rem .95rem!important;margin:0!important;border:1px solid transparent!important;border-radius:11px!important;background:transparent!important;white-space:nowrap!important;color:#52647b!important;font-weight:600!important;font-size:.86rem!important;transition:all .15s ease}
+div[data-testid="stRadio"] div[role="radiogroup"]>label:has(input:checked){background:#fff!important;color:#17385e!important;border-color:#dce5ef!important;box-shadow:0 2px 7px rgba(16,37,68,.08)!important}
+div[data-testid="stRadio"] div[role="radiogroup"]>label>div:first-child{display:none!important}
+div[data-testid="stRadio"] div[role="radiogroup"]>label p{margin:0!important}
+.stButton>button,.stDownloadButton>button{border-radius:11px!important;border:1px solid #d7e1ed!important;font-weight:600!important;min-height:2.55rem;transition:all .15s ease}
+.stButton>button[kind="primary"]{background:linear-gradient(120deg,#17385e,#245985)!important;border-color:#17385e!important;color:white!important}
+.stButton>button:hover,.stDownloadButton>button:hover{border-color:#7296b8!important;box-shadow:0 4px 12px rgba(16,37,68,.08)}
+div[data-baseweb="select"]>div{border-radius:11px!important;border-color:#d7e1ed!important;background:#fff}
+div[data-testid="stTextInput"] input,div[data-testid="stNumberInput"] input{border-radius:10px!important}
+div[data-testid="stDataFrame"],div[data-testid="stTable"]{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+div[data-testid="stAlert"]{border-radius:13px}
+div[data-testid="stExpander"]{border:1px solid var(--line);border-radius:13px;background:#fff}
+.js-plotly-plot,.plot-container{border-radius:14px;overflow:hidden}
+hr{border-color:var(--line)!important}
+@media(max-width:820px){.verdict{grid-template-columns:1fr;padding:1rem}.stats{grid-template-columns:1fr 1fr}.v-title{font-size:1.85rem}}
+@media(max-width:640px){
+ .block-container,[data-testid="stMainBlockContainer"]{padding-left:.7rem!important;padding-right:.7rem!important}
+ .topbar{margin-left:-.7rem;margin-right:-.7rem;padding:.95rem .9rem;border-radius:0 0 17px 17px}
+ .brand-name{font-size:1.18rem}
+ .verdict{border-radius:17px;padding:.95rem;gap:1rem}
+ .stats{gap:.45rem}
+ .stat{padding:.7rem .65rem;border-radius:11px}
+ .stat-v{font-size:1.15rem}
+ .nav-heading{gap:.45rem}
+ div[data-testid="stRadio"]{padding:.28rem;border-radius:12px}
+ div[data-testid="stRadio"] div[role="radiogroup"]>label{min-height:38px;padding:.45rem .72rem!important;font-size:.82rem!important}
+ .pick{padding:.9rem;border-radius:14px}
+ .sec{margin-top:1.25rem}
+}
+
 </style>
 """
 
