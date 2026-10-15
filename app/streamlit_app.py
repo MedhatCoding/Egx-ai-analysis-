@@ -94,10 +94,18 @@ st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
 st.markdown(ui.verdict_html(latest, notes.get("market_view", ""), report.get("warnings") or []), unsafe_allow_html=True)
 
 section_labels = ["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "محفظتي", "الأداء", "عن النظام"]
-active_section = st.selectbox(
-    "انتقل إلى القسم",
+st.markdown(
+    '<div class="nav-heading"><span class="nav-eyebrow">WORKSPACE</span>'
+    '<span class="nav-title">أقسام المنصة</span>'
+    '<span class="nav-hint">اختار القسم اللي محتاجه</span></div>',
+    unsafe_allow_html=True,
+)
+active_section = st.radio(
+    "أقسام المنصة",
     section_labels,
     index=0,
+    horizontal=True,
+    label_visibility="collapsed",
     key="main_section_navigation",
 )
 
