@@ -3,8 +3,8 @@
   "universe_size": 118,
   "analyzed": 115,
   "signal_counts": {
-    "AVOID": 53,
-    "NEUTRAL": 32,
+    "AVOID": 52,
+    "NEUTRAL": 33,
     "ILLIQUID": 19,
     "WATCH": 6,
     "BUY": 4,
@@ -73,9 +73,9 @@
       "code": "CPCI",
       "name": "شركة القاهرة للأدوية",
       "signal": "BUY",
-      "score": 81.9194,
+      "score": 81.9222,
       "technical_score": 82.872,
-      "ml_prob": 0.5929,
+      "ml_prob": 0.5971,
       "comp_trend": 1.0,
       "comp_momentum": 0.7952,
       "comp_rs": 0.6496,
@@ -114,9 +114,9 @@
       "code": "GPIM",
       "name": "جي بي آي للنمو العمراني",
       "signal": "BUY",
-      "score": 80.7429,
+      "score": 80.8824,
       "technical_score": 82.3856,
-      "ml_prob": 0.4173,
+      "ml_prob": 0.4572,
       "comp_trend": 1.0,
       "comp_momentum": 0.8054,
       "comp_rs": 0.6125,
@@ -154,9 +154,9 @@
       "code": "RUBX",
       "name": "رووبكس",
       "signal": "BUY",
-      "score": 78.368,
+      "score": 78.5348,
       "technical_score": 80.144,
-      "ml_prob": 0.3618,
+      "ml_prob": 0.409,
       "comp_trend": 1.0,
       "comp_momentum": 0.6951,
       "comp_rs": 0.5747,
@@ -193,9 +193,9 @@
       "code": "AMOC",
       "name": "الاسكندرية للزيوت المعدنية",
       "signal": "BUY",
-      "score": 74.1227,
+      "score": 74.1789,
       "technical_score": 75.4841,
-      "ml_prob": 0.4178,
+      "ml_prob": 0.4365,
       "comp_trend": 1.0,
       "comp_momentum": 0.452,
       "comp_rs": 0.6619,
@@ -232,9 +232,9 @@
       "code": "AJWA",
       "name": "اجواء للصناعات الغذائية - مصر",
       "signal": "WATCH",
-      "score": 80.8613,
+      "score": 80.9092,
       "technical_score": 82.1813,
-      "ml_prob": 0.4951,
+      "ml_prob": 0.5116,
       "comp_trend": 1.0,
       "comp_momentum": 0.746,
       "comp_rs": 0.6054,
@@ -276,9 +276,9 @@
       "code": "ADRI",
       "name": "اراب للتنمية والاستثمار العقاري",
       "signal": "WATCH",
-      "score": 78.2193,
+      "score": 78.4344,
       "technical_score": 79.8361,
-      "ml_prob": 0.3982,
+      "ml_prob": 0.4565,
       "comp_trend": 1.0,
       "comp_momentum": 0.8262,
       "comp_rs": 0.6562,
@@ -318,9 +318,9 @@
       "code": "ETEL",
       "name": "المصرية للاتصالات",
       "signal": "WATCH",
-      "score": 75.0242,
+      "score": 75.0266,
       "technical_score": 76.3253,
-      "ml_prob": 0.4412,
+      "ml_prob": 0.4465,
       "comp_trend": 1.0,
       "comp_momentum": 0.5626,
       "comp_rs": 0.6435,
@@ -360,9 +360,9 @@
       "code": "FCMD",
       "name": "فيوتشر كير للصناعات الطبية",
       "signal": "WATCH",
-      "score": 66.5309,
+      "score": 66.5067,
       "technical_score": 67.2517,
-      "ml_prob": 0.4941,
+      "ml_prob": 0.4908,
       "comp_trend": 0.7,
       "comp_momentum": 0.8831,
       "comp_rs": 0.3587,
@@ -403,9 +403,9 @@
       "code": "ABUK",
       "name": "أبو قير للأسمدة",
       "signal": "WATCH",
-      "score": 61.33,
+      "score": 61.2701,
       "technical_score": 62.1598,
-      "ml_prob": 0.4162,
+      "ml_prob": 0.4046,
       "comp_trend": 1.0,
       "comp_momentum": 0.3198,
       "comp_rs": 0.4311,
@@ -441,9 +441,9 @@
       "code": "SIPC",
       "name": "سبأ الدولية للأدوية",
       "signal": "WATCH",
-      "score": 55.8263,
+      "score": 55.8931,
       "technical_score": 56.7892,
-      "ml_prob": 0.3295,
+      "ml_prob": 0.3494,
       "comp_trend": 0.7,
       "comp_momentum": 0.3667,
       "comp_rs": 0.6091,
@@ -482,7 +482,7 @@
   "ml": {
     "enabled": true,
     "samples": 101697,
-    "auc": 0.5202,
+    "auc": 0.5205,
     "model_used": true,
     "model": "RandomForest + MLP(32,16)",
     "horizon_days": 10,
@@ -552,15 +552,74 @@
   "market_indices": {},
   "live_market": null,
   "news": {
-    "market": [],
-    "companies": [],
-    "generated_at": "2026-10-15T04:16:44.262151+00:00"
+    "market": [
+      {
+        "title": "«بنك القاهرة» يعتزم طرح أسهمه في البورصة المصرية - الشرق الأوسط",
+        "source": "الشرق الأوسط",
+        "published": "2026-10-14T18:36:55+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiwwNBVV95cUxOOS1XRnJ4NkV2OWM4SHhSQkFYSWl4SzF4VE9fMU84ZEdvbE8taUpxOGQxaVhxaFdCMTIyVWdxNlRtU2YxeTZhR1pCb2NYaUF2Tzc4Sy1fdk9FeHZwOUswNl9ReGtjYzRUcjRYVW0yQWVWZERrVDUyUnhTMXl6czUwX2RrQnlGbnFjOWhkYmF3SWtHcXdtTmo2YnQtNGlfaVZRQVNZNGNuekc0SmF4dnA3TDhDVmNCN19WTzFGN0FWNFY4QTdsSklPQ252TDgxeU5URndsVUZUMW9pLVYzYndLY3FQRmt3cWZadXRMNW9TTGpsNTJoeExFSDJSbGZoSkxlMWQxZVdrTzQ5SkNMSF90dVdRbWpuTGhSNTQtWllnZ0xHMlFpeDFjbW55ZDRVQVhnZVJVd3UweVVTbFVSWnlHc2tzaEVJQWNUZUwyRmxJcG1VVFo4U2FGdW5YWUxhS3BZcm1OYWctQVFrLV82My1XVE5YdVRVS3FwMXVKbElnMW9USzBwTm9UcUptMm5rajdPNWxtX05sdVhzRk5ZNk1nVDJSeG1WWWRDWGVuMzBXNzMzcWNUNVBHYzY3Z2lJZlNRcFYw?oc=5"
+      },
+      {
+        "title": "مصادر: سعر طرح بنك القاهرة يتراوح بين 4.3 و 4.82 جنيه للسهم ببورصة مصر - الشرق بلومبرغ",
+        "source": "الشرق بلومبرغ",
+        "published": "2026-10-14T12:54:37+00:00",
+        "url": "https://news.google.com/rss/articles/CBMisgNBVV95cUxOREw0bDgzZktESjVzMnNIX1VKcHR2S1dmZV9zNmU3M0lWUFpmTXNtMGloVnd3c0Y4VDRIaFZhMGhzZFhONkw4cG5vN3hFOFpBa1ZQS2U2dGZTR1dWQk5oM19fOTQtVDFmbGxiajF0V0FFWXU0SGRFRkJUWjd1YXBHS19qU0JvRTJxRkpCbjZVS1lJQzFjNmFLNFVNTjI2T0lIXzRLbmlXelA5N2VvSGE0THY2cDRIdjRvMDctc1dRazEzclJvek40Z214N2h3cWpFb0E3MF9PWmZfc2ctS2lVb3lEWlZ3WVZ3MXVhZkZYRVlLWGE0eHVwQnJYT3gzRTVab2tWTUQ0ZkFWdXphN3BDR0J4djZ6eF9SRmdCdWQyNFRQSVNYczg1SUpPdGhCOS1UdDZ0R29WWm53b2lCRWhvMUpFeS1GOUpFUW5MNVhIYUl4TEMwZzhPeG5zOXhUNWpiclJDV21kSEplQWtObFlkcXdzcHhLX1VvS0laemo2aTNlNTR3VGd3a3g3cjdid0x6bGYzV1BoVEdJV1pQTld2dGMtblBRQmlnMElfelgxYWxXUQ?oc=5"
+      },
+      {
+        "title": "مؤشرات البورصة تواصل الصعود مع ختام تعاملات اليوم الأربعاء - Masrawy",
+        "source": "Masrawy",
+        "published": "2026-10-14T13:48:10+00:00",
+        "url": "https://news.google.com/rss/articles/CBMikwRBVV95cUxPeHA0RjhEMFFiN0doeGpkSUNFeVdFcEx1cWY1NVZod19YVGd0VFNTdEUyWm55VUpHbk5DTHVNOEtlMjZTN1hyYWk2WlUwb3NMRFNMRVpwVndQeVhYWWc2eFhCMGFLSjRTbUp0YzRpeTJtR3RXMW5qT3dSX0hGRkViaGtabURqQUN2VWVDczR3QXU1azl5MTMwS1lFQ1I2b3VVRmdrbzFDYngwbkJIVHliZWJodHRCZTluX3lBWkpLWERLYjcyU1dfbVRYTzZ4MzVYSjdNMXhYMU5FWXpBRzNxeFN3VTBHalVWaE1KOWstNTgtREg3RVVhNFQxejRWRTJoaDNXQ3kyV0FtU25MZ1NVVFVxNWtGbXllU25sV2drajBJRnBISVZFemYzWGFISkR2WTN5T3lkTkt5eEtSWE01MGlPZTdUOVJnR1pHUXRZZm5ZOV9yU3N5TnVhWlc4UWtwOTdGdWUyNUU3NG1vbGFQeHpoMi1UX1FBLS0wZHkwQVVhRnpjcnFZUHg0YmI2VTY2Q1R5TXRELXZLS0xVb3oweWpyYjVBOXV2aTNUazM5Qk92RHZ3VU5MM1Q3Tmc4RC00YXFpRFZXd3VaYlZmbktoOWdGaENSVWVZdWJJenJKelg3Unp4czNzMmZHQVhOeUxrRGk4Rm5EUVJsWGNBUXhJelFpd0paOGM0QzJ6WjlkTlA2QknSAZgEQVVfeXFMTzJEbVZtSzB5X0RmcjJTSmJiMWduUnpGTy1ZY2RFbEZ5V19CNnRBSmdZQ1Q5cHc5dWFIRUNhQ2JDNEMxMjlvVm53Yk1rVDlRZkNsY3NLcmhkbVA5QTVzU1V0NWQ4bVYzak1kcXVhUUxadHVYRTJieUJlNXN1NTVMczY5ZlRvd2FBZHpJYzlza3NkbzkwWUdKQ0ItS3dvenFWcVBLTHhpaHl6OEZ5LXNBRGtoay05ZXUwSTNlTGcxN293UmFzQmU3RmJaVmJpUlhMaTU2TF84LVNidzV5ajFYSUxuaEhlMTQtOTI5eHhQaXplbEpuWl9VQWZsRV9lQ2NfUGpsQ1VvaVU5YUY1LXNpTENyU2UxWGxjelV5Z0NzbzFhSmpXZFVKVThNLWZVZ29Jb2k3WG1NVnZaLTJTc25tbVFqeGVzaTZ5VkVLMVlITmlyaVlVdHZqQzZMMnVsbnoyck12Mmc4anhYdzcxVzB5RC04SXpTU2RmUVpaRUVwelBwVkZRX1VmZmxtMHBJX3pMTzNYRWJUUnIxRnZsWUN5Qk5yWS05REJRS0UxQWZoM01xRjFRdmI0bS15T3RndWtYOElEYmExVkJaa3pfcnd4RHhqQ2NySmRZd3dVQjNkQ29NUmpDWlhmOG1Ea2c5Y0pyRmJMQ1I0VTBqaTdCOE1WbjRyS3ZNUFM4MHRnMFlVekVwWVVHRFBIUVE?oc=5"
+      },
+      {
+        "title": "تراجعات حادة للبورصة المصرية.. ومؤشر EGX 70 يقلص خسائره إلى 2.7% - العربية",
+        "source": "العربية",
+        "published": "2026-10-13T14:00:49+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiwwNBVV95cUxOYUNaZ1N2em1Jci14MUo4MmZKUUhsSmRwQlpTOU1QQkhxR003eWx5Qm5lQS0zWEpOY3VMSXpPekZYMjVwVzlWVG1VdFI0VUhOTGZuTUxHUG8xVkRPMjJ5QVNEMHVqZXhudVJ0Ul85RFNRcW01MU9SUHlyczROWU00R1VVSlR4U1J4V3NNWHpkeXBLeHBHbkNaV3lGU0dGQmtzMm4taER5RE1Kb0hydmotNmlEZlRGTHY5THJ2bWZuOC1xb1BaMDhiUmM3OXJ1Y2U4YWZLN1N1MTh3bm51TlRvaUFhOVAyQW1rSGlkNmt3TU1NS1A3QXNSeE9kOER6TVhlWTB5cWpvQW1lcFo3NHQ0RG1CLXhzT2dheWJLT0JTZ01iVVVxamdUYWdTaEVLWFc2ZzVlLVJDNnpGZHUyNXlVM3lndDNqMnluS0lVTE9tUDBoa3h4Z1RDUUR0QVk0ZDRvZV80cVhsTEI0SEZCV0NMOWp0RnNXSW9KVF9aR2NfUWRyaTlWa2FNcHZoMmJhTzBEY1FrZFN2aGo4WGY0OTlPaENNMWhvNzdTRHRwM3g2eXp1OEc1c1ZQRVpzZkY4UndVMjVR0gHIA0FVX3lxTE9DT2Z6YzdGTW9uazl2UkhiQmRnazhIY0lNcmo2ZXR0bDBfa1k2U0hObW5NaXoyMnpMQjRVbTY2WGFVR3lTeVlMZ3Z0OTlvaloxRmMwbjNpeUluUHVDdXpuZ1U0S3k5MElrY0xnU2ZyU1laQndGT2w2OU9obkpMNjRvSkZ3SE1rZEFfNjA3ZTlEQW1zY0FKUWRrM25JbXhxWkgyUzNrdU1uUk03TEZJWXgxZ2M2TWFXUksxVUg5OXhfYm5jVnloUGlNVGRWT19xSXVhaFNGOGR6R0N5UVd5TWc0WW5oaGUyenVJd1hrbTlCN201cV8zX3UwYU9NYk5rTUZNVTNkWmFtM3c4ZUdSVi00RmNEeVMtRW9PZVkxcjFMQ3VwMS1rNndXd3dFSmRNOVhsZWdmaG5hUFFkalp4MUhBTEV4eFp2d3RGdXVKVGFabWZNUEhzY1RINGxkdTNmNW9lVUlDM3RpVHZKTXl0Y0VUQlk1Y3N4ZlBrY2puUE5QTC1tUVZ5dk9IN3lXY3pnVjd5RDVoLU1kVjc5bWtPS05RQ19WWGI3Q2J0S01KbFlQbnpPRGVBNndQQnRxMGZtalgwYnAzNnZROA?oc=5"
+      },
+      {
+        "title": "خبير أسواق مال: البورصة المصرية مرشحة لمواصلة الصعود خلال الأسبوع المقبل - اليوم السابع",
+        "source": "اليوم السابع",
+        "published": "2026-10-15T01:00:00+00:00",
+        "url": "https://news.google.com/rss/articles/CBMinwRBVV95cUxObVNJQkd1UUdxYnFmR01YMGdqQjkwYjMxU0Jzek0tdE56dUZQTWo1Mkp1QVA4aEd1RjQwV0tKZzByUjhtTXBINWtJYlBTSkFXUFBNcVhPSE1vV2VWRlhvR0JEdU56LXg1N0ZNRk5wRlhJQW9wNkJmbXg4UmpQWkpxZ29YOV9uWnUwTnBJdVFDaU9HWm5oVDl6a0xtaG9JZ25lNnBveU00dW5aeGlTQ191cHFqaE5CRkRWRUdJdl9aYS03ZUJFbm1kWldMWm53N192MU5kS3lTOXhRbFhIR3ZvTTd6TFNKNFVJZXAzMExkX09uTVlnallLU3k1TFJkQTJhQzJDaWRhN0VHSGt2S3M4Wjk3ZWtHSDQwdzFOLTlfb0Zock8yaU95RjNMTEFfMFFybHhrZmFQY3N4NDlJamZvZzJjekZ5MmdBM1F0OEJDSEVGa1JJb1h3Uk1MbWREb20tcG1FaEY3b244Nko5TVo2dzZ4UEd0MTFEcHZpdWRRNGZNaVcxcjdkdm9HVm1TcDV5RVdKSzI5UE1pUkdjNVNHQkdjbUhXc0d0clQzbnZIYVpreGNfTGdjdVpJOG1VQU10em5pSlJhVHh6NS1xeTQyMjNjcWl3bmNqS0NzdF8tVlMzVnJTbWlORFNMdWM4TFF0czNfVFkzMFVzZnU4Uzh3X3dPektZTUc2RTkyRGtCS2tGYzdRajg3aGw5dWRoaHPSAZoEQVVfeXFMTl9BMjRCemR2bEhkWGRmNlkteVZOTHhEM1dCQUZ2bnRvcG9qLWZQYVdRcDQxSzU3MkVYWmlneDJwYy1kbmJUd1dFRGRDcGpQamVOeHdNSWw0MlRxV1JVd0s5aUNTNUFNYWxRN3hxeDN1bG9YbG1HOUFZYnhoMUFLMktDYVVTVXFSQ1BITE5hamFOOG9JODVoTldsNG1NV3pUTkNIOXVxWXlNUE1SWWpFNjdfOVFOcGoyWGtFU2QzdXRxSzFWNWo3aWk0ZnZhekloeUNLS1FJQkpteGd1bFJEMTJnZjJTZnV6Y2hxeXVFT09qTVloWnJZOWtuNDU3dzQ4LXhrbU5OM1MzXzZoYWhHN2tCRE9sMGJ2a0g2VTVEM3FrY0szVEdPSVVzOUxGREUtM0V6cWVmUU1wM2xiMGNLNy1qVVVWRUFWRDcyYV8zRXloRlpKRHBSX01BTjFuMlJBQVA4U0paMTBySHdyWV8xaWUxSGRsV1llZXZ0RFZQN1lCSmowbjRsZVhQRkR6VVJQaFNRdFZGcGpPS0c1b3A1NjFWdDRrR2swamZpZVpWb1FvODQ5WTlNM3N1T3hwcXRXOWJNWmZtdXVpUGlHUjJJb2ZBb1Z0eDQteEkwSm9jM3VtUFdQdmpKSzlBcFhhT2Y4SUJCa2V3SjBVdkN5dElJSnkwT1Q2ZUV5Tkx2eDJFUklDNFdLVWg3LU9MQQ?oc=5"
+      },
+      {
+        "title": "البورصة تترقب استكمال الحركة التصحيحية و«EGX30» يستهدف 54100 نقطة - جريدة المال",
+        "source": "جريدة المال",
+        "published": "2026-10-14T18:04:35+00:00",
+        "url": "https://news.google.com/rss/articles/CBMirANBVV95cUxNN3d1Y3plU1FFTXZINGlVRm5TUVo3TTEwSUM2eXMxbXVoalk1YW1ZYzdlc0thTDI0Qi1uTDhTRVJMNEloWDVzZi1lMUM0Z1loTzdXUEFfek9Cci1SVHhodll2MTQxWFpvYVVlcXZKaTVnY3NZWjRfQXZfNmpWclVGQ3IzWnJxdE9PeUc0aVlEaTJYVjJZT1JpYjRLQkc1d3E5UFR3Qi1BUTdKTXFFcTNpYXgtelRaTDJ6ZGJCRnptLWJYcS15ODB0VEhfZlp2TTJFa1l5NS1SSnhTb1h5aEZXV3BIYlFUYmpacmlPWmw0NjM4cUdBMjBIWHpJV1VUWGZWUE9ZRWNiRWg1cUtlcXRtOXRIQ01NZjFaWVlaazRUNWk1d1MxU28tYUdmaVBwbFZvNnpwVVo5ZjhSMjBoWW1iN3VBYjJ0dTVQZWlPZ1JiVDVJUFFFUmFMLWhvQmtHRFlVS1UwT3dZeXNIeGt1WUZCRU1NSEo0QnR6SGluRVpxUlZoZ09PV1h5V1dBMFYxbjNkTFhxc1ZuOC1tdFhuU0tOeG9fWk5Wc01kR2kwWA?oc=5"
+      }
+    ],
+    "companies": [
+      {
+        "title": "تم ايقاف الورقة المالية - EGS3A221C018 - روبكس العالميه لتصنيع البلاستيك والاكريلك لمدة 10 دقائق لتجاوزها نسبة 10 % - معلومات مباشر",
+        "source": "معلومات مباشر",
+        "published": "2026-10-13T09:10:07+00:00",
+        "url": "https://news.google.com/rss/articles/CBMi8AVBVV95cUxNNVZnVGFNZ3RqTFQtR0ZtaC00emE0d0JKeF9MUFppaVp6ZUItVWp6djRjb1dGenh3RVIzM1FOdGI5RHlENkVwYXlhM1lydWNCcjMxMVpta240MUJ2UVNHYjh5b21jVDh4X0IyNG5vamlSejI3QzE1OUx0X2ttU0Zjd2JIMk1sNnJYdlUwV0syZzFfeFhpSWFpaS1ETjl1a2V4dE5GRmFRaktfZ3l1emNOTEtQa2hIZG9NcDZxR1BCd0xQdlpPRXc1dkh5dWZaNFB3ZlpucVY4ZFQ1dXJseFhMUmRTRVd6Y2dUMy1WWHlmRGFNeXptTUp4ZW40UU96ZnVmQ2ZZT1VveDhsSWFnS3ZGd3lyUGdmUXhobUUxOWhfT0RuM1U3LUhqY19yR0hsdFRLODJXX0Q1d3FZNU5pUzBkQnJYWTNCZmpKcjBPRnVZWHZEbGdsc2hCbkt4VGpmUU44MDRkb0JJSEQ5WFpFTzJZVTJUNHpVVXBCaUtwdHl4R2t5WG9JWWRicmVqLUdrX2dGeUp6NmM5NGZEVDhyWEpIb3dWS2RLeS1QMzB4UDZHdlRzdjIxRGtUMUY5WGFCdmt6Ql84WHBiemdQVGtSZjRscVlwTk02am1pdU1QSjcxR2dvMGRNdmxkT1l5VGFGX2QwS3N3aGx3QjROOThaRnVNRlZ2eDZ5clc0RGpXa3BUR1ZzLV94bzVWZkJDYVBfY21Ma3N4R0hzYkdMazRpR2NQcl9VYy1XT2FuTTNDV1RYdDJwendzNGp3N19JTlVhYWVvdWdlLUdLcnJMYk9EczZmNXg2NUkzN3hkcXgtaDRSdGJhT1Ntdl81eEpUa1p2b0Mzb0NqZFVHOEhRUUZCUHR0bnBNYWFwZmhGLUdGQ0d2VDhMR0FoMGxwaXJGdl9RY3FIVFNoejd2UDVlbGpfRENLcXFNSmtlSDYzOGZEWjBGUlNJbTcyRklWUTZ3WXlUNkh2dVJGakpJdWNlRG55Rm9qNw?oc=5",
+        "code": "RUBX"
+      },
+      {
+        "title": "تباين أداء أسهم الطاقة والخدمات المساندة بالبورصة المصرية - جريدة المال",
+        "source": "جريدة المال",
+        "published": "2026-10-13T12:48:21+00:00",
+        "url": "https://news.google.com/rss/articles/CBMipgNBVV95cUxNelFQYllFNmxEYU5vTWdocVhPaXcwcFpEZ3JhSy1VMlg5a0luLUFYaU1odDJsSlM2WnVrR0FPRzBaZ211bkV5NW8wWWM0ZVlZY3JvMUV6X3V4Y19SRkhIVS1aejNPb0VKZ1pvWnVrV2RySE9Sb2FJVHY3cjN6UG1wU1FKUXZLbFVLR2NJVmlVUFFPeHlSaEdhZDdfa3RkN0hGNU5QMkFLS3pJdUx1WGhLTF9WdEZ6d2FKTENySWllaXVjd1o1SC1CczFSRy04MXZYa24zZUt1Y2RFV0Z1TW42UEFjUVlEdVVEWk51U0NYNUxYSlRUeGNuUnBOSHhpRXRtcDI0allzaVozMFVYTlpzd1RvaDUxa2tScnBwR1FXbVdrVGw4YmY3eHpmMS1jNFNuZHQxbnVZbktuQ0lHdHRqVkstQWhUVFVfODZ0Tzl1NGpPTmtsdjZJQ25yU1h3RUFCYTdKaWZsZldfblRKWmdMWVkzWWw4QlM5aWI2R2g0QzdhQ3VaeVVvX2ZCeDItcjZqeWVCWS1LX0FtdWQ1dzRvdzlCckxWQQ?oc=5",
+        "code": "AMOC"
+      },
+      {
+        "title": "من 50% إلى 25%.. «أموك» تقترح تعديل قواعد انعقاد جمعيتها العامة - جريدة النهار المصرية",
+        "source": "جريدة النهار المصرية",
+        "published": "2026-10-13T10:26:42+00:00",
+        "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE81bTN3SHVYbWFGV0FhVkRaeGp1bHJwWE14UEVsNVFGNFdMQU1kX3UtZXZETkI0QWRKWG5mT2ROdU00M085TDVPRWEzM0w?oc=5",
+        "code": "AMOC"
+      }
+    ],
+    "generated_at": "2026-10-15T04:36:05.450972+00:00"
   },
   "portfolio": {
     "holdings": [],
     "enabled": false
   },
-  "generated_at": "2026-10-15T07:14:15+03:00",
+  "generated_at": "2026-10-15T07:34:45+03:00",
   "universe": {
     "mode": "union",
     "total": 118,
