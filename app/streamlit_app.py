@@ -37,6 +37,36 @@ def wide(fn, *args, **kwargs):
         return fn(*args, use_container_width=True, **kwargs)
 
 
+
+def render_cards(df: pd.DataFrame | None, title_candidates=("الشركة", "الأصل", "الرمز", "المكوّن", "المقياس", "المؤشر", "الخبر"), limit: int | None = None):
+    """Render data as compact mobile-friendly cards instead of spreadsheet grids."""
+    if df is None or df.empty:
+        st.info("لا توجد بيانات للعرض.")
+        return
+    shown = df.head(limit) if limit else df
+    for _, row in shown.iterrows():
+        title = next((str(row.get(k)) for k in title_candidates if k in row.index and pd.notna(row.get(k)) and str(row.get(k)).strip()), "تفاصيل")
+        facts = []
+        for key, value in row.items():
+            if key in title_candidates:
+                continue
+            try:
+                if pd.isna(value):
+                    continue
+            except (TypeError, ValueError):
+                pass
+            if isinstance(value, float):
+                value = f"{value:,.2f}" if math.isfinite(value) else "-"
+            facts.append(f'<div style="display:flex;flex-direction:column;gap:.12rem;min-width:0"><span style="font-size:.75rem;color:var(--muted)">{ui.e(key)}</span><b style="overflow-wrap:anywhere">{ui.e(value)}</b></div>')
+        st.markdown(
+            '<article class="data-card" style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:.85rem 1rem;margin:.55rem 0;box-shadow:0 3px 12px rgba(20,36,58,.035)">'
+            f'<div style="font-weight:750;font-size:1rem;margin-bottom:.55rem">{ui.e(title)}</div>'
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:.55rem .8rem">'
+            + "".join(facts) +
+            '</div></article>',
+            unsafe_allow_html=True,
+        )
+
 def mtime(p: Path) -> float:
     return p.stat().st_mtime if p.exists() else 0.0
 
@@ -91,23 +121,26 @@ if table is not None:
 notes = report.get("notes") or {}
 
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
-st.markdown(ui.verdict_html(latest, notes.get("market_view", ""), report.get("warnings") or []), unsafe_allow_html=True)
-
-section_labels = ["فرص اليوم", "خريطة السوق", "كل الأسهم", "تحليل سهم", "محفظتي", "الأداء", "عن النظام"]
+section_labels = ["الفرص", "المحفظة", "المزيد"]
+more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
 st.markdown(
-    '<div class="nav-heading"><span class="nav-eyebrow">WORKSPACE</span>'
-    '<span class="nav-title">أقسام المنصة</span>'
-    '<span class="nav-hint">اختار القسم اللي محتاجه</span></div>',
+    '<div class="nav-heading"><span class="nav-title">مستشارك في البورصة</span>'
+    '<span class="nav-hint">3 تبويبات رئيسية</span></div>',
     unsafe_allow_html=True,
 )
 active_section = st.radio(
-    "أقسام المنصة",
+    "التنقل الرئيسي",
     section_labels,
     index=0,
     horizontal=True,
     label_visibility="collapsed",
     key="main_section_navigation",
 )
+more_section = None
+if active_section == section_labels[2]:
+    more_section = st.selectbox("أقسام إضافية", more_labels, label_visibility="collapsed", key="more_section_navigation")
+if active_section == section_labels[0]:
+    st.markdown(ui.verdict_html(latest, notes.get("market_view", ""), report.get("warnings") or []), unsafe_allow_html=True)
 
 
 # ================================================================== فرص اليوم
@@ -122,22 +155,12 @@ if active_section == section_labels[0]:
 
     if watch:
         st.markdown(ui.section("قائمة المراقبة", notes.get("watch_view", "")), unsafe_allow_html=True)
-        wdf = pd.DataFrame(
-            [
-                {
-                    "الرمز": w["code"], "الشركة": w["name"], "النقاط": w["score"], "النموذج": w["setup_ar"],
-                    "RSI": w["rsi"], "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2]),
-                }
-                for w in watch
-            ]
-        )
-        wide(
-            st.dataframe, wdf, hide_index=True,
-            column_config={
-                "النقاط": st.column_config.ProgressColumn("النقاط", min_value=0, max_value=100, format="%.0f"),
-                "RSI": st.column_config.NumberColumn("RSI", format="%.0f"),
-            },
-        )
+        wdf = pd.DataFrame([
+            {"الرمز": w["code"], "الشركة": w["name"], "النقاط": w["score"], "النموذج": w["setup_ar"],
+             "RSI": w["rsi"], "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2])}
+            for w in watch
+        ])
+        render_cards(wdf, title_candidates=("الشركة", "الرمز"))
 
     if regime is not None and len(regime) > 60:
         st.markdown(ui.section("اتجاه المؤشر", "المؤشر مقابل متوسطيه 50 و200 يومًا"), unsafe_allow_html=True)
@@ -148,17 +171,17 @@ if active_section == section_labels[0]:
         gcol, lcol = st.columns(2)
         gcol.markdown(
             ui.section("الأكثر ارتفاعًا")
-            + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_gainers"]]),
+            + "".join(f'<article class="data-card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.4rem 0">{ui.e(g["code"])} — {ui.e(g["name"])} <b>{ui.change_html(g["ret1"])}</b></article>' for g in m["top_gainers"]),
             unsafe_allow_html=True,
         )
         lcol.markdown(
             ui.section("الأكثر انخفاضًا")
-            + ui.kv_html([(f"{g['code']} {g['name']}", ui.change_html(g["ret1"])) for g in m["top_losers"]]),
+            + "".join(f'<article class="data-card" style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin:.4rem 0">{ui.e(g["code"])} — {ui.e(g["name"])} <b>{ui.change_html(g["ret1"])}</b></article>' for g in m["top_losers"]),
             unsafe_allow_html=True,
         )
 
 # ================================================================== خريطة السوق
-if active_section == section_labels[1]:
+if active_section == section_labels[2] and more_section == more_labels[0]:
     st.markdown(ui.section("السوق والمؤشرات", "بيانات المؤشرات تُجلب من مزودي البيانات المتاحين، والبيانات اللحظية من OANOR عند ضبط المفتاح."), unsafe_allow_html=True)
 
     idxs = latest.get("market_indices") or {}
@@ -168,10 +191,7 @@ if active_section == section_labels[1]:
         for name, x in idxs.items():
             rows.append({"المؤشر": name, "القيمة": x.get("close"), "اليوم %": x.get("change_pct"), "التاريخ": x.get("date")})
         iv = pd.DataFrame(rows)
-        wide(st.dataframe, iv, hide_index=True, column_config={
-            "القيمة": st.column_config.NumberColumn(format="%.2f"),
-            "اليوم %": st.column_config.NumberColumn(format="%.2f"),
-        })
+        render_cards(iv, title_candidates=("المؤشر",))
     else:
         st.info("لم تتوفر بيانات تاريخية للمؤشرات من EODHD في آخر تشغيل. بعد إضافة OANOR_API_KEY وإعادة تشغيل التقرير ستظهر اللقطة اللحظية المتاحة.")
 
@@ -181,7 +201,7 @@ if active_section == section_labels[1]:
         idx_data = oi.get("data", {}) if isinstance(oi, dict) else {}
         idx_rows = idx_data.get("indices") or []
         if idx_rows:
-            wide(st.dataframe, pd.DataFrame(idx_rows), hide_index=True)
+            render_cards(pd.DataFrame(idx_rows), title_candidates=("name", "symbol", "index", "المؤشر", "الاسم"))
         else:
             wide(st.json, oi)
 
@@ -189,7 +209,7 @@ if active_section == section_labels[1]:
         scr_data = oscr.get("data", {}) if isinstance(oscr, dict) else {}
         scr_rows = scr_data.get("results") or []
         if scr_rows:
-            wide(st.dataframe, pd.DataFrame(scr_rows), hide_index=True)
+            render_cards(pd.DataFrame(scr_rows), title_candidates=("name", "symbol", "code", "الرمز", "الاسم"))
         elif oscr:
             wide(st.json, oscr)
 
@@ -200,17 +220,17 @@ if active_section == section_labels[1]:
         st.markdown(ui.section("أخبار السوق", "عناوين حديثة للسياق فقط؛ لا تدخل الأخبار وحدها في قرار الشراء."), unsafe_allow_html=True)
         news_rows = [{"الخبر": x.get("title"), "المصدر": x.get("source", "")} for x in market_news[:8]]
         if news_rows:
-            wide(st.dataframe, pd.DataFrame(news_rows), hide_index=True)
+            render_cards(pd.DataFrame(news_rows), title_candidates=("الخبر",))
         if company_news:
             st.markdown(ui.section("أخبار مرتبطة بالفرص"), unsafe_allow_html=True)
-            wide(st.dataframe, pd.DataFrame([{"الرمز": x.get("code"), "الخبر": x.get("title"), "المصدر": x.get("source", "")} for x in company_news[:10]]), hide_index=True)
+            render_cards(pd.DataFrame([{"الرمز": x.get("code"), "الخبر": x.get("title"), "المصدر": x.get("source", "")} for x in company_news[:10]]), title_candidates=("الخبر",))
 
     st.markdown(ui.section("خريطة السوق", "حجم المربع = متوسط قيمة التداول اليومي، واللون = تغير آخر جلسة"), unsafe_allow_html=True)
     if table is not None and len(table):
         wide(st.plotly_chart, charts.market_map(table), config={"displayModeBar": False})
 
 # ================================================================== كل الأسهم
-if active_section == section_labels[2]:
+if active_section == section_labels[2] and more_section == more_labels[1]:
     st.markdown(ui.section("كل الأسهم المحللة", f"{latest['analyzed']} سهم من {latest['universe_size']} في القائمة"), unsafe_allow_html=True)
     if table is not None:
         c1, c2, c3 = st.columns([2, 1, 1])
@@ -228,34 +248,24 @@ if active_section == section_labels[2]:
                 "القوة النسبية %": f["rs_pct"], "الوقف": f["stop"], "الهدف 1": f["t1"],
             }
         )
-        wide(
-            st.dataframe, view, hide_index=True, height=560,
-            column_config={
-                "النقاط": st.column_config.ProgressColumn("النقاط", min_value=0, max_value=100, format="%.0f"),
-                "الإغلاق": st.column_config.NumberColumn(format="%.2f"),
-                "اليوم %": st.column_config.NumberColumn(format="%.2f"),
-                "20 يوم %": st.column_config.NumberColumn(format="%.1f"),
-                "RSI": st.column_config.NumberColumn(format="%.0f"),
-                "حجم/متوسط": st.column_config.NumberColumn(format="%.1f"),
-                "سيولة (مليون ج.م)": st.column_config.NumberColumn(format="%.1f"),
-                "القوة النسبية %": st.column_config.NumberColumn(format="%.0f"),
-                "الوقف": st.column_config.NumberColumn(format="%.2f"),
-                "الهدف 1": st.column_config.NumberColumn(format="%.2f"),
-            },
-        )
-        st.download_button("تنزيل الجدول كملف CSV", table.to_csv(index=False).encode("utf-8-sig"), "egx_signals.csv", "text/csv")
+        render_cards(view, title_candidates=("الشركة", "الرمز"))
+        st.download_button("تنزيل نتائج التحليل CSV", table.to_csv(index=False).encode("utf-8-sig"), "egx_signals.csv", "text/csv")
 
 # ================================================================== تحليل سهم
-if active_section == section_labels[3]:
+if active_section == section_labels[0]:
+    st.markdown(ui.section("تفاصيل الفرصة", "اختار سهمًا من الفرص أو قائمة المراقبة لعرض الرسم والتحليل والخطة والأخبار."), unsafe_allow_html=True)
     if table is None or table.empty:
         st.info("لا توجد بيانات.")
     else:
         ranked = table.sort_values("score", ascending=False)
-        codes = ranked["code"].tolist()
-        names = dict(zip(table["code"], table["name"].astype(str)))
-        default = latest["picks"][0]["code"] if latest["picks"] else codes[0]
+        opportunity_codes = [str(x.get("code")) for x in (latest.get("picks") or []) + (latest.get("watch") or [])]
+        codes = [c for c in opportunity_codes if c in set(table["code"].astype(str))]
+        if not codes:
+            codes = ranked["code"].astype(str).tolist()
+        names = dict(zip(table["code"].astype(str), table["name"].astype(str)))
+        default = next((str(p["code"]) for p in latest.get("picks", []) if str(p["code"]) in codes), codes[0])
         cc1, cc2 = st.columns([3, 2])
-        code = cc1.selectbox("السهم", codes, index=codes.index(default), format_func=lambda c: f"{c}   {names.get(c, '')}")
+        code = cc1.selectbox("الفرصة", codes, index=codes.index(default), format_func=lambda c: f"{c}   {names.get(c, '')}")
         span_map = {"3 شهور": 3, "6 شهور": 6, "سنة": 12, "الكل": None}
         span = cc2.radio("المدى", list(span_map), index=1, horizontal=True)
         row = table[table["code"] == code].iloc[0].to_dict()
@@ -338,8 +348,16 @@ if active_section == section_labels[3]:
                 )
 
 
+        related_news = [x for x in (latest.get("news") or {}).get("companies", []) if str(x.get("code", "")) == str(code)]
+        st.markdown(ui.section("أخبار السهم", "الأخبار المتاحة المرتبطة بالفرصة المختارة"), unsafe_allow_html=True)
+        if related_news:
+            render_cards(pd.DataFrame([{"الخبر": x.get("title", ""), "المصدر": x.get("source", ""), "التاريخ": x.get("date", "")} for x in related_news]), title_candidates=("الخبر",), limit=8)
+        else:
+            st.caption("لا توجد أخبار مرتبطة بهذا السهم في التقرير الحالي.")
+
+
 # ================================================================== محفظتي
-if active_section == section_labels[4]:
+if active_section == section_labels[1]:
     st.markdown(ui.section("محفظتي", "أدخل المراكز التي تملكها، والنظام يراجعها مع كل تحديث للبيانات ويعطيك: بيع / احتفاظ / زيادة."), unsafe_allow_html=True)
 
     if "portfolio" not in st.session_state:
@@ -413,12 +431,7 @@ if active_section == section_labels[4]:
         )
         if not dfp.empty:
             view = dfp[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار"]].copy()
-            wide(st.dataframe, view, hide_index=True, column_config={
-                "متوسط التكلفة": st.column_config.NumberColumn(format="%.2f"),
-                "السعر الحالي": st.column_config.NumberColumn(format="%.2f"),
-                "الربح/الخسارة %": st.column_config.NumberColumn(format="%.2f"),
-                "النقاط": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
-            })
+            render_cards(view, title_candidates=("الأصل", "النوع"))
             for _, rr in dfp.iterrows():
                 st.markdown(ui.section(f"{rr['النوع']}: {rr['الأصل']}", f"قرار: {rr['القرار']}"), unsafe_allow_html=True)
                 st.markdown(f'<div class="note">{ui.e(rr["reason"])}</div>', unsafe_allow_html=True)
@@ -447,7 +460,7 @@ if active_section == section_labels[4]:
         st.markdown('<div class="empty"><b>المحفظة فارغة.</b><br>أضف الأسهم أو صناديق الشريعة/الذهب التي تملكها.</div>', unsafe_allow_html=True)
 
 # ================================================================== الأداء
-if active_section == section_labels[5]:
+if active_section == section_labels[2] and more_section == more_labels[2]:
     hist = load_history() if HISTORY.exists() else None
     st.markdown(ui.section("سجل توصياتنا الفعلية", "كل توصية شراء بتتسجل وتتابع بنفس قواعد الاختبار التاريخي: دخول بافتتاح الجلسة التالية"), unsafe_allow_html=True)
     if hist is None or hist.empty:
@@ -482,7 +495,7 @@ if active_section == section_labels[5]:
                     for v in comp.values()
                 ]
             ).sort_values("الفرق", ascending=False)
-            wide(st.dataframe, cdf, hide_index=True)
+            render_cards(cdf, title_candidates=("المكوّن",))
             st.caption("فرق كبير وموجب معناه المكوّن ده بيميّز فعلًا؛ فرق قريب من الصفر معناه وزنه في الإعدادات ممكن يقل.")
         else:
             st.markdown(
@@ -491,13 +504,11 @@ if active_section == section_labels[5]:
                 unsafe_allow_html=True,
             )
         shown = hist.sort_values("signal_date", ascending=False).head(40)
-        wide(
-            st.dataframe,
+        render_cards(
             shown[["signal_date", "code", "name", "score", "status", "entry", "exit", "reason", "r_net", "ret_pct", "days"]].rename(
                 columns={"signal_date": "تاريخ الإشارة", "code": "الرمز", "name": "الشركة", "score": "النقاط", "status": "الحالة",
                          "entry": "الدخول", "exit": "الخروج/آخر سعر", "reason": "سبب الخروج", "r_net": "R", "ret_pct": "العائد %", "days": "أيام"}
-            ),
-            hide_index=True,
+            ), title_candidates=("الشركة", "الرمز"), limit=40
         )
 
     bt = load_json(C.BACKTEST / "summary.json")
@@ -519,7 +530,7 @@ if active_section == section_labels[5]:
 
         cmp_df = pd.DataFrame({"المقياس": [r[0] for r in rows], "قواعد النظام": [cell(a, r[1], r[2]) for r in rows],
                                "خط الأساس (دخول بدون فلاتر)": [cell(b, r[1], r[2]) for r in rows]})
-        wide(st.dataframe, cmp_df, hide_index=True)
+        render_cards(cmp_df, title_candidates=("المقياس",))
         per = bt.get("period", {})
         st.caption(f"الفترة من {per.get('from', '')} إلى {per.get('to', '')} على {bt.get('stocks', '')} سهم، وتكلفة الدخول والخروج {bt['assumptions']['round_trip_cost_pct']}%.")
         tr_csv = load_csv(C.BACKTEST / "strategy_trades.csv")
@@ -532,7 +543,7 @@ if active_section == section_labels[5]:
         )
 
 # ================================================================== عن النظام
-if active_section == section_labels[6]:
+if active_section == section_labels[2] and more_section == more_labels[3]:
     sc, rk = cfg["scoring"], cfg["risk"]
     st.markdown(ui.section("كيف يعمل النظام"), unsafe_allow_html=True)
     st.markdown(
@@ -544,7 +555,7 @@ if active_section == section_labels[6]:
     )
     w = sc["weights"]
     wdf = pd.DataFrame({"المكوّن": [c[0] for c in ui.COMPONENTS], "الوزن": [w[c[2]] for c in ui.COMPONENTS]})
-    wide(st.dataframe, wdf, hide_index=True)
+    render_cards(wdf, title_candidates=("المكوّن",))
     st.markdown(
         ui.kv_html(
             [
@@ -581,6 +592,6 @@ if active_section == section_labels[6]:
         weak = cov[(cov["source"] != "yahoo") | (cov["note"].fillna("") != "")]
         if len(weak):
             st.markdown(ui.section("أسهم بها ملاحظات في البيانات"), unsafe_allow_html=True)
-            wide(st.dataframe, weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), hide_index=True)
+            render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
 
 st.markdown(ui.legal_html(), unsafe_allow_html=True)
