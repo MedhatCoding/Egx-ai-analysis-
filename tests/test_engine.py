@@ -545,9 +545,9 @@ def _fake_streamlit():
     def stop():
         raise StopApp()
 
-    st.cache_data, st.tabs, st.columns, st.multiselect, st.slider = cache_data, tabs, columns, multiselect, slider
+    st.session_state = {}  # Streamlit session state is a mutable mapping in the real app\n    st.cache_data, st.tabs, st.columns, st.multiselect, st.slider = cache_data, tabs, columns, multiselect, slider
     st.selectbox, st.radio, st.number_input, st.stop = selectbox, radio, number_input, stop
-    st.text_input = lambda *a, **k: ""
+    st.text_input = lambda *a, **k: ""\n    st.button = lambda *a, **k: False
     st.column_config = d
     st.__getattr__ = lambda name: d      # noqa: E731  (PEP 562)
     for n in ("set_page_config", "markdown", "dataframe", "plotly_chart", "warning", "info", "caption", "download_button", "metric"):
