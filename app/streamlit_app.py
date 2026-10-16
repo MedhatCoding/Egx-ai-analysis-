@@ -121,7 +121,7 @@ if table is not None:
 notes = report.get("notes") or {}
 
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
-section_labels = ["الفرص", "المحفظة", "المزيد"]
+section_labels = ["📈 الفرص", "💼 المحفظة", "☰ المزيد"]
 more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
 st.markdown("""
 <style>
@@ -158,7 +158,18 @@ st.markdown("""
     text-align: center;
     font-size: .85rem;
   }
-  .st-key-main_section_navigation [role="radiogroup"] > label > div:first-child { display: none; }
+  .st-key-main_section_navigation [role="radiogroup"] input[type="radio"] { display: none !important; }
+  .st-key-main_section_navigation [role="radiogroup"] > label > div:first-child { display: none !important; }
+  .st-key-main_section_navigation [role="radiogroup"] > label:has(input:checked) {
+    background: var(--primary-color, #1769aa) !important;
+    color: white !important;
+    font-weight: 750 !important;
+  }
+  .st-key-main_section_navigation [role="radiogroup"] > label p {
+    font-size: .9rem !important;
+    font-weight: 650 !important;
+    white-space: nowrap !important;
+  }
 }
 </style>
 """, unsafe_allow_html=True)
