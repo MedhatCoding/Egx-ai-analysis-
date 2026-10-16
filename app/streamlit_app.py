@@ -580,11 +580,16 @@ if active_section == section_labels[1]:
                     action_color, action_bg, action_icon = "#8a6500", "#fff7db", "ℹ️"
                 pnl_color = "#087f5b" if pnl_value is not None and pnl_value > 0 else "#c0392b" if pnl_value is not None and pnl_value < 0 else "#64748b"
                 pnl_text = f"{pnl_value:+.2f}%" if pnl_value is not None else "غير متاح"
-                fund_note = (
-                    '<div style="margin-top:.55rem;font-size:.78rem;color:var(--muted)">'
-                    'تنبيه: التقييم المتاح يعكس بيانات فئة الصندوق، وليس سعرًا لحظيًا أو عائدًا مؤكدًا لهذا الصندوق بعينه.</div>'
-                    if is_fund else ""
-                )
+                fund_note = ""
+                if is_fund:
+                    nav_date = rr.get("تاريخ السعر")
+                    price_source = rr.get("مصدر السعر")
+                    if current_price > 0:
+                        date_label = f" · تاريخ السعر: {ui.e(nav_date)}" if pd.notna(nav_date) else ""
+                        source_label = f" · المصدر: {ui.e(price_source)}" if pd.notna(price_source) else ""
+                        fund_note = f'<div style="margin-top:.55rem;font-size:.78rem;color:var(--muted)">سعر الوثيقة المنشور: {current_price:.4f} جنيه{date_label}{source_label}</div>'
+                    else:
+                        fund_note = '<div style="margin-top:.55rem;font-size:.78rem;color:var(--muted)">سعر الوثيقة غير متاح من مصدر الأسعار الحالي؛ القيمة والربح والخسارة غير محسوبين.</div>'
 
                 score = rr.get("النقاط")
                 try:
@@ -602,8 +607,8 @@ if active_section == section_labels[1]:
                     f'<div style="font-size:1.05rem;font-weight:800">{ui.e(rr["النوع"])} · {ui.e(rr["الأصل"])}</div>'
                     f'<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .7rem;border-radius:999px;background:{action_bg};color:{action_color};font-weight:800">{action_icon} {ui.e(decision)}</span></div>'
                     f'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">'
-                    f'<span style="color:var(--muted);font-size:.85rem">{"عائد الصندوق" if is_fund else "الربح / الخسارة"}</span>'
-                    f'<b style="font-size:1.05rem;color:{pnl_color};direction:ltr">{("غير متاح من مصدر البيانات الحالي" if is_fund else pnl_text)}</b></div>'
+                    f'<span style="color:var(--muted);font-size:.85rem">{"الربح / الخسارة" if is_fund and pnl_value is not None else "عائد الصندوق" if is_fund else "الربح / الخسارة"}</span>'
+                    f'<b style="font-size:1.05rem;color:{pnl_color};direction:ltr">{pnl_text}</b></div>'
                     f'{score_html}<div style="margin-top:.8rem;line-height:1.7">{ui.e(rr["reason"])}</div>'
                     f'{fund_note}</article>',
                     unsafe_allow_html=True,
