@@ -63,10 +63,24 @@ def evaluate(holdings: list[dict], table: pd.DataFrame | None, funds: dict, regi
         elif typ == "fund" and key in fund_map:
             category, item = fund_map[key]
             action, reason = recommend_fund(item.get("score"), item.get("trend", "غير متاح"), regime)
+            fund_details = next((f for f in item.get("funds", []) if f.get("name") == key), {})
+            nav = fund_details.get("nav")
+            try:
+                current = float(nav) if nav is not None else None
+            except (TypeError, ValueError):
+                current = None
+            value = qty * current if current is not None else None
+            pnl_pct = ((current / avg - 1) * 100) if current is not None and avg > 0 else None
+            nav_date = fund_details.get("nav_date")
+            if current is None:
+                reason = "سعر الوثيقة الفعلي غير متاح من مصدر الأسعار؛ لا يمكن حساب القيمة الحالية أو الربح والخسارة."
+            else:
+                reason = f"{reason} سعر الوثيقة المنشور: {current:.4f} جنيه" + (f" بتاريخ {nav_date}." if nav_date else ".")
             rows.append({
-                "النوع": "صندوق", "الأصل": key, "الرمز": "",
-                "الكمية": qty, "متوسط التكلفة": avg, "السعر الحالي": None,
-                "القيمة": None, "الربح/الخسارة %": None,
+                "النوع": "صندوق", "الأصل": key, "الرمز": fund_details.get("fund_code", ""),
+                "الكمية": qty, "متوسط التكلفة": avg, "السعر الحالي": current,
+                "قيمة المركز": value, "القيمة": value, "الربح/الخسارة %": pnl_pct,
+                "تاريخ السعر": nav_date, "مصدر السعر": fund_details.get("price_source"),
                 "النقاط": item.get("score"), "القرار": ACTIONS[action], "reason": reason,
             })
     df = pd.DataFrame(rows)
