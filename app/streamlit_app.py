@@ -484,8 +484,10 @@ if active_section == section_labels[1]:
             avg = q2.number_input(
                 "متوسط سعر شراء السهم (جنيه)" if asset_type == "stock" else "متوسط سعر شراء الوثيقة (جنيه)",
                 min_value=0.0, value=0.0, step=0.01, key="portfolio_avg",
-                help="سعر الوحدة الواحدة في المتوسط، وليس إجمالي المبلغ المدفوع.",
+                help="اكتب سعر شراء الوحدة الواحدة. مثال: لو اشتريت السهم بـ25 جنيه، اكتب 25 هنا.",
             )
+            q1.caption("مثال: لو اشتريت 100 سهم، اكتب 100 هنا.")
+            q2.caption("مثال: سعر السهم الواحد 25 جنيه، اكتب 25 هنا — مش إجمالي المبلغ.")
             total_cost = qty * avg
             st.markdown(
                 f'<div style="border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:.8rem 1rem;margin:.25rem 0 1rem">'
