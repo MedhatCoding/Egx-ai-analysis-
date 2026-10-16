@@ -490,9 +490,18 @@ if active_section == section_labels[1]:
         if options:
             selected = ac2.selectbox(
                 "الأصل", options,
-                format_func=lambda x: f"{x} — {stock_names.get(x, '')}" if asset_type == "stock" else x,
+                format_func=lambda x: (
+                    f"{x} — {stock_names.get(x, '')}" if asset_type == "stock"
+                    else f"{x} — تقييم فئة فقط، وليس سعر الصندوق الفعلي"
+                ),
                 key="portfolio_asset",
             )
+            if asset_type == "fund":
+                st.warning(
+                    "تنبيه مهم: أسماء الصناديق هنا تمثل متابعة تحليلية لفئة الاستثمار (أسهم شرعية أو ذهب)، "
+                    "وليست ربطًا بسعر تداول موثّق للصندوق المحدد. التطبيق لا يستطيع حاليًا حساب قيمة المركز "
+                    "أو ربحه وخسارته الفعليين من هذه القائمة وحدها."
+                )
             q1, q2 = st.columns(2)
             qty = q1.number_input(
                 "عدد الأسهم المملوكة" if asset_type == "stock" else "عدد الوثائق المملوكة",
@@ -504,8 +513,8 @@ if active_section == section_labels[1]:
                 min_value=0.0, value=0.0, step=0.01, key="portfolio_avg",
                 help="اكتب سعر شراء الوحدة الواحدة. مثال: لو اشتريت السهم بـ25 جنيه، اكتب 25 هنا.",
             )
-            q1.caption("مثال: لو اشتريت 100 سهم، اكتب 100 هنا.")
-            q2.caption("مثال: سعر السهم الواحد 25 جنيه، اكتب 25 هنا — مش إجمالي المبلغ.")
+            q1.caption("مثال: لو اشتريت 100 سهم، اكتب 100 هنا." if asset_type == "stock" else "مثال: لو تملك 100 وثيقة، اكتب 100 هنا.")
+            q2.caption("مثال: سعر السهم الواحد 25 جنيه، اكتب 25 هنا — مش إجمالي المبلغ." if asset_type == "stock" else "مثال: سعر الوثيقة الواحدة 25 جنيه، اكتب 25 هنا — مش إجمالي المبلغ.")
             total_cost = qty * avg
             st.markdown(
                 f'<div style="border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:.8rem 1rem;margin:.25rem 0 1rem">'
