@@ -72,40 +72,89 @@ def _score(s: pd.Series | None) -> dict:
     }
 
 
-def fetch_beltone_wafra_nav() -> dict:
-    """Fetch the published NAV for Beltone Wafra from Snduk's public daily-price page."""
-    url = "https://snduk.com/us/page/mutual-funds-prices-today?lang=ar"
+def _normalize_digits(value: str) -> str:
+    """Normalize Arabic/Persian digits and decimal separators to parse published prices."""
+    trans = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹٫٬", "01234567890123456789.,")
+    return value.translate(trans)
+
+
+# App labels -> exact public fund names/codes on Snduk.
+FUND_SOURCE_MATCHES = {
+    "مصر مؤشر شريعة إكويتي – CI": ("CSF", ("مصر شريعة إكويتي", "Misr Shariah Equity")),
+    "بلتون وفرة – EGX33": ("BWA", ("بلتون وفرة", "Beltone Wafra")),
+    "كنز شريعة EGX33 – AAIH": ("KSF", ("كنز EGX33", "Kenz EGX33 Shariah")),
+    "AZ فرص الشريعة": ("ASO", ("ازيموت فرص الشريعة", "Azimut Opportunities Shariah")),
+    "سبيكة – Beltone Evolve Gold": ("BSB", ("بلتون سبائك", "Beltone Sabayek")),
+    "Gold Misr – CI": ("CGF", ("جولد مصر", "Gold Masr", "CIAM Gold")),
+    "AZ Gold": ("AZG", ("ازيموت جولد", "Azimut Gold")),
+    "EFG Hermes Gold Fund": ("HGF", ("هيرميس للاستثمار في الذهب", "EFG Hermes Gold")),
+}
+
+
+def fetch_fund_navs() -> dict:
+    """Fetch actual published NAVs for every fund configured in the app from one public daily-price page."""
+    url = "https://snduk.com/eg/page/mutual-funds-prices-today?lang=ar"
+    result: dict[str, dict] = {}
     try:
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=12)
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
         response.raise_for_status()
         tables = pd.read_html(response.text)
         for table in tables:
             for _, row in table.iterrows():
                 cells = [str(value).strip() for value in row.tolist() if pd.notna(value)]
-                line = " ".join(cells)
-                if "بلتون وفرة" not in line and "Beltone Wafra" not in line:
-                    continue
-                numbers = []
-                for cell in cells:
-                    try:
-                        value = float(cell.replace(",", "").replace("٫", "."))
-                        if 0.01 <= value <= 100000:
-                            numbers.append(value)
-                    except (TypeError, ValueError):
+                line = _normalize_digits(" ".join(cells)).casefold()
+                for app_name, (fund_code, aliases) in FUND_SOURCE_MATCHES.items():
+                    if app_name in result:
                         continue
-                if numbers:
-                    date_text = next((v for v in cells if "202" in v or "2026" in v), None)
-                    return {"nav": numbers[-1], "nav_date": date_text, "price_source": "Snduk", "fund_code": "BWA"}
+                    if not any(alias.casefold() in line for alias in aliases):
+                        continue
+                    # Prefer the last table cell: SNDUK's daily-price table ends with the published NAV.
+                    price_text = _normalize_digits(cells[-1]) if cells else ""
+                    import re
+                    matches = re.findall(r"(?<![\w])\d[\d,]*(?:\.\d+)?", price_text)
+                    nav = None
+                    for token in reversed(matches):
+                        try:
+                            candidate = float(token.replace(",", ""))
+                            if candidate > 0:
+                                nav = candidate
+                                break
+                        except ValueError:
+                            continue
+                    if nav is None:
+                        # Fallback: scan numeric-looking cells from right to left, excluding row number.
+                        for cell in reversed(cells[1:]):
+                            for token in reversed(re.findall(r"\d[\d,]*(?:\.\d+)?", _normalize_digits(cell))):
+                                try:
+                                    candidate = float(token.replace(",", ""))
+                                    if candidate > 0:
+                                        nav = candidate
+                                        break
+                                except ValueError:
+                                    continue
+                            if nav is not None:
+                                break
+                    if nav is None:
+                        continue
+                    date_text = next((v for v in cells if re.search(r"20\d{2}|٢٠\d{2}", v)), None)
+                    result[app_name] = {
+                        "nav": nav,
+                        "nav_date": date_text,
+                        "price_source": "Snduk",
+                        "fund_code": fund_code,
+                    }
     except Exception:
-        pass
-    return {}
+        # No fabricated prices: missing/unreadable rows remain explicitly unavailable.
+        return result
+    return result
 
 def build_fund_overlay(bench: pd.Series | None, cfg: dict, sharia_close: pd.Series | None = None, state: dict | None = None) -> dict:
     gold = _gold_series(int(cfg.get("data", {}).get("history_years", 5)), state, cfg)
     sh = _score(sharia_close if sharia_close is not None else bench)
     go = _score(gold)
-    wafra_nav = fetch_beltone_wafra_nav()
-    sharia_funds = [dict(f, **(wafra_nav if f["name"] == "بلتون وفرة – EGX33" else {})) for f in SHARIA_FUNDS]
+    published_navs = fetch_fund_navs()
+    sharia_funds = [dict(f, **published_navs.get(f["name"], {})) for f in SHARIA_FUNDS]
+    gold_funds = [dict(f, **published_navs.get(f["name"], {})) for f in GOLD_FUNDS]
     return {
         "sharia_equity": {
             "reference": "EGX33",
@@ -115,7 +164,7 @@ def build_fund_overlay(bench: pd.Series | None, cfg: dict, sharia_close: pd.Seri
         "gold": {
             "reference": "XAUUSD",
             "score": go["score"], "ret20": go["ret20"], "ret60": go["ret60"], "trend": go["trend"],
-            "funds": GOLD_FUNDS,
+            "funds": gold_funds,
         },
         "note": "درجات الفئات مرجعية وليست NAV للصندوق. عند توفر تاريخ NAV موثوق يمكن استبدال المرجع بتحليل الصندوق نفسه.",
     }
