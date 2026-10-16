@@ -476,8 +476,24 @@ if active_section == section_labels[1]:
                 key="portfolio_asset",
             )
             q1, q2 = st.columns(2)
-            qty = q1.number_input("الكمية / عدد الوثائق", min_value=0.0, value=0.0, step=1.0, key="portfolio_qty")
-            avg = q2.number_input("متوسط تكلفة الشراء", min_value=0.0, value=0.0, step=0.01, key="portfolio_avg")
+            qty = q1.number_input(
+                "عدد الأسهم المملوكة" if asset_type == "stock" else "عدد الوثائق المملوكة",
+                min_value=0.0, value=0.0, step=1.0, key="portfolio_qty",
+                help="اكتب إجمالي عدد الأسهم أو الوثائق التي تملكها.",
+            )
+            avg = q2.number_input(
+                "متوسط سعر شراء السهم (جنيه)" if asset_type == "stock" else "متوسط سعر شراء الوثيقة (جنيه)",
+                min_value=0.0, value=0.0, step=0.01, key="portfolio_avg",
+                help="سعر الوحدة الواحدة في المتوسط، وليس إجمالي المبلغ المدفوع.",
+            )
+            total_cost = qty * avg
+            st.markdown(
+                f'<div style="border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:.8rem 1rem;margin:.25rem 0 1rem">'
+                f'<div style="font-size:.85rem;color:var(--muted)">إجمالي تكلفة الشراء التقديرية</div>'
+                f'<div style="font-size:1.35rem;font-weight:800;direction:rtl">{total_cost:,.2f} جنيه</div>'
+                f'<div style="font-size:.78rem;color:var(--muted)">= عدد الوحدات × متوسط سعر شراء الوحدة، قبل رسوم التداول</div></div>',
+                unsafe_allow_html=True,
+            )
             if st.button("إضافة إلى المحفظة", type="primary"):
                 item = {"type": asset_type, "key": selected, "quantity": qty, "avg_cost": avg}
                 st.session_state.portfolio = [x for x in st.session_state.portfolio if not (x.get("type") == asset_type and x.get("key") == selected)]
