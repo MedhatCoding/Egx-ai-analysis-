@@ -71,15 +71,46 @@ def _score(s: pd.Series | None) -> dict:
         "trend": "صاعد" if score >= 70 else "محايد" if score >= 50 else "ضعيف",
     }
 
+
+def fetch_beltone_wafra_nav() -> dict:
+    """Fetch the published NAV for Beltone Wafra from Snduk's public daily-price page."""
+    url = "https://snduk.com/us/page/mutual-funds-prices-today?lang=ar"
+    try:
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=12)
+        response.raise_for_status()
+        tables = pd.read_html(response.text)
+        for table in tables:
+            for _, row in table.iterrows():
+                cells = [str(value).strip() for value in row.tolist() if pd.notna(value)]
+                line = " ".join(cells)
+                if "بلتون وفرة" not in line and "Beltone Wafra" not in line:
+                    continue
+                numbers = []
+                for cell in cells:
+                    try:
+                        value = float(cell.replace(",", "").replace("٫", "."))
+                        if 0.01 <= value <= 100000:
+                            numbers.append(value)
+                    except (TypeError, ValueError):
+                        continue
+                if numbers:
+                    date_text = next((v for v in cells if "202" in v or "2026" in v), None)
+                    return {"nav": numbers[-1], "nav_date": date_text, "price_source": "Snduk", "fund_code": "BWA"}
+    except Exception:
+        pass
+    return {}
+
 def build_fund_overlay(bench: pd.Series | None, cfg: dict, sharia_close: pd.Series | None = None, state: dict | None = None) -> dict:
     gold = _gold_series(int(cfg.get("data", {}).get("history_years", 5)), state, cfg)
     sh = _score(sharia_close if sharia_close is not None else bench)
     go = _score(gold)
+    wafra_nav = fetch_beltone_wafra_nav()
+    sharia_funds = [dict(f, **(wafra_nav if f["name"] == "بلتون وفرة – EGX33" else {})) for f in SHARIA_FUNDS]
     return {
         "sharia_equity": {
             "reference": "EGX33",
             "score": sh["score"], "ret20": sh["ret20"], "ret60": sh["ret60"], "trend": sh["trend"],
-            "funds": SHARIA_FUNDS,
+            "funds": sharia_funds,
         },
         "gold": {
             "reference": "XAUUSD",
