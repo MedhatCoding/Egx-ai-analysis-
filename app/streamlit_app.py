@@ -126,61 +126,92 @@ more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء
 st.markdown("""
 <style>
 @media (max-width: 768px) {
-  .main .block-container { padding-bottom: 7rem !important; }
-  .st-key-main_section_navigation {
+  .main .block-container { padding-bottom: 7.5rem !important; }
+  .st-key-mobile_bottom_nav {
     position: fixed;
     left: 50%;
-    bottom: .75rem;
+    bottom: .65rem;
     transform: translateX(-50%);
-    width: calc(100vw - 1.5rem);
+    width: calc(100vw - 1rem);
     max-width: 560px;
     z-index: 1000;
     background: var(--surface, white);
     border: 1px solid var(--line, #ddd);
-    border-radius: 18px;
-    padding: .5rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.14);
+    border-radius: 20px;
+    padding: .35rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,.18);
     margin: 0;
   }
-  .st-key-main_section_navigation [data-testid="stRadio"] > label { display: none; }
-  .st-key-main_section_navigation [role="radiogroup"] {
+  .st-key-mobile_bottom_nav [data-testid="stHorizontalBlock"] {
     display: flex;
-    width: 100%;
     gap: .25rem;
   }
-  .st-key-main_section_navigation [role="radiogroup"] > label {
-    flex: 1 1 0;
-    min-width: 0;
-    justify-content: center;
-    padding: .5rem .2rem;
-    margin: 0;
-    border-radius: 12px;
+  .st-key-mobile_bottom_nav [data-testid="column"] {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] {
+    width: 100%;
+  }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button {
+    width: 100%;
+    min-height: 4.4rem;
+    padding: .45rem .15rem;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: none;
+    white-space: pre-line;
+  }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
+    white-space: pre-line !important;
+    line-height: 1.35 !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
     text-align: center;
-    font-size: .85rem;
   }
-  .st-key-main_section_navigation [role="radiogroup"] input[type="radio"] { display: none !important; }
-  .st-key-main_section_navigation [role="radiogroup"] > label > div:first-child { display: none !important; }
-  .st-key-main_section_navigation [role="radiogroup"] > label:has(input:checked) {
-    background: var(--primary-color, #1769aa) !important;
-    color: white !important;
-    font-weight: 750 !important;
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button:focus,
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button:hover {
+    border: 0;
+    background: rgba(80,120,180,.12);
   }
-  .st-key-main_section_navigation [role="radiogroup"] > label p {
-    font-size: .9rem !important;
-    font-weight: 650 !important;
-    white-space: nowrap !important;
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button[kind="primary"] {
+    background: var(--primary-color, #1769aa);
+    color: white;
+  }
+}
+@media (min-width: 769px) {
+  .st-key-mobile_bottom_nav { margin: .5rem 0 1rem; }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
+    font-weight: 650;
   }
 }
 </style>
 """, unsafe_allow_html=True)
-active_section = st.radio(
-    "التنقل الرئيسي",
-    section_labels,
-    index=0,
-    horizontal=True,
-    label_visibility="collapsed",
-    key="main_section_navigation",
-)
+
+if "main_section_navigation" not in st.session_state:
+    st.session_state["main_section_navigation"] = section_labels[0]
+
+with st.container(key="mobile_bottom_nav"):
+    nav_cols = st.columns(3, gap="small")
+    nav_items = [
+        (section_labels[0], "📈  \nالفرص"),
+        (section_labels[1], "💼  \nالمحفظة"),
+        (section_labels[2], "☰  \nالمزيد"),
+    ]
+    for col, (section_value, button_label) in zip(nav_cols, nav_items):
+        with col:
+            if st.button(
+                button_label,
+                key=f"nav_{section_value}",
+                type="primary" if st.session_state["main_section_navigation"] == section_value else "secondary",
+                use_container_width=True,
+            ):
+                st.session_state["main_section_navigation"] = section_value
+                st.rerun()
+
+active_section = st.session_state["main_section_navigation"]
 more_section = None
 if active_section == section_labels[2]:
     more_section = st.selectbox("أقسام إضافية", more_labels, label_visibility="collapsed", key="more_section_navigation")
