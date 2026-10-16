@@ -11,16 +11,26 @@ import requests
 import yfinance as yf
 
 SHARIA_FUNDS = [
-    {"name": "مصر مؤشر شريعة إكويتي – CI", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "مصر شريعة إكويتي – CI", "category": "sharia_equity", "proxy": "EGX33"},
     {"name": "بلتون وفرة – EGX33", "category": "sharia_equity", "proxy": "EGX33"},
     {"name": "كنز شريعة EGX33 – AAIH", "category": "sharia_equity", "proxy": "EGX33"},
-    {"name": "AZ فرص الشريعة", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "أزيموت فرص الشريعة AZ", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "نعيم مصر للأسهم المتوافق مع الشريعة", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "سنابل الإسلامي", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "الوفاق الإسلامي", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "الحصن – بنك مصر", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "أمان المتوافق مع الشريعة", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "ألفا المتوافق مع الشريعة – بيت التمويل الكويتي", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "هلال – بنك نكست", "category": "sharia_equity", "proxy": "EGX33"},
+    {"name": "هيرميس لأسهم الشريعة", "category": "sharia_equity", "proxy": "EGX33"},
 ]
 GOLD_FUNDS = [
-    {"name": "سبيكة – Beltone Evolve Gold", "category": "gold", "proxy": "XAUUSD"},
-    {"name": "Gold Misr – CI", "category": "gold", "proxy": "XAUUSD"},
-    {"name": "AZ Gold", "category": "gold", "proxy": "XAUUSD"},
-    {"name": "EFG Hermes Gold Fund", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "أزيموت جولد", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "بلتون سبائك", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "الأهلي دهب", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "جولد مصر", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "دهب مباشر", "category": "gold", "proxy": "XAUUSD"},
+    {"name": "هيرميس للاستثمار في الذهب", "category": "gold", "proxy": "XAUUSD"},
 ]
 
 def _gold_series(years: int = 5, state: dict | None = None, cfg: dict | None = None) -> pd.Series | None:
@@ -80,14 +90,24 @@ def _normalize_digits(value: str) -> str:
 
 # App labels -> exact public fund names/codes on Snduk.
 FUND_SOURCE_MATCHES = {
-    "مصر مؤشر شريعة إكويتي – CI": ("CSF", ("مصر شريعة إكويتي", "Misr Shariah Equity")),
-    "بلتون وفرة – EGX33": ("BWA", ("بلتون وفرة", "Beltone Wafra")),
-    "كنز شريعة EGX33 – AAIH": ("KSF", ("كنز EGX33", "Kenz EGX33 Shariah")),
-    "AZ فرص الشريعة": ("ASO", ("ازيموت فرص الشريعة", "Azimut Opportunities Shariah")),
-    "سبيكة – Beltone Evolve Gold": ("BSB", ("بلتون سبائك", "Beltone Sabayek")),
-    "Gold Misr – CI": ("CGF", ("جولد مصر", "Gold Masr", "CIAM Gold")),
-    "AZ Gold": ("AZG", ("ازيموت جولد", "Azimut Gold")),
-    "EFG Hermes Gold Fund": ("HGF", ("هيرميس للاستثمار في الذهب", "EFG Hermes Gold")),
+    "مصر شريعة إكويتي – CI": ("CSF", ("مصر شريعة إكويتي", "Misr Shariah Equity")),
+    "بلتون وفرة – EGX33": ("BWA", ("بلتون وفرة للاستثمار", "Beltone Wafra")),
+    "كنز شريعة EGX33 – AAIH": ("KZF", ("كنز شريعة EGX33", "كنز شريعة", "Kenz EGX33 Shariah")),
+    "أزيموت فرص الشريعة AZ": ("AZS", ("ازيموت فرص الشريعة", "أزيموت فرص الشريعة", "Azimut Shariah")),
+    "نعيم مصر للأسهم المتوافق مع الشريعة": ("NMF", ("نعيم مصر للأسهم المتوافق مع الشريعة",)),
+    "سنابل الإسلامي": ("SAN", ("سنابل الإسلامي", "Sanabel Islamic")),
+    "الوفاق الإسلامي": ("WIF", ("الوفاق الإسلامي",)),
+    "الحصن – بنك مصر": ("HOS", ("الحصن المتوافق مع الشريعة", "صندوق الحصن")),
+    "أمان المتوافق مع الشريعة": ("AMAN", ("أمان المتوافق مع الشريعة",)),
+    "ألفا المتوافق مع الشريعة – بيت التمويل الكويتي": ("ALF", ("ألفا للاستثمار فى الأسهم", "ألفا للاستثمار في الأسهم")),
+    "هلال – بنك نكست": ("HEL", ("صندوق هلال",)),
+    "هيرميس لأسهم الشريعة": ("HES", ("هيرميس لأسهم الشريعة",)),
+    "أزيموت جولد": ("AZG", ("ازيموت جولد المتوافق مع الشريعة", "Azimut Gold")),
+    "بلتون سبائك": ("BSB", ("بلتون سبائك", "Beltone Sabayek")),
+    "الأهلي دهب": ("ADF", ("الأهلي دهب",)),
+    "جولد مصر": ("CGF", ("جولد مصر", "Gold Misr")),
+    "دهب مباشر": ("DMB", ("دهب مباشر",)),
+    "هيرميس للاستثمار في الذهب": ("HGF", ("هيرميس للاستثمار في الذهب", "هيرميس للذهب")),
 }
 
 
