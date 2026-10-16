@@ -139,17 +139,17 @@ st.markdown("""
     right: 0 !important;
     bottom: 0 !important;
     transform: none !important;
-    width: 100% !important;
-    max-width: none !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     box-sizing: border-box !important;
     z-index: 99999 !important;
     margin: 0 !important;
-    padding: .35rem .5rem calc(.35rem + env(safe-area-inset-bottom)) !important;
+    padding: .35rem .35rem calc(.35rem + env(safe-area-inset-bottom)) !important;
     background: var(--background-color, #fff) !important;
     border: 0 !important;
     border-top: 1px solid var(--line, #d9e0e8) !important;
     border-radius: 0 !important;
-    box-shadow: 0 -4px 16px rgba(20,36,58,.12) !important;
+    box-shadow: 0 -2px 10px rgba(20,36,58,.08) !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stHorizontalBlock"] {
     display: flex !important;
