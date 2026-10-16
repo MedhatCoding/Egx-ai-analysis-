@@ -553,7 +553,10 @@ if active_section == section_labels[1]:
                     pnl_value = float(pnl) if pd.notna(pnl) else None
                 except (TypeError, ValueError):
                     pnl_value = None
-                if current_price <= 0 or pnl_value is None:
+                is_fund = str(rr.get("النوع", "")) == "صندوق"
+                # صندوق الاستثمار لا تتوفر له دائمًا قيمة سوقية/سعر وحدة لحظي في مصدر البيانات.
+                # لا نحجب إشارة الفئة بسبب غياب سعر الصندوق، لكن نوضح أن العائد غير متاح.
+                if (not is_fund) and (current_price <= 0 or pnl_value is None):
                     decision = "البيانات غير كافية"
                     action_color, action_bg, action_icon = "#64748b", "#eef2f6", "⏳"
                 elif "زيادة" in decision:
@@ -585,17 +588,29 @@ if active_section == section_labels[1]:
                     f'<div style="font-size:1.05rem;font-weight:800">{ui.e(rr["النوع"])} · {ui.e(rr["الأصل"])}</div>'
                     f'<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .7rem;border-radius:999px;background:{action_bg};color:{action_color};font-weight:800">{action_icon} {ui.e(decision)}</span></div>'
                     f'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">'
-                    f'<span style="color:var(--muted);font-size:.85rem">الربح / الخسارة</span>'
-                    f'<b style="font-size:1.15rem;color:{pnl_color};direction:ltr">{pnl_text}</b></div>'
-                    f'{score_html}<div style="margin-top:.8rem;line-height:1.7">{ui.e(rr["reason"])}</div></article>',
+                    f'<span style="color:var(--muted);font-size:.85rem">{"عائد الصندوق" if is_fund else "الربح / الخسارة"}</span>'
+                    f'<b style="font-size:1.05rem;color:{pnl_color};direction:ltr">{("غير متاح من مصدر البيانات الحالي" if is_fund else pnl_text)}</b></div>'
+                    f'{score_html}<div style="margin-top:.8rem;line-height:1.7">{ui.e(rr["reason"])}</div>'
+                    f'{"<div style=\'margin-top:.55rem;font-size:.78rem;color:var(--muted)\'>تنبيه: التقييم المتاح يعكس بيانات فئة الصندوق، وليس سعرًا لحظيًا أو عائدًا مؤكدًا لهذا الصندوق بعينه.</div>" if is_fund else ""}</article>',
                     unsafe_allow_html=True,
                 )
 
+            st.markdown('<div style="margin-top:1rem;margin-bottom:.5rem;font-weight:800;font-size:1rem">📦 أدوات تصدير المحفظة</div>', unsafe_allow_html=True)
             exp = pd.DataFrame(holdings).to_csv(index=False).encode("utf-8-sig")
-            st.download_button("حفظ المحفظة CSV", exp, "my_egx_portfolio.csv", "text/csv")
             blob = json.dumps(holdings, ensure_ascii=False, indent=2).encode("utf-8")
-            st.download_button("تصدير ملف التشغيل اليومي", blob, "portfolio.json", "application/json",
-                               help="ضع الملف باسم data/portfolio.json في المستودع ليقرأه التقرير اليومي تلقائيًا.")
+            ex1, ex2 = st.columns(2)
+            with ex1:
+                st.download_button(
+                    "⬇️ تنزيل نسخة احتياطية CSV", exp, "my_egx_portfolio.csv", "text/csv",
+                    help="ملف جدول يمكنك فتحه في Excel للاحتفاظ بنسخة من الأسهم والصناديق.",
+                    use_container_width=True,
+                )
+            with ex2:
+                st.download_button(
+                    "📨 تنزيل ملف التقرير اليومي JSON", blob, "portfolio.json", "application/json",
+                    help="ملف بيانات بصيغة JSON. تنزيله وحده لا يرفعه إلى GitHub ولا يرسله إلى تيليجرام.",
+                    use_container_width=True,
+                )
             ps = latest.get("portfolio") or {}
             sm = ps.get("summary") or {}
             if sm:
