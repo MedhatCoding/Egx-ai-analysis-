@@ -123,11 +123,45 @@ notes = report.get("notes") or {}
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
 section_labels = ["الفرص", "المحفظة", "المزيد"]
 more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
-st.markdown(
-    '<div class="nav-heading"><span class="nav-title">مستشارك في البورصة</span>'
-    '<span class="nav-hint">3 تبويبات رئيسية</span></div>',
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+  .main .block-container { padding-bottom: 7rem !important; }
+  .st-key-main_section_navigation {
+    position: fixed;
+    left: 50%;
+    bottom: .75rem;
+    transform: translateX(-50%);
+    width: calc(100vw - 1.5rem);
+    max-width: 560px;
+    z-index: 1000;
+    background: var(--surface, white);
+    border: 1px solid var(--line, #ddd);
+    border-radius: 18px;
+    padding: .5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.14);
+    margin: 0;
+  }
+  .st-key-main_section_navigation [data-testid="stRadio"] > label { display: none; }
+  .st-key-main_section_navigation [role="radiogroup"] {
+    display: flex;
+    width: 100%;
+    gap: .25rem;
+  }
+  .st-key-main_section_navigation [role="radiogroup"] > label {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding: .5rem .2rem;
+    margin: 0;
+    border-radius: 12px;
+    text-align: center;
+    font-size: .85rem;
+  }
+  .st-key-main_section_navigation [role="radiogroup"] > label > div:first-child { display: none; }
+}
+</style>
+""", unsafe_allow_html=True)
 active_section = st.radio(
     "التنقل الرئيسي",
     section_labels,
