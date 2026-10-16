@@ -126,7 +126,9 @@ more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء
 st.markdown("""
 <style>
 @media (max-width: 768px) {
-  .main .block-container { padding-bottom: calc(9rem + env(safe-area-inset-bottom)) !important; scroll-padding-bottom: 9rem; }
+  [data-testid="stAppViewContainer"] [data-testid="stMain"] .block-container,
+  section[data-testid="stMain"] .block-container,
+  .main .block-container { padding-bottom: calc(12rem + env(safe-area-inset-bottom)) !important; scroll-padding-bottom: 12rem !important; }
   .st-key-mobile_bottom_nav { bottom: calc(.5rem + env(safe-area-inset-bottom)); }
   .st-key-mobile_bottom_nav {
     position: fixed;
@@ -525,24 +527,30 @@ if active_section == section_labels[1]:
             unsafe_allow_html=True,
         )
         if not dfp.empty:
-            view = dfp[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار"]].copy()
-            render_cards(view, title_candidates=("الأصل", "النوع"))
             for _, rr in dfp.iterrows():
                 decision = str(rr.get("القرار", "مراجعة"))
-                if "زيادة" in decision:
-                    action_color, action_bg, action_icon = "#087f5b", "#e4f7ee", "➕"
-                elif "بيع" in decision:
-                    action_color, action_bg, action_icon = "#c0392b", "#fff0ee", "↘"
-                elif "احتفاظ" in decision:
-                    action_color, action_bg, action_icon = "#1769aa", "#eaf3ff", "⏸"
-                else:
-                    action_color, action_bg, action_icon = "#8a6500", "#fff7db", "ℹ️"
-
+                try:
+                    current_price = float(rr.get("السعر الحالي", 0) or 0)
+                except (TypeError, ValueError):
+                    current_price = 0.0
                 pnl = rr.get("الربح/الخسارة %")
                 try:
                     pnl_value = float(pnl) if pd.notna(pnl) else None
                 except (TypeError, ValueError):
                     pnl_value = None
+                if current_price <= 0 or pnl_value is None:
+                    decision = "البيانات غير كافية"
+                    action_color, action_bg, action_icon = "#64748b", "#eef2f6", "⏳"
+                elif "زيادة" in decision:
+                    action_color, action_bg, action_icon = "#087f5b", "#e4f7ee", "➕"
+                elif "بيع" in decision:
+                    action_color, action_bg, action_icon = "#c0392b", "#fff0ee", "↘"
+                elif "احتفاظ" in decision:
+                    action_color, action_bg, action_icon = "#1769aa", "#eaf3ff", "⏸"
+                elif "البيانات غير كافية" in decision:
+                    pass
+                else:
+                    action_color, action_bg, action_icon = "#8a6500", "#fff7db", "ℹ️"
                 pnl_color = "#087f5b" if pnl_value is not None and pnl_value > 0 else "#c0392b" if pnl_value is not None and pnl_value < 0 else "#64748b"
                 pnl_text = f"{pnl_value:+.2f}%" if pnl_value is not None else "غير متاح"
 
@@ -727,4 +735,4 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
             render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
 
 st.markdown(ui.legal_html(), unsafe_allow_html=True)
-st.markdown('<div class="mobile-bottom-nav-spacer" aria-hidden="true"></div>', unsafe_allow_html=True)
+st.markdown('<div class="mobile-bottom-nav-spacer" style="height:180px;min-height:180px;width:100%" aria-hidden="true"></div>', unsafe_allow_html=True)
