@@ -97,9 +97,9 @@ def evaluate(holdings: list[dict], table: pd.DataFrame | None, funds: dict, regi
 def totals(df: pd.DataFrame) -> dict:
     if df is None or df.empty:
         return {"value": 0, "cost": 0, "pnl": 0, "pnl_pct": None}
-    stocks = df[df["النوع"] == "سهم"].copy()
-    value = float(stocks["القيمة"].fillna(0).sum())
-    cost = float((stocks["الكمية"].fillna(0) * stocks["متوسط التكلفة"].fillna(0)).sum())
+    priced = df.copy()
+    value = float(pd.to_numeric(priced["القيمة"], errors="coerce").fillna(0).sum())
+    cost = float((pd.to_numeric(priced["الكمية"], errors="coerce").fillna(0) * pd.to_numeric(priced["متوسط التكلفة"], errors="coerce").fillna(0)).where(priced["القيمة"].notna(), 0).sum())
     pnl = value - cost
     return {"value": value, "cost": cost, "pnl": pnl, "pnl_pct": pnl / cost * 100 if cost else None}
 
