@@ -125,13 +125,13 @@ section_labels = ["📈 الفرص", "💼 المحفظة", "☰ المزيد"]
 more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
 st.markdown("""
 <style>
-/* App-style bottom navigation: full-width dock, anchored to viewport edge. */
+/* Mobile: full-width bottom navigation, docked to the viewport edge (not a floating pill). */
 @media (max-width: 768px) {
   [data-testid="stAppViewContainer"] [data-testid="stMain"] .block-container,
   section[data-testid="stMain"] .block-container,
   .main .block-container {
-    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)) !important;
-    scroll-padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom)) !important;
+    scroll-padding-bottom: calc(8.5rem + env(safe-area-inset-bottom)) !important;
   }
   .st-key-mobile_bottom_nav {
     position: fixed !important;
@@ -139,23 +139,22 @@ st.markdown("""
     right: 0 !important;
     bottom: 0 !important;
     transform: none !important;
-    width: 100vw !important;
+    width: 100% !important;
     max-width: none !important;
     box-sizing: border-box !important;
     z-index: 99999 !important;
     margin: 0 !important;
     padding: .35rem .5rem calc(.35rem + env(safe-area-inset-bottom)) !important;
-    background: var(--surface, #fff) !important;
+    background: var(--background-color, #fff) !important;
     border: 0 !important;
-    border-top: 1px solid var(--line, #dce3eb) !important;
+    border-top: 1px solid var(--line, #d9e0e8) !important;
     border-radius: 0 !important;
     box-shadow: 0 -4px 16px rgba(20,36,58,.12) !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stHorizontalBlock"] {
     display: flex !important;
-    gap: .35rem !important;
+    gap: .25rem !important;
     width: 100% !important;
-    margin: 0 !important;
   }
   .st-key-mobile_bottom_nav [data-testid="column"] {
     flex: 1 1 0 !important;
@@ -168,30 +167,43 @@ st.markdown("""
     width: 100% !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button {
-    min-height: 4.2rem !important;
-    padding: .35rem .1rem !important;
+    min-height: 4.25rem !important;
+    padding: .4rem .1rem !important;
+    margin: 0 !important;
     border: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     box-shadow: none !important;
-    white-space: pre-line !important;
     background: transparent !important;
+    white-space: pre-line !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
     white-space: pre-line !important;
-    line-height: 1.3 !important;
-    font-size: 1rem !important;
+    line-height: 1.35 !important;
+    font-size: .95rem !important;
     font-weight: 750 !important;
     text-align: center !important;
     margin: 0 !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button[kind="primary"] {
-    background: var(--primary-color, #1769aa) !important;
-    color: #fff !important;
+    background: var(--primary-color, #20527b) !important;
+    color: white !important;
   }
 }
+/* Desktop keeps a normal in-flow navigation row. */
 @media (min-width: 769px) {
-  .st-key-mobile_bottom_nav { margin: .5rem 0 1rem; }
-  .st-key-mobile_bottom_nav [data-testid="stButton"] button p { font-weight: 650; }
+  .st-key-mobile_bottom_nav {
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: .5rem 0 1rem !important;
+    padding: .35rem !important;
+    background: var(--surface, white);
+    border: 1px solid var(--line, #ddd);
+    border-radius: 12px;
+  }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
+    font-weight: 650;
+  }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -738,4 +750,4 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
             render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
 
 st.markdown(ui.legal_html(), unsafe_allow_html=True)
-st.markdown('<div class="mobile-bottom-nav-spacer" style="height:180px;min-height:180px;width:100%" aria-hidden="true"></div>', unsafe_allow_html=True)
+st.markdown('<div class="mobile-bottom-nav-spacer" style="height:120px;min-height:120px;width:100%" aria-hidden="true"></div>', unsafe_allow_html=True)
