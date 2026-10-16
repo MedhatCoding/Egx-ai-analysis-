@@ -125,70 +125,73 @@ section_labels = ["📈 الفرص", "💼 المحفظة", "☰ المزيد"]
 more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
 st.markdown("""
 <style>
+/* App-style bottom navigation: full-width dock, anchored to viewport edge. */
 @media (max-width: 768px) {
   [data-testid="stAppViewContainer"] [data-testid="stMain"] .block-container,
   section[data-testid="stMain"] .block-container,
-  .main .block-container { padding-bottom: calc(12rem + env(safe-area-inset-bottom)) !important; scroll-padding-bottom: 12rem !important; }
-  .st-key-mobile_bottom_nav { bottom: calc(.5rem + env(safe-area-inset-bottom)); }
+  .main .block-container {
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)) !important;
+    scroll-padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)) !important;
+  }
   .st-key-mobile_bottom_nav {
-    position: fixed;
-    left: 50%;
-    bottom: .65rem;
-    transform: translateX(-50%);
-    width: calc(100vw - 1rem);
-    max-width: 560px;
-    z-index: 1000;
-    background: var(--surface, white);
-    border: 1px solid var(--line, #ddd);
-    border-radius: 20px;
-    padding: .35rem;
-    box-shadow: 0 5px 20px rgba(0,0,0,.18);
-    margin: 0;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    transform: none !important;
+    width: 100vw !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    z-index: 99999 !important;
+    margin: 0 !important;
+    padding: .35rem .5rem calc(.35rem + env(safe-area-inset-bottom)) !important;
+    background: var(--surface, #fff) !important;
+    border: 0 !important;
+    border-top: 1px solid var(--line, #dce3eb) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 -4px 16px rgba(20,36,58,.12) !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stHorizontalBlock"] {
-    display: flex;
-    gap: .25rem;
+    display: flex !important;
+    gap: .35rem !important;
+    width: 100% !important;
+    margin: 0 !important;
   }
   .st-key-mobile_bottom_nav [data-testid="column"] {
     flex: 1 1 0 !important;
     width: 0 !important;
     min-width: 0 !important;
+    padding: 0 !important;
   }
-  .st-key-mobile_bottom_nav [data-testid="stButton"] {
-    width: 100%;
+  .st-key-mobile_bottom_nav [data-testid="stButton"],
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button {
+    width: 100% !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button {
-    width: 100%;
-    min-height: 4.4rem;
-    padding: .45rem .15rem;
-    border: 0;
-    border-radius: 14px;
-    background: transparent;
-    box-shadow: none;
-    white-space: pre-line;
+    min-height: 4.2rem !important;
+    padding: .35rem .1rem !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    white-space: pre-line !important;
+    background: transparent !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
     white-space: pre-line !important;
-    line-height: 1.35 !important;
+    line-height: 1.3 !important;
     font-size: 1rem !important;
-    font-weight: 700 !important;
-    text-align: center;
-  }
-  .st-key-mobile_bottom_nav [data-testid="stButton"] button:focus,
-  .st-key-mobile_bottom_nav [data-testid="stButton"] button:hover {
-    border: 0;
-    background: rgba(80,120,180,.12);
+    font-weight: 750 !important;
+    text-align: center !important;
+    margin: 0 !important;
   }
   .st-key-mobile_bottom_nav [data-testid="stButton"] button[kind="primary"] {
-    background: var(--primary-color, #1769aa);
-    color: white;
+    background: var(--primary-color, #1769aa) !important;
+    color: #fff !important;
   }
 }
 @media (min-width: 769px) {
   .st-key-mobile_bottom_nav { margin: .5rem 0 1rem; }
-  .st-key-mobile_bottom_nav [data-testid="stButton"] button p {
-    font-weight: 650;
-  }
+  .st-key-mobile_bottom_nav [data-testid="stButton"] button p { font-weight: 650; }
 }
 </style>
 """, unsafe_allow_html=True)
