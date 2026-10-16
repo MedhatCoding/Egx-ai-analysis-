@@ -571,6 +571,11 @@ if active_section == section_labels[1]:
                     action_color, action_bg, action_icon = "#8a6500", "#fff7db", "ℹ️"
                 pnl_color = "#087f5b" if pnl_value is not None and pnl_value > 0 else "#c0392b" if pnl_value is not None and pnl_value < 0 else "#64748b"
                 pnl_text = f"{pnl_value:+.2f}%" if pnl_value is not None else "غير متاح"
+                fund_note = (
+                    '<div style="margin-top:.55rem;font-size:.78rem;color:var(--muted)">'
+                    'تنبيه: التقييم المتاح يعكس بيانات فئة الصندوق، وليس سعرًا لحظيًا أو عائدًا مؤكدًا لهذا الصندوق بعينه.</div>'
+                    if is_fund else ""
+                )
 
                 score = rr.get("النقاط")
                 try:
@@ -591,7 +596,7 @@ if active_section == section_labels[1]:
                     f'<span style="color:var(--muted);font-size:.85rem">{"عائد الصندوق" if is_fund else "الربح / الخسارة"}</span>'
                     f'<b style="font-size:1.05rem;color:{pnl_color};direction:ltr">{("غير متاح من مصدر البيانات الحالي" if is_fund else pnl_text)}</b></div>'
                     f'{score_html}<div style="margin-top:.8rem;line-height:1.7">{ui.e(rr["reason"])}</div>'
-                    f'{"<div style=\'margin-top:.55rem;font-size:.78rem;color:var(--muted)\'>تنبيه: التقييم المتاح يعكس بيانات فئة الصندوق، وليس سعرًا لحظيًا أو عائدًا مؤكدًا لهذا الصندوق بعينه.</div>" if is_fund else ""}</article>',
+                    f'{fund_note}</article>',
                     unsafe_allow_html=True,
                 )
 
