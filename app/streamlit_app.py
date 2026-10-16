@@ -126,7 +126,8 @@ more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء
 st.markdown("""
 <style>
 @media (max-width: 768px) {
-  .main .block-container { padding-bottom: 7.5rem !important; }
+  .main .block-container { padding-bottom: calc(9rem + env(safe-area-inset-bottom)) !important; scroll-padding-bottom: 9rem; }
+  .st-key-mobile_bottom_nav { bottom: calc(.5rem + env(safe-area-inset-bottom)); }
   .st-key-mobile_bottom_nav {
     position: fixed;
     left: 50%;
@@ -527,8 +528,45 @@ if active_section == section_labels[1]:
             view = dfp[["النوع", "الأصل", "الكمية", "متوسط التكلفة", "السعر الحالي", "الربح/الخسارة %", "النقاط", "القرار"]].copy()
             render_cards(view, title_candidates=("الأصل", "النوع"))
             for _, rr in dfp.iterrows():
-                st.markdown(ui.section(f"{rr['النوع']}: {rr['الأصل']}", f"قرار: {rr['القرار']}"), unsafe_allow_html=True)
-                st.markdown(f'<div class="note">{ui.e(rr["reason"])}</div>', unsafe_allow_html=True)
+                decision = str(rr.get("القرار", "مراجعة"))
+                if "زيادة" in decision:
+                    action_color, action_bg, action_icon = "#087f5b", "#e4f7ee", "➕"
+                elif "بيع" in decision:
+                    action_color, action_bg, action_icon = "#c0392b", "#fff0ee", "↘"
+                elif "احتفاظ" in decision:
+                    action_color, action_bg, action_icon = "#1769aa", "#eaf3ff", "⏸"
+                else:
+                    action_color, action_bg, action_icon = "#8a6500", "#fff7db", "ℹ️"
+
+                pnl = rr.get("الربح/الخسارة %")
+                try:
+                    pnl_value = float(pnl) if pd.notna(pnl) else None
+                except (TypeError, ValueError):
+                    pnl_value = None
+                pnl_color = "#087f5b" if pnl_value is not None and pnl_value > 0 else "#c0392b" if pnl_value is not None and pnl_value < 0 else "#64748b"
+                pnl_text = f"{pnl_value:+.2f}%" if pnl_value is not None else "غير متاح"
+
+                score = rr.get("النقاط")
+                try:
+                    score_value = max(0.0, min(100.0, float(score))) if pd.notna(score) else None
+                except (TypeError, ValueError):
+                    score_value = None
+                score_html = (
+                    f'<div style="margin-top:.75rem"><div style="display:flex;justify-content:space-between;gap:.5rem;font-size:.82rem;margin-bottom:.3rem"><span>درجة التقييم</span><b>{score_value:.0f}/100</b></div>'
+                    f'<div style="height:7px;background:#e8edf3;border-radius:99px;overflow:hidden"><div style="height:100%;width:{score_value:.0f}%;background:{action_color};border-radius:99px"></div></div></div>'
+                    if score_value is not None else ""
+                )
+                st.markdown(
+                    f'<article style="border:1px solid {action_color}55;border-right:5px solid {action_color};background:var(--surface);border-radius:16px;padding:1rem;margin:.65rem 0;box-shadow:0 4px 14px rgba(20,36,58,.06)">'
+                    f'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap">'
+                    f'<div style="font-size:1.05rem;font-weight:800">{ui.e(rr["النوع"])} · {ui.e(rr["الأصل"])}</div>'
+                    f'<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .7rem;border-radius:999px;background:{action_bg};color:{action_color};font-weight:800">{action_icon} {ui.e(decision)}</span></div>'
+                    f'<div style="display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:.8rem">'
+                    f'<span style="color:var(--muted);font-size:.85rem">الربح / الخسارة</span>'
+                    f'<b style="font-size:1.15rem;color:{pnl_color};direction:ltr">{pnl_text}</b></div>'
+                    f'{score_html}<div style="margin-top:.8rem;line-height:1.7">{ui.e(rr["reason"])}</div></article>',
+                    unsafe_allow_html=True,
+                )
 
             exp = pd.DataFrame(holdings).to_csv(index=False).encode("utf-8-sig")
             st.download_button("حفظ المحفظة CSV", exp, "my_egx_portfolio.csv", "text/csv")
@@ -689,3 +727,4 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
             render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
 
 st.markdown(ui.legal_html(), unsafe_allow_html=True)
+st.markdown('<div class="mobile-bottom-nav-spacer" aria-hidden="true"></div>', unsafe_allow_html=True)
