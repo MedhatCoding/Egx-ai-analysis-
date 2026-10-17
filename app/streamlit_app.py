@@ -281,7 +281,7 @@ if active_section == section_labels[0]:
         ])
         render_cards(wdf, title_candidates=("الشركة", "الرمز"))
 
-    if regime is not None and len(regime) > 60:
+    if isinstance(regime, (pd.DataFrame, pd.Series)) and len(regime) > 60:
         st.markdown(ui.section("اتجاه المؤشر", "المؤشر مقابل متوسطيه 50 و200 يومًا"), unsafe_allow_html=True)
         wide(st.plotly_chart, charts.index_chart(regime, latest["market"].get("bench_name", "المؤشر")), config={"displayModeBar": False})
 
