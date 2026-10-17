@@ -230,7 +230,15 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
             # request only a small overlap, then merge, so the cache retains the full
             # history without downloading it again every morning.
             if cached is not None and len(cached):
-                start = (cached.index[-1] - timedelta(days=7)).date()
+                target_start = date.today() - timedelta(days=int(d["history_years"] * 365.25))
+                # If the cache predates this configuration or is materially shorter
+                # than the requested history, backfill the missing years once.
+                # Otherwise fetch only a small overlap for a cheap daily refresh.
+                cache_start = cached.index[0].date()
+                if cache_start > target_start + timedelta(days=30):
+                    start = target_start
+                else:
+                    start = (cached.index[-1] - timedelta(days=7)).date()
                 fresh = fetch_yahoo_from(code + d["yahoo_suffix"], start)
             else:
                 fresh = fetch_yahoo(code + d["yahoo_suffix"], d["history_years"])
