@@ -42,20 +42,23 @@ def compute_regime(bench_close: pd.Series | None, close_panel: pd.DataFrame, cfg
     comp_b200 = pd.Series(np.where(s200.isna(), 0.5, (bench > s200).astype(float)), index=idx)
     comp_slope = (s50 > s50.shift(10)).astype(float)
 
+    # Causal seasonality: at date d, use only completed monthly returns from
+    # prior years. Never use the current month's partial return or future years
+    # when calculating historical regime scores/backtests.
     monthly = bench.resample("ME").last().pct_change().dropna()
-    month_avg = monthly.groupby(monthly.index.month).mean()
-    month_count = monthly.groupby(monthly.index.month).count()
     season_w = float(cfg["regime"].get("seasonality_weight", 0.0))
     min_month_obs = int(cfg["regime"].get("seasonality_min_observations", 4))
     season_raw = pd.Series(index=idx, dtype=float)
     season_ret = pd.Series(index=idx, dtype=float)
     for d in idx:
         m = int(d.month)
-        avg, n = float(month_avg.get(m, 0.0)), int(month_count.get(m, 0))
+        month_start = d.to_period("M").start_time
+        prior = monthly[(monthly.index.month == m) & (monthly.index < month_start)]
+        n = int(prior.count())
+        avg = float(prior.mean()) if n else 0.0
         season_ret.loc[d] = avg * 100.0 if n >= min_month_obs else np.nan
         season_raw.loc[d] = 0.5 + 0.30 * np.tanh(avg / 0.06) if n >= min_month_obs else 0.5
 
-    season_w = float(cfg["regime"].get("seasonality_weight", 0.0))
     total_w = float(sum(w.values())) + season_w
     score = (
         w["bench_above_sma50"] * comp_b50 +
