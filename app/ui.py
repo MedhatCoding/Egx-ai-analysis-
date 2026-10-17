@@ -254,17 +254,29 @@ def header_html(latest: dict, report: dict | None) -> str:
 
 
 def verdict_html(latest: dict, view: str, warnings: list[str]) -> str:
-    rg, m = latest["regime"], latest["market"]
-    tone = TONE.get(rg["label"], "mid")
-    idx = ORDER.index(rg["label"]) if rg["label"] in ORDER else 2
+    # Partial/cached reports and smoke-test fixtures may omit regime fields.
+    rg = latest.get("regime") or {}
+    m = latest.get("market") or {}
+    try:
+        label = rg.get("label", "neutral")
+    except AttributeError:
+        label = "neutral"
+    label = label if label in ORDER else "neutral"
+    label_ar = rg.get("label_ar") or REGIME_AR.get(label, "محايد")
+    tone = TONE.get(label, "mid")
+    idx = ORDER.index(label)
     meter = "".join(f'<i class="on {tone}"></i>' if i == idx else "<i></i>" for i in range(len(ORDER)))
-    n_buy = len(latest.get("picks", []))
+    n_buy = len(latest.get("picks") or [])
     b50 = m.get("breadth50")
+    try:
+        breadth_text = bdi(f"{float(b50):.0f}%") if b50 is not None else "-"
+    except (TypeError, ValueError):
+        breadth_text = "-"
     stats = (
         f'<div class="stat"><span class="stat-l">{e(m.get("bench_name", "المؤشر"))} في آخر جلسة</span>'
         f'<span class="stat-v">{change_html(m.get("bench_change_1d"))}</span></div>'
         f'<div class="stat"><span class="stat-l">الأسهم فوق متوسط 50 يومًا</span>'
-        f'<span class="stat-v">{bdi(f"{b50:.0f}%") if b50 is not None else "-"}</span></div>'
+        f'<span class="stat-v">{breadth_text}</span></div>'
         f'<div class="stat"><span class="stat-l">أسهم صاعدة مقابل هابطة</span>'
         f'<span class="stat-v">{bdi(m.get("advancers", 0))} / {bdi(m.get("decliners", 0))}</span></div>'
         f'<div class="stat"><span class="stat-l">فرص الشراء اليوم</span>'
@@ -274,11 +286,14 @@ def verdict_html(latest: dict, view: str, warnings: list[str]) -> str:
     flag = ""
     if warnings:
         flag = '<div class="flag">' + "<br>".join(e(w) for w in warnings[:3]) + "</div>"
-    score_txt = f"{rg['score']:.0f}"
+    try:
+        score_txt = f"{float(rg.get('score', 50)):.0f}"
+    except (TypeError, ValueError):
+        score_txt = "50"
     return (
         '<section class="verdict"><div>'
-        f'<h1 class="v-title tone-{tone}">السوق {e(rg["label_ar"])}</h1>'
-        f'<p class="v-text">{e(view)}</p>'
+        f'<h1 class="v-title tone-{tone}">السوق {e(label_ar)}</h1>'
+        f'<p class="v-text">{e(view or "لا تتوفر تفاصيل كافية عن حالة السوق حاليًا.")}</p>'
         f'<div class="meter">{meter}</div>'
         f'<div class="meter-cap">درجة السوق {bdi(score_txt)} من 100، ومقياسها يجمع اتجاه المؤشر واتساع الأسهم</div>'
         f"{flag}</div>"
