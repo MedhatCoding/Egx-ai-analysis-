@@ -82,7 +82,7 @@ python tests/test_engine.py     # بدون إنترنت، ببيانات وهم�
 
 ## نطاق الأسهم المتوافقة مع الشريعة — تحديث 2026-10-17
 - الكون الافتراضي `sharia_union`: مكونات ملف EGX33 الحالي + الأسهم خارج المؤشر الموجودة في `data/sharia_extra.csv`.
-- أضيفت قائمة خارج المؤشر بناءً على **Boubyan Capital — List of Sharia Compliant Companies available for trading on the Egyptian Exchange as of Q1 2026**، إصدار 2026-06-08. المصدر: https://boubyancapital.com/media/filer_public/39/f0/39f09809-5448-4ba2-bfc3-3ff159779e11/egypt-list-q4-2025.pdf
+- أضيفت قائمة خارج المؤشر بناءً على **Boubyan Capital — List of Sharia Compliant Companies available for trading on the Egyptian Exchange as of Q1 2026**، إصدار 2026-06-08. المصدر: https://boubyancapital.com/media/filer_public/39/f0/39f09809-5448-4ba2-bfc3-3ff159779e11/egypt-list-q1-2026.pdf
 - هذه القائمة لها تاريخ مراجعة محدد وليست ضمانًا دائمًا؛ راجع آخر إصدار ربع سنوي والمنهجية الشرعية التي تعتمدها قبل إبقاء السهم معتمدًا. تاريخ المصدر محفوظ في كل سجل.
 - `data/sharia_candidates.csv` تعرض كل الأسهم خارج EGX33 الموجودة في قائمة المشروع، مع حالة `approved` أو `pending`. الأسهم `pending` لا تدخل التحليل أو التوصيات.
 - `data/universe.csv` قائمة تغطية ورموز تاريخية، وليست بمفردها إثباتًا للتوافق الشرعي.
