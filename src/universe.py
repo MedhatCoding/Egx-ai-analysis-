@@ -57,8 +57,12 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     extra = read_sharia_extra()
     mode = cfg["universe"]["mode"]
 
-    extra_merge = extra[["code", "name_ar", "verification_source"]].rename(
-        columns={"name_ar": "extra_name_ar", "verification_source": "sharia_source"}
+    extra_merge = extra[["code", "name_ar", "verification_source", "verified_on"]].rename(
+        columns={
+            "name_ar": "extra_name_ar",
+            "verification_source": "sharia_source",
+            "verified_on": "sharia_verified_on",
+        }
     )
     df = lst.merge(e33, on="code", how="outer").merge(extra_merge, on="code", how="outer")
     df["in_list"] = df["code"].isin(lst["code"])
@@ -67,6 +71,8 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["name_ar"] = df["name_ar"].fillna("")
     df["extra_name_ar"] = df["extra_name_ar"].fillna("")
     df["name_en"] = df["name_en"].fillna("")
+    df["sharia_source"] = df["sharia_source"].fillna("")
+    df["sharia_verified_on"] = df["sharia_verified_on"].fillna("")
     df["name_ar"] = df["name_ar"].where(df["name_ar"] != "", df["extra_name_ar"])
     df["name"] = df["name_ar"].where(df["name_ar"] != "", df["name_en"])
 
@@ -86,4 +92,7 @@ def build_universe(cfg: dict) -> pd.DataFrame:
 
     out = df[mask].sort_values("code").reset_index(drop=True)
     out["sharia_verified"] = out["in_egx33"] | out["in_sharia_extra"]
-    return out[["code", "name", "name_ar", "name_en", "in_list", "in_egx33", "in_sharia_extra", "sharia_verified"]]
+    return out[[
+        "code", "name", "name_ar", "name_en", "in_list", "in_egx33",
+        "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_verified_on",
+    ]]
