@@ -46,14 +46,15 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------- Yahoo
-def fetch_yahoo(symbol: str, years: int, retries: int = 3) -> pd.DataFrame | None:
+def fetch_yahoo_from(symbol: str, start: date | str, retries: int = 3) -> pd.DataFrame | None:
+    """Fetch adjusted Yahoo bars from a specific date; useful for low-cost incremental refresh."""
     import yfinance as yf  # استيراد متأخر عشان الاختبار بدون إنترنت
 
-    start = (date.today() - timedelta(days=int(years * 365.25))).isoformat()
+    start_text = start.isoformat() if isinstance(start, date) else str(start)
     last_err = None
     for attempt in range(retries):
         try:
-            raw = yf.Ticker(symbol).history(start=start, auto_adjust=True, actions=False)
+            raw = yf.Ticker(symbol).history(start=start_text, auto_adjust=True, actions=False)
             if raw is not None and len(raw) > 0:
                 raw = raw.rename(columns=str.lower)
                 return _clean(raw)
@@ -63,6 +64,11 @@ def fetch_yahoo(symbol: str, years: int, retries: int = 3) -> pd.DataFrame | Non
             time.sleep(1.5 * (attempt + 1))
     print(f"  [Yahoo] فشل {symbol}: {last_err}")
     return None
+
+
+def fetch_yahoo(symbol: str, years: int, retries: int = 3) -> pd.DataFrame | None:
+    start = date.today() - timedelta(days=int(years * 365.25))
+    return fetch_yahoo_from(symbol, start, retries=retries)
 
 
 # ---------------------------------------------------------------- EODHD
@@ -220,12 +226,23 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
         fresh = None
 
         if not offline:
-            fresh = fetch_yahoo(code + d["yahoo_suffix"], d["history_years"])
+            # Initial load: request the configured multi-year history. Daily refresh:
+            # request only a small overlap, then merge, so the cache retains the full
+            # history without downloading it again every morning.
+            if cached is not None and len(cached):
+                start = (cached.index[-1] - timedelta(days=7)).date()
+                fresh = fetch_yahoo_from(code + d["yahoo_suffix"], start)
+            else:
+                fresh = fetch_yahoo(code + d["yahoo_suffix"], d["history_years"])
             time.sleep(d["request_sleep"])
 
-        if fresh is not None and len(fresh) >= 20:
-            write_cache(code, fresh)
-            row.update(source="yahoo", bars=len(fresh), last_date=str(fresh.index[-1].date()))
+        if fresh is not None and len(fresh) >= 1:
+            merged = fresh
+            if cached is not None and len(cached):
+                merged = pd.concat([cached, fresh])
+                merged = merged[~merged.index.duplicated(keep="last")].sort_index()
+            write_cache(code, merged)
+            row.update(source="yahoo" if cached is None else "cache+yahoo", bars=len(merged), last_date=str(merged.index[-1].date()))
         elif cached is not None:
             merged, src = cached, "cache"
             # نحاول نكمّل آخر الشموع من EODHD لو فيه ميزانية
