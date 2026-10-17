@@ -266,7 +266,8 @@ def verdict_html(latest: dict, view: str, warnings: list[str]) -> str:
     tone = TONE.get(label, "mid")
     idx = ORDER.index(label)
     meter = "".join(f'<i class="on {tone}"></i>' if i == idx else "<i></i>" for i in range(len(ORDER)))
-    n_buy = len(latest.get("picks") or [])
+    raw_picks = latest.get("picks", [])
+    n_buy = len(raw_picks) if isinstance(raw_picks, (list, tuple)) else 0
     b50 = m.get("breadth50")
     try:
         breadth_text = bdi(f"{float(b50):.0f}%") if b50 is not None else "-"
