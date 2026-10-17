@@ -440,19 +440,29 @@ def test_universe_modes_on_real_files():
     lst = pd.read_csv(real / "universe.csv")
     assert len(lst) >= 140 and lst["code"].is_unique
     backup = {n: (TMP / n).read_bytes() for n in ("universe.csv", "egx33.txt")}
+    extra_path = TMP / "sharia_extra.csv"
+    extra_backup = extra_path.read_bytes() if extra_path.exists() else None
     try:
         shutil.copy(real / "universe.csv", TMP / "universe.csv")
         shutil.copy(real / "egx33.txt", TMP / "egx33.txt")
+        shutil.copy(real / "sharia_extra.csv", extra_path)
         cfg = {**CFG, "universe": {"mode": "union"}}
         u = build_universe(cfg)
         both = build_universe({**CFG, "universe": {"mode": "intersection"}})
         only_l = build_universe({**CFG, "universe": {"mode": "list_only"}})
+        sharia = build_universe({**CFG, "universe": {"mode": "sharia_union"}})
         assert len(only_l) == len(lst) and len(both) > 0 and len(u) >= len(lst)
         assert set(both["code"]) <= set(only_l["code"]) and set(only_l["code"]) <= set(u["code"])
         assert (u["in_list"] | u["in_egx33"]).all()
+        assert len(sharia) == 107 and sharia["sharia_verified"].all()
+        assert len(sharia.loc[sharia["in_sharia_extra"]]) == 73
     finally:
         for n, b in backup.items():
             (TMP / n).write_bytes(b)
+        if extra_backup is None:
+            extra_path.unlink(missing_ok=True)
+        else:
+            extra_path.write_bytes(extra_backup)
 
 
 def test_sharia_extra_requires_audited_approval():
