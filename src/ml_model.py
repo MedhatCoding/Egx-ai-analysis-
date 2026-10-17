@@ -40,8 +40,14 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
         return {}, {"enabled": False, "samples": 0, "auc": None}
 
     horizon = int(mcfg.get("horizon_days", 10))
-    threshold = float(mcfg.get("positive_return", 0.03))
-    data = _dataset(frames, horizon, threshold)
+    # Target is defined on net return: require the desired net gain PLUS round-trip
+    # trading costs, otherwise the model would learn "winners" that may be flat
+    # or negative after commissions and slippage.
+    net_threshold = float(mcfg.get("positive_return", 0.03))
+    cost_pct = float(cfg.get("risk", {}).get("round_trip_cost_pct", 0.0))
+    cost_fraction = max(0.0, cost_pct) / 100.0
+    gross_threshold = net_threshold + cost_fraction
+    data = _dataset(frames, horizon, gross_threshold)
     if len(data) < int(mcfg.get("min_samples", 500)):
         return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "عينات غير كافية"}
 
@@ -155,5 +161,8 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
     return dict(latest_rows), {
         "enabled": True, "samples": int(len(data)), **validation_meta,
         "model_used": True, "model": "RandomForest + MLP(32,16)",
-        "horizon_days": horizon, "positive_return": threshold,
+        "horizon_days": horizon,
+        "net_positive_return": net_threshold,
+        "round_trip_cost_pct": cost_pct,
+        "gross_return_threshold": gross_threshold,
     }
