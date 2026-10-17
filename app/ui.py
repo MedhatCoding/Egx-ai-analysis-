@@ -389,7 +389,8 @@ def pick_html(p: dict, note: str | None = None) -> str:
 def empty_picks_html(latest: dict) -> str:
     rg = latest["regime"]
     if rg.get("max_buys", 0) == 0:
-        why = (f"السوق {rg['label_ar']} حاليًا، فالنظام لا يصدر توصيات شراء في هذه البيئة. "
+        regime_label = rg.get("label_ar") or rg.get("label") or "غير محددة"
+        why = (f"السوق {regime_label} حاليًا، فالنظام لا يصدر توصيات شراء في هذه البيئة. "
                "الانتظار قرار مشروع، وقائمة المراقبة تحت تجهّزك لحين تحسّن الاتجاه.")
     else:
         why = ("لم يستوفِ أي سهم كل شروط الشراء اليوم (الاتجاه والسيولة والمقاومة والتشبّع). "
