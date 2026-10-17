@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, brier_score_loss
 
 FEATURES = [
     "score", "rsi14", "macd_hist", "atr_pct", "ret1", "ret5", "ret20", "ret60",
@@ -105,12 +105,33 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
     p_deep = deep.predict_proba(Xva)[:, 1]
     p = 0.55 * p_rf + 0.45 * p_deep
     auc = float(roc_auc_score(yva, p))
+    brier = float(brier_score_loss(yva, p))
+    # مرجع احتمالي بسيط: توقع معدل النجاح في بيانات التدريب لكل عينات التحقق.
+    baseline_rate = float(ytr.mean())
+    baseline_brier = float(brier_score_loss(yva, np.full(len(yva), baseline_rate)))
+    validation_meta = {
+        "auc": round(auc, 4),
+        "brier": round(brier, 4),
+        "baseline_brier": round(baseline_brier, 4),
+        "validation_samples": int(len(yva)),
+        "validation_start": str(validation_start.date()),
+        "validation_end": str(dates.loc[validation_mask].max().date()),
+    }
 
-    # إذا كان النموذج لا يتفوق على التخمين، لا نسمح له بتغيير الترتيب.
-    if auc < float(mcfg.get("min_auc", 0.52)):
+    # لا نسمح للنموذج بتغيير ترتيب الفرص إلا إذا اجتاز AUC وحسّن
+    # خط الأساس في Brier؛ جودة الترتيب وحدها لا تثبت جودة الاحتمالات.
+    min_auc = float(mcfg.get("min_auc", 0.52))
+    min_brier_improvement = float(mcfg.get("min_brier_improvement", 0.0))
+    required_brier = baseline_brier * (1.0 - min_brier_improvement)
+    if auc < min_auc or brier >= required_brier:
+        reason = (
+            "AUC أقل من الحد الأدنى؛ تم تجاهل النموذج"
+            if auc < min_auc
+            else "دقة الاحتمالات لم تتفوق على خط الأساس؛ تم تجاهل النموذج"
+        )
         return {}, {
-            "enabled": True, "samples": int(len(data)), "auc": round(auc, 4),
-            "model_used": False, "error": "AUC أقل من الحد الأدنى؛ تم تجاهل النموذج اليوم",
+            "enabled": True, "samples": int(len(data)), **validation_meta,
+            "model_used": False, "error": reason,
         }
 
     with warnings.catch_warnings():
@@ -132,7 +153,7 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
         latest_rows.append((code, pr))
 
     return dict(latest_rows), {
-        "enabled": True, "samples": int(len(data)), "auc": round(auc, 4),
+        "enabled": True, "samples": int(len(data)), **validation_meta,
         "model_used": True, "model": "RandomForest + MLP(32,16)",
         "horizon_days": horizon, "positive_return": threshold,
     }
