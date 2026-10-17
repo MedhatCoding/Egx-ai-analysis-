@@ -452,6 +452,30 @@ def test_universe_modes_on_real_files():
             (TMP / n).write_bytes(b)
 
 
+def test_sharia_extra_requires_audited_approval():
+    path = TMP / "sharia_extra.csv"
+    existed = path.exists()
+    backup = path.read_bytes() if existed else None
+    try:
+        pd.DataFrame([
+            {"code": "OUT1", "name_ar": "سهم خارجي معتمد", "verification_source": "مصدر شرعي موثق",
+             "verified_on": "2026-10-01", "notes": "test", "status": "approved"},
+            {"code": "OUT2", "name_ar": "سهم غير معتمد", "verification_source": "",
+             "verified_on": "", "notes": "test", "status": "pending"},
+        ]).to_csv(path, index=False)
+        union = build_universe({**CFG, "universe": {"mode": "union"}})
+        sharia = build_universe({**CFG, "universe": {"mode": "sharia_union"}})
+        assert "OUT1" not in set(union["code"])
+        assert "OUT1" in set(sharia["code"])
+        assert "OUT2" not in set(sharia["code"])
+        assert bool(sharia.loc[sharia["code"] == "OUT1", "sharia_verified"].iloc[0])
+    finally:
+        if existed:
+            path.write_bytes(backup)
+        else:
+            path.unlink(missing_ok=True)
+
+
 # ------------------------------------------------------------------ الواجهة
 def test_ui_html_builders():
     from app import ui
