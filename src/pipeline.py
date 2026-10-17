@@ -131,7 +131,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
     result = build_result(frames, regime_df, cls, len(codes), cfg)
-    sharia_codes = uni.loc[uni["in_egx33"], "code"].tolist()
+    sharia_codes = uni.loc[uni["sharia_verified"], "code"].tolist()
     sharia_parts = [prices[c]["close"].rename(c) for c in sharia_codes if c in prices]
     sharia_close = None
     if len(sharia_parts) >= 5:
