@@ -246,7 +246,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
             if add is not None and len(add) > 0:
                 write_cache(code, add)
                 row.update(source="eodhd", bars=len(add), last_date=str(add.index[-1].date()))
-                row["note"] = "من EODHD فقط (سنة تاريخ)"
+                row["note"] = f"من EODHD فقط ({cfg['data']['history_years']} سنوات مطلوبة؛ التغطية الفعلية حسب المصدر)"
             else:
                 row["note"] = "لا بيانات (Yahoo وEODHD)"
         else:
