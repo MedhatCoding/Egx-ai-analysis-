@@ -77,8 +77,10 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["name"] = df["name_ar"].where(df["name_ar"] != "", df["name_en"])
 
     if mode == "sharia_union":
-        # EGX33 constituents + independently screened/approved additions outside the index.
-        mask = df["in_egx33"] | df["in_sharia_extra"]
+        # Personal universe: user's curated Sharia list + EGX33 + independently
+        # screened additions. The owner is responsible for keeping universe.csv
+        # as a vetted Sharia list; unreviewed general-market symbols belong elsewhere.
+        mask = df["in_list"] | df["in_egx33"] | df["in_sharia_extra"]
     elif mode == "union":
         mask = df["in_list"] | df["in_egx33"]
     elif mode == "intersection":
@@ -91,7 +93,10 @@ def build_universe(cfg: dict) -> pd.DataFrame:
         raise ValueError(f"universe.mode غير معروف: {mode}")
 
     out = df[mask].sort_values("code").reset_index(drop=True)
+    # in_list is treated as the owner's curated Sharia universe only in sharia_union mode.
     out["sharia_verified"] = out["in_egx33"] | out["in_sharia_extra"]
+    if mode == "sharia_union":
+        out["sharia_verified"] = out["in_list"] | out["in_egx33"] | out["in_sharia_extra"]
     return out[[
         "code", "name", "name_ar", "name_en", "in_list", "in_egx33",
         "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_verified_on",
