@@ -66,6 +66,7 @@ jobs:
         run: python tests/test_engine.py
 
       - name: Run daily report
+        if: github.event_name != 'push'
         run: |
           if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.force }}" = "true" ]; then
             python run_daily.py --force
@@ -74,6 +75,7 @@ jobs:
           fi
 
       - name: Commit generated data
+        if: github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
