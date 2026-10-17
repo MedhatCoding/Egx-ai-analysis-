@@ -438,7 +438,7 @@ def test_pipeline_dry_run_and_missing_secrets_and_alerts():
 def test_universe_modes_on_real_files():
     real = ROOT / "data"
     lst = pd.read_csv(real / "universe.csv")
-    assert len(lst) == 113 and lst["code"].is_unique
+    assert len(lst) >= 140 and lst["code"].is_unique
     backup = {n: (TMP / n).read_bytes() for n in ("universe.csv", "egx33.txt")}
     try:
         shutil.copy(real / "universe.csv", TMP / "universe.csv")
@@ -447,7 +447,7 @@ def test_universe_modes_on_real_files():
         u = build_universe(cfg)
         both = build_universe({**CFG, "universe": {"mode": "intersection"}})
         only_l = build_universe({**CFG, "universe": {"mode": "list_only"}})
-        assert len(only_l) == 113 and len(both) > 0 and len(u) >= 113
+        assert len(only_l) == len(lst) and len(both) > 0 and len(u) >= len(lst)
         assert set(both["code"]) <= set(only_l["code"]) and set(only_l["code"]) <= set(u["code"])
         assert (u["in_list"] | u["in_egx33"]).all()
     finally:
