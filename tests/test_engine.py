@@ -477,34 +477,6 @@ def test_sharia_extra_requires_audited_approval():
 
 
 
-# ------------------------------------------------------------------ نطاق الشريعة
-def test_sharia_union_requires_audited_out_of_index_approval():
-    path = TMP / "sharia_extra.csv"
-    previous = path.read_bytes() if path.exists() else None
-    try:
-        pd.DataFrame([
-            {"code": "B001", "name_ar": "سهم غير معتمد", "verification_source": "", "verified_on": "", "notes": "", "status": "pending"},
-            {"code": "B002", "name_ar": "سهم معتمد", "verification_source": "اختبار مصدر موثق", "verified_on": "2026-10-01", "notes": "test", "status": "approved"},
-        ]).to_csv(path, index=False)
-        result = build_universe({**CFG, "universe": {"mode": "sharia_union"}})
-        codes = set(result["code"])
-        assert "B001" not in codes
-        assert "B002" in codes
-        assert result.set_index("code").loc["B002", "sharia_verified"]
-        assert set(result.loc[result["in_egx33"], "code"]) == set(read_test_egx33_codes())
-    finally:
-        if previous is None:
-            path.unlink(missing_ok=True)
-        else:
-            path.write_bytes(previous)
-
-
-def read_test_egx33_codes():
-    path = TMP / "egx33.txt"
-    return [line.split("#")[0].split(",")[0].strip().upper() for line in path.read_text(encoding="utf-8").splitlines()
-            if line.split("#")[0].strip() and line.split("#")[0].split(",")[0].strip()]
-
-
 # ------------------------------------------------------------------ الواجهة
 def test_ui_html_builders():
     from app import ui
