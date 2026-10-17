@@ -34,6 +34,7 @@ from src.backtest import run_backtest  # noqa: E402
 from src.indicators import atr, compute_indicators, rsi, sma  # noqa: E402
 from src.scoring import compute_scores  # noqa: E402
 from src.regime import compute_regime  # noqa: E402
+from src.regime import compute_regime  # noqa: E402
 from src.signals import analyze, build_result, classify, latest_table  # noqa: E402
 from src.sim import simulate_trade  # noqa: E402
 from src.track_record import COMPONENTS, component_stats, load_history, log_signals, save_history, summarize, update_history  # noqa: E402
@@ -174,6 +175,33 @@ def test_sim_time_exit():
 
 
 # ------------------------------------------------------------------ الإشارات وحالة السوق
+def test_seasonality_has_no_future_data_leakage():
+    """قيمة الموسمية عند تاريخ قديم لا تتغير عند إضافة بيانات مستقبلية."""
+    dates = pd.bdate_range("2018-01-01", "2024-12-31")
+    t = np.arange(len(dates), dtype=float)
+    monthly_wave = np.sin(2 * np.pi * pd.Index(dates).month.to_numpy() / 12.0)
+    close = 1000.0 * np.exp(0.00015 * t + 0.0008 * np.cumsum(monthly_wave))
+    bench = pd.Series(close, index=dates, name="close")
+    panel = pd.DataFrame(
+        {f"S{i}": close * (1.0 + i * 0.002) for i in range(5)},
+        index=dates,
+    )
+    cutoff = pd.Timestamp("2022-06-15")
+    full = compute_regime(bench, panel, CFG)
+    truncated = compute_regime(bench.loc[:cutoff], panel.loc[:cutoff], CFG)
+    check_date = pd.Timestamp("2022-06-15")
+    assert np.isclose(
+        float(full.loc[check_date, "seasonality_score"]),
+        float(truncated.loc[check_date, "seasonality_score"]),
+        atol=1e-12,
+    )
+    assert np.isclose(
+        float(full.loc[check_date, "regime_score"]),
+        float(truncated.loc[check_date, "regime_score"]),
+        atol=1e-12,
+    )
+
+
 def test_bull_universe_gives_valid_picks():
     frames, regime_df, cls, result = _analysis()
     assert result["regime"]["label"] in ("up", "strong_up")
