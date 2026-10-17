@@ -224,19 +224,18 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
         row = {"code": code, "source": "none", "bars": 0, "first_date": "", "last_date": "", "coverage_years": 0.0, "note": ""}
         cached = read_cache(code)
         fresh = None
+        requested_start = date.today() - timedelta(days=int(d["history_years"] * 365.25))
 
         if not offline:
             # Initial load: request the configured multi-year history. Daily refresh:
             # request only a small overlap, then merge, so the cache retains the full
             # history without downloading it again every morning.
             if cached is not None and len(cached):
-                target_start = date.today() - timedelta(days=int(d["history_years"] * 365.25))
-                # If the cache predates this configuration or is materially shorter
-                # than the requested history, backfill the missing years once.
-                # Otherwise fetch only a small overlap for a cheap daily refresh.
+                # If the cache is shorter than the requested history, try backfilling
+                # from the target start. Otherwise fetch only a small overlap.
                 cache_start = cached.index[0].date()
-                if cache_start > target_start + timedelta(days=30):
-                    start = target_start
+                if cache_start > requested_start + timedelta(days=30):
+                    start = requested_start
                 else:
                     start = (cached.index[-1] - timedelta(days=7)).date()
                 fresh = fetch_yahoo_from(code + d["yahoo_suffix"], start)
@@ -256,7 +255,15 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
             # نحاول نكمّل آخر الشموع من EODHD لو فيه ميزانية
             if not offline and token and _eodhd_budget(state, cfg) > 0:
                 state["eodhd"]["calls"] += 1
-                add = fetch_eodhd(code, token, (cached.index[-1] - timedelta(days=3)).date())
+                # If Yahoo failed while the cache is short, let the fallback attempt
+                # backfill the missing history instead of fetching only recent candles.
+                cache_start = cached.index[0].date()
+                fallback_start = (
+                    requested_start
+                    if cache_start > requested_start + timedelta(days=30)
+                    else (cached.index[-1] - timedelta(days=3)).date()
+                )
+                add = fetch_eodhd(code, token, fallback_start)
                 if add is not None and len(add) > 0:
                     merged = pd.concat([cached, add])
                     merged = merged[~merged.index.duplicated(keep="last")].sort_index()
