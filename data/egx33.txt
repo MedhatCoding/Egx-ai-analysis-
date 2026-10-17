@@ -1,6 +1,7 @@
-# مكونات مؤشر EGX33 (الرمز، الاسم)
-# المصدر: صفحة المكونات في موقع البورصة المصرية عبر مصدر وسيط، وقد تتغير المكونات بالمراجعة الدورية.
-# راجعها من: https://www.egx.com.eg/en/currentindexconstituntes.aspx?type=22&nav=22
+# مكونات مؤشر EGX33 Shariah (الرمز، الاسم) — مراجعة محلية 2026-09.
+# المرجع الرسمي: هيئة الرقابة المالية، Current Constituent Companies of the EGX33 Shariah Index:
+# https://fra.gov.eg/en/مؤشر-البورصة-المتوافق-مع-أحكام-الشريعة/
+# راجع ملف المكونات دوريًا مع إعلانات مراجعة المؤشرات في البورصة المصرية؛ هذه النسخة لا تُحدّث تلقائيًا من المصدر.
 # السطر الذي يبدأ بـ # يُتجاهل. الشكل: RAMZ,Name
 ISPH,Ibnsina Pharma
 AMOC,Alexandria Mineral Oils Company
@@ -36,5 +37,5 @@ ATQA,Misr National Steel - Ataqa
 MCQE,Misr Cement (Qena)
 EGAL,Egypt Aluminum
 ADIB,Abu Dhabi Islamic Bank - Egypt
-# ظهر CIRA في صفحة EGX الرسمية ولم يظهر في المصدر الوسيط. لو عايز تضيفه شيل # من السطر:
+# CIRA خرج من المكونات في مراجعة سبتمبر 2026؛ يُحتفظ بالرمز هنا كسجل توضيحي فقط:
 # CIRA,Cairo For Investment And Real Estate Developments
