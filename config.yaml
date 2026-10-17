@@ -75,6 +75,7 @@ ml:
   validation_fraction: 0.20
   purge_horizon: true
   min_auc: 0.52
+  min_brier_improvement: 0.02
   rf_trees: 120
   rf_depth: 6
 llm:
