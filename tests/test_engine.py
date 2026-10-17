@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import runpy
 import shutil
@@ -397,7 +398,7 @@ def test_pipeline_end_to_end():
     for f in ("signals/latest.json", "signals/table.csv", "signals/regime.csv", "signals/coverage.csv", "signals/history.csv",
               "report/latest.json", "backtest/summary.json"):
         assert (TMP / f).exists(), f
-    latest_payload = C.read_json(C.SIGNALS / "latest.json", {})
+    latest_payload = json.loads((C.SIGNALS / "latest.json").read_text(encoding="utf-8"))
     coverage = latest_payload.get("history_coverage", {})
     assert coverage.get("requested_years") == float(CFG["data"]["history_years"])
     assert "median_years" in coverage and "symbols_at_least_5y" in coverage
