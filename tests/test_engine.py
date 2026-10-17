@@ -486,6 +486,10 @@ class _Dummy:
     def __iter__(self):
         return iter([])
 
+    def __getitem__(self, key):
+        # Supports the minimal pandas-like column access used by the Streamlit smoke test.
+        return pd.Series(dtype=object)
+
 
 class StopApp(Exception):
     pass
