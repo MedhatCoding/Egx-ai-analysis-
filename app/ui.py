@@ -232,13 +232,23 @@ def chip(signal: str) -> str:
 
 # ------------------------------------------------------------------ الرأس وحالة السوق
 def header_html(latest: dict, report: dict | None) -> str:
-    dd = date.fromisoformat(latest["data_date"])
+    # Be defensive: cached/partial data can contain a missing or non-ISO data_date.
+    raw_date = latest.get("data_date")
+    dd = None
+    if isinstance(raw_date, str) and raw_date.strip():
+        try:
+            dd = date.fromisoformat(raw_date.strip()[:10])
+        except (TypeError, ValueError):
+            dd = None
     gen = _parse_dt((report or {}).get("generated_at") or latest.get("generated_at"))
+    if dd is None and gen is not None:
+        dd = gen.date()
     upd = f"آخر تحديث {ar_date(gen)} الساعة {gen:%H:%M}" if gen else ""
+    close_label = f"بيانات إغلاق {e(ar_date(dd))}" if dd else "بيانات الإغلاق غير متاحة"
     return (
         '<div class="topbar"><div class="topbar-in">'
         '<div><span class="brand-name">مستشار البورصة</span><span class="brand-sub">EGX Advisor</span></div>'
-        f'<div class="asof">بيانات إغلاق {e(ar_date(dd))}<br>{e(upd)}</div>'
+        f'<div class="asof">{close_label}<br>{e(upd)}</div>'
         "</div></div>"
     )
 
