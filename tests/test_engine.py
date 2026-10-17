@@ -631,6 +631,9 @@ def _run_app():
 def test_streamlit_app_smoke_run():
     """تشغيل صفحة Streamlit كاملة بـ streamlit وplotly وهميين: بيكشف أي خطأ بايثون في منطق الصفحة."""
     _reset_outputs()
+    # Remove the exact artifact the UI reads, not just the helper's temporary
+    # directory; this keeps the empty-state assertion deterministic.
+    (C.SIGNALS / "latest.json").unlink(missing_ok=True)
     try:
         _run_app()
         raise AssertionError("كان لازم يوقف لعدم وجود بيانات (empty state)")
