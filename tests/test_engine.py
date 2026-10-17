@@ -490,6 +490,10 @@ class _Dummy:
         # Supports the minimal pandas-like column access used by the Streamlit smoke test.
         return pd.Series(dtype=object)
 
+    def __setitem__(self, key, value):
+        # The smoke test uses an empty dummy frame; assignment only needs to be accepted.
+        return None
+
 
 class StopApp(Exception):
     pass
