@@ -381,7 +381,10 @@ def _run(**kw):
     pipeline.send_message = lambda token, chat, text: (sent.append(text) or 1)
     os.environ["TELEGRAM_BOT_TOKEN"], os.environ["TELEGRAM_CHAT_ID"] = "t", "1"
     os.environ.pop("ANTHROPIC_API_KEY", None)
-    return pipeline.run(CFG, offline=True, now=kw.pop("now", SUN_9AM), **kw), sent
+    # This fixture contains synthetic symbols that are not Sharia-screened; test
+    # pipeline behavior with the explicit legacy union, not the production universe.
+    test_cfg = {**CFG, "universe": {"mode": "union"}}
+    return pipeline.run(test_cfg, offline=True, now=kw.pop("now", SUN_9AM), **kw), sent
 
 
 def test_pipeline_end_to_end():
