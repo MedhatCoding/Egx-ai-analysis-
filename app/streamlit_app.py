@@ -241,9 +241,21 @@ if active_section == section_labels[0]:
 if active_section == section_labels[0]:
     picks, watch = latest["picks"], latest["watch"]
     st.markdown(ui.section("فرص الشراء", f"{len(picks)} فرصة بعد فلاتر السيولة والاتجاه والمقاومة والتشبّع"), unsafe_allow_html=True)
-    has_picks = not picks.empty if isinstance(picks, pd.DataFrame) else bool(picks)
-    if has_picks:
-        for p in picks:
+    if isinstance(picks, pd.DataFrame):
+        pick_items = picks.to_dict("records")
+    elif isinstance(picks, pd.Series):
+        # A Series may represent either one pick record or a column/list of picks.
+        pick_items = [picks.to_dict()] if "code" in picks.index else list(picks.values)
+    elif isinstance(picks, dict):
+        pick_items = [picks] if "code" in picks else list(picks.values())
+    elif isinstance(picks, (list, tuple)):
+        pick_items = list(picks)
+    else:
+        pick_items = []
+
+    pick_items = [p for p in pick_items if isinstance(p, dict) and p.get("code")]
+    if pick_items:
+        for p in pick_items:
             st.markdown(ui.pick_html(p, (notes.get("picks") or {}).get(p["code"])), unsafe_allow_html=True)
     else:
         st.markdown(ui.empty_picks_html(latest), unsafe_allow_html=True)
