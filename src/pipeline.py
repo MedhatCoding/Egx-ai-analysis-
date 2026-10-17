@@ -90,7 +90,25 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
         "in_list": int(uni["in_list"].sum()),
         "in_egx33": int(uni["in_egx33"].sum()),
         "both": int((uni["in_list"] & uni["in_egx33"]).sum()),
+        "sharia_verified_total": int(uni["sharia_verified"].sum()) if "sharia_verified" in uni else 0,
+        "sharia_extra_outside_egx33": int((uni["in_sharia_extra"] & ~uni["in_egx33"]).sum()) if "in_sharia_extra" in uni else 0,
     }
+    # Expose the actual historical coverage instead of implying that every ticker
+    # has the configured lookback. These values feed diagnostics and are auditable.
+    if not cov.empty:
+        years = pd.to_numeric(cov.get("coverage_years", pd.Series(dtype=float)), errors="coerce")
+        out["history_coverage"] = {
+            "requested_years": float(cfg.get("data", {}).get("history_years", 0)),
+            "symbols_with_data": int((pd.to_numeric(cov.get("bars", 0), errors="coerce").fillna(0) > 0).sum()),
+            "symbols_at_least_5y": int((years >= 5).sum()),
+            "symbols_at_least_3y": int((years >= 3).sum()),
+            "symbols_under_1y": int(((years > 0) & (years < 1)).sum()),
+            "median_years": round(float(years[years > 0].median()), 2) if (years > 0).any() else 0.0,
+            "oldest_first_date": str(cov.loc[cov["first_date"].astype(str).ne(""), "first_date"].min()) if "first_date" in cov and cov["first_date"].astype(str).ne("").any() else None,
+            "newest_last_date": str(cov.loc[cov["last_date"].astype(str).ne(""), "last_date"].max()) if "last_date" in cov and cov["last_date"].astype(str).ne("").any() else None,
+        }
+    else:
+        out["history_coverage"] = {"requested_years": float(cfg.get("data", {}).get("history_years", 0)), "symbols_with_data": 0, "symbols_at_least_5y": 0, "symbols_at_least_3y": 0, "symbols_under_1y": 0, "median_years": 0.0, "oldest_first_date": None, "newest_last_date": None}
     _write_json(C.SIGNALS / "latest.json", out)
 
 
