@@ -216,6 +216,26 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     if n_stale:
         warnings.append(f"{n_stale} سهم بيانات آخر شمعة له قديمة (موقوف أو متأخر).")
 
+    # شرعية السهم ليست صفة دائمة؛ اعرض عمر مصدر الفرز بدل افتراض استمراره.
+    if "sharia_verified_on" in uni.columns:
+        extra_dates = pd.to_datetime(
+            uni.loc[uni["in_sharia_extra"].fillna(False), "sharia_verified_on"],
+            errors="coerce",
+        ).dropna()
+        extra_count = int(uni["in_sharia_extra"].fillna(False).sum())
+        if extra_count and len(extra_dates) < extra_count:
+            warnings.append(
+                f"مراجعة الشريعة: {extra_count - len(extra_dates)} سهم خارج EGX33 بلا تاريخ تحقق؛ راجع data/sharia_extra.csv."
+            )
+        if len(extra_dates):
+            latest_review = extra_dates.max().date()
+            review_age = (now.date() - latest_review).days
+            if review_age > 120:
+                warnings.append(
+                    f"قائمة الشريعة للأسهم خارج EGX33 قديمة نسبيًا: أحدث تاريخ تحقق {latest_review} "
+                    f"(منذ {review_age} يومًا). الأسهم تظل في التحليل لكن يلزم إعادة التحقق من المصدر الشرعي قبل الاعتماد عليها."
+                )
+
     # ---- سجل التوصيات
     hist = load_history()
     hist = update_history(hist, prices, cfg)
