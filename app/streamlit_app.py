@@ -260,12 +260,24 @@ if active_section == section_labels[0]:
     else:
         st.markdown(ui.empty_picks_html(latest), unsafe_allow_html=True)
 
-    if watch:
+    if isinstance(watch, pd.DataFrame):
+        watch_items = watch.to_dict("records")
+    elif isinstance(watch, pd.Series):
+        watch_items = [watch.to_dict()] if "code" in watch.index else list(watch.values)
+    elif isinstance(watch, dict):
+        watch_items = [watch] if "code" in watch else list(watch.values())
+    elif isinstance(watch, (list, tuple)):
+        watch_items = list(watch)
+    else:
+        watch_items = []
+    watch_items = [w for w in watch_items if isinstance(w, dict) and w.get("code")]
+
+    if watch_items:
         st.markdown(ui.section("قائمة المراقبة", notes.get("watch_view", "")), unsafe_allow_html=True)
         wdf = pd.DataFrame([
-            {"الرمز": w["code"], "الشركة": w["name"], "النقاط": w["score"], "النموذج": w["setup_ar"],
-             "RSI": w["rsi"], "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2])}
-            for w in watch
+            {"الرمز": w.get("code", ""), "الشركة": w.get("name", ""), "النقاط": w.get("score", 0), "النموذج": w.get("setup_ar", ""),
+             "RSI": w.get("rsi", "-"), "سبب عدم الوصول للشراء": " | ".join((w.get("why_not_buy") or [])[:2])}
+            for w in watch_items
         ])
         render_cards(wdf, title_candidates=("الشركة", "الرمز"))
 
