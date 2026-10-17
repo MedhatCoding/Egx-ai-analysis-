@@ -8,9 +8,9 @@ market:
   report_window: ["08:55", "10:30"]
   session_close_hour: 15
 universe:
-  mode: "union"
+  mode: "sharia_union"
 data:
-  history_years: 5
+  history_years: 8
   yahoo_suffix: ".CA"
   benchmark_yahoo_symbol: "^CASE30"
   benchmark_eodhd_symbol: "CASE30.INDX"
@@ -72,6 +72,8 @@ ml:
   horizon_days: 10
   positive_return: 0.03
   min_samples: 500
+  validation_fraction: 0.20
+  purge_horizon: true
   min_auc: 0.52
   rf_trees: 120
   rf_depth: 6
