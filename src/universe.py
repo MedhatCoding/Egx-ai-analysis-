@@ -57,12 +57,10 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     extra = read_sharia_extra()
     mode = cfg["universe"]["mode"]
 
-    df = lst.merge(e33, on="code", how="outer").merge(
-        extra[["code", "name_ar", "verification_source"]].rename(
-            columns={"name_ar": "extra_name_ar", "verification_source": "sharia_source"}
-        ),
-        on="code", how="outer",
+    extra_merge = extra[["code", "name_ar", "verification_source"]].rename(
+        columns={"name_ar": "extra_name_ar", "verification_source": "sharia_source"}
     )
+    df = lst.merge(e33, on="code", how="outer").merge(extra_merge, on="code", how="outer")
     df["in_list"] = df["code"].isin(lst["code"])
     df["in_egx33"] = df["code"].isin(e33["code"])
     df["in_sharia_extra"] = df["code"].isin(extra["code"])
