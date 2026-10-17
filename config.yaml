@@ -8,7 +8,7 @@ market:
   report_window: ["08:55", "10:30"]
   session_close_hour: 15
 universe:
-  mode: "sharia_union"
+  mode: "union"
 data:
   history_years: 8
   yahoo_suffix: ".CA"
