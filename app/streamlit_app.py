@@ -122,7 +122,7 @@ notes = report.get("notes") or {}
 
 st.markdown(ui.header_html(latest, report), unsafe_allow_html=True)
 section_labels = ["📈 الفرص", "💼 المحفظة", "☰ المزيد"]
-more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام"]
+more_labels = ["السوق والأخبار", "كل الأسهم", "الأداء", "عن النظام", "مراجعة الشريعة"]
 st.markdown("""
 <style>
 /* Mobile: full-width bottom navigation, docked to the viewport edge (not a floating pill). */
@@ -740,7 +740,7 @@ if active_section == section_labels[2] and more_section == more_labels[2]:
             wide(st.plotly_chart, charts.equity_chart(tr_csv), config={"displayModeBar": False})
         st.markdown(
             '<div class="flag">تحفّظات مهمة: القائمة الحالية فقط (الأسهم اللي اختفت أو اتوقفت مش موجودة فالنتائج أفضل من الواقع)، '
-            "ولا يوجد انزلاق سعري في الأسهم قليلة السيولة، والتاريخ المتاح سنوات قليلة تشمل ظروف سوق خاصة. النتائج للاسترشاد فقط.</div>",
+            "ولا يوجد انزلاق سعري في الأسهم قليلة السيولة، والتاريخ المتاح يصل إلى 8 سنوات عندما يوفره المصدر، وقد تختلف التغطية من سهم لآخر. النتائج للاسترشاد فقط.</div>",
             unsafe_allow_html=True,
         )
 
@@ -795,6 +795,36 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
         if len(weak):
             st.markdown(ui.section("أسهم بها ملاحظات في البيانات"), unsafe_allow_html=True)
             render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
+
+
+# ================================================================== مراجعة الشريعة خارج EGX33
+if active_section == section_labels[2] and more_section == more_labels[4]:
+    st.markdown(ui.section("مراجعة الأسهم المتوافقة مع الشريعة", "قائمة عمل للأسهم خارج EGX33؛ لا تدخل الفرص أو المؤشر الداخلي إلا بعد التحقق واعتماد السهم."), unsafe_allow_html=True)
+    candidate_path = C.DATA / "sharia_candidates.csv"
+    approved_path = C.DATA / "sharia_extra.csv"
+    candidates = pd.DataFrame()
+    approved = pd.DataFrame()
+    try:
+        if candidate_path.exists():
+            candidates = pd.read_csv(candidate_path, dtype=str).fillna("")
+    except Exception:
+        candidates = pd.DataFrame()
+    try:
+        if approved_path.exists():
+            approved = pd.read_csv(approved_path, dtype=str).fillna("")
+    except Exception:
+        approved = pd.DataFrame()
+    pending = candidates[candidates.get("status", pd.Series(dtype=str)).str.lower().eq("pending")] if not candidates.empty else pd.DataFrame()
+    st.metric("أسهم خارج EGX33 تحتاج مراجعة", len(pending))
+    st.warning("القائمة المرشحة ليست حكمًا شرعيًا. لا تعتمد سهمًا إلا بعد فحص النشاط التجاري والنسب المالية وفق منهجية شرعية موثوقة وتسجيل المصدر وتاريخ المراجعة.")
+    if not pending.empty:
+        cols = [x for x in ["code", "name_ar", "status", "business_activity_review", "financial_screen_source", "verified_on", "notes"] if x in pending.columns]
+        render_cards(pending[cols].rename(columns={"code": "الرمز", "name_ar": "الشركة", "status": "الحالة", "business_activity_review": "مراجعة النشاط", "financial_screen_source": "مصدر الفحص المالي", "verified_on": "تاريخ التحقق", "notes": "ملاحظات"}), title_candidates=("الشركة", "الرمز"))
+        st.download_button("تنزيل قائمة المراجعة CSV", pending.to_csv(index=False).encode("utf-8-sig"), file_name="sharia_candidates_review.csv", mime="text/csv")
+    if not approved.empty:
+        st.markdown(ui.section("أسهم خارج المؤشر معتمدة في ملف النظام", "هذه الرموز فقط تُضاف إلى التحليل بعد إدخال حالة approved ومصدر التحقق."), unsafe_allow_html=True)
+        render_cards(approved.rename(columns={"code": "الرمز", "name_ar": "الشركة", "verification_source": "مصدر التحقق", "verified_on": "تاريخ التحقق", "notes": "ملاحظات"}), title_candidates=("الشركة", "الرمز"))
+    st.caption("استخدام شخصي: عدّل ملفات data/sharia_candidates.csv وdata/sharia_extra.csv في المستودع، ثم شغّل التقرير لتحديث التحليل. لا تُعامل قائمة الكون الحالي على أنها تاريخية كاملة؛ تغيّر مكونات المؤشر والأسهم المتاحة قد يسبب انحياز البقاء.")
 
 st.markdown(ui.legal_html(), unsafe_allow_html=True)
 st.markdown('<div class="mobile-bottom-nav-spacer" style="height:120px;min-height:120px;width:100%" aria-hidden="true"></div>', unsafe_allow_html=True)
