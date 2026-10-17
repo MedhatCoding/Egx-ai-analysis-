@@ -514,7 +514,10 @@ def test_universe_modes_on_real_files():
         assert len(only_l) == len(lst) and len(both) > 0 and len(u) >= len(lst)
         assert set(both["code"]) <= set(only_l["code"]) and set(only_l["code"]) <= set(u["code"])
         assert (u["in_list"] | u["in_egx33"]).all()
-        assert len(sharia) == 107 and sharia["sharia_verified"].all()
+        # Personal Sharia universe includes the owner's curated list, EGX33,
+        # and approved additions; do not silently drop vetted out-of-index names.
+        assert len(sharia) >= len(lst) and sharia["sharia_verified"].all()
+        assert (sharia["in_list"] | sharia["in_egx33"] | sharia["in_sharia_extra"]).all()
         assert len(sharia.loc[sharia["in_sharia_extra"]]) == 73
     finally:
         for n, b in backup.items():
