@@ -801,6 +801,22 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
         ),
         unsafe_allow_html=True,
     )
+    # عرض التغطية التاريخية الفعلية، لا سنوات الإعداد فقط.
+    hc = latest.get("history_coverage", {})
+    st.markdown(ui.section("التغطية التاريخية الفعلية", "المصدر قد لا يوفر 8 سنوات لكل سهم؛ الأرقام أدناه من البيانات المحفوظة فعليًا."), unsafe_allow_html=True)
+    st.markdown(
+        ui.kv_html([
+            ("الفترة المطلوبة", ui.bdi(f"{hc.get('requested_years', 0)} سنوات")),
+            ("الوسيط الفعلي لتاريخ السهم", ui.bdi(f"{hc.get('median_years', 0)} سنة")),
+            ("أسهم لها 5 سنوات فأكثر", ui.bdi(hc.get("symbols_at_least_5y", 0))),
+            ("أسهم لها 3 سنوات فأكثر", ui.bdi(hc.get("symbols_at_least_3y", 0))),
+            ("أقل من سنة تاريخية", ui.bdi(hc.get("symbols_under_1y", 0))),
+            ("أقدم تاريخ متاح", ui.bdi(hc.get("oldest_first_date") or "غير متاح")),
+            ("أحدث تاريخ ضمن التغطية", ui.bdi(hc.get("newest_last_date") or "غير متاح")),
+            ("أسهم شرعية خارج EGX33", ui.bdi(u.get("sharia_extra_outside_egx33", 0))),
+        ]),
+        unsafe_allow_html=True,
+    )
     cov = load_csv(C.SIGNALS / "coverage.csv")
     if cov is not None:
         weak = cov[(cov["source"] != "yahoo") | (cov["note"].fillna("") != "")]
