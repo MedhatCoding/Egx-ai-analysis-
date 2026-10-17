@@ -133,7 +133,17 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     uni = build_universe(cfg)
     codes = uni["code"].tolist()
     names = dict(zip(uni["code"], uni["name"]))
-    print(f"الأسهم المحللة: {len(codes)} (قائمتك {int(uni['in_list'].sum())} | EGX33 {int(uni['in_egx33'].sum())} | وضع الدمج: {cfg['universe']['mode']})")
+    # سجل تدقيقي ثابت لكل تشغيل: ما الأسهم التي دخلت التحليل، وما مصدر اعتماد الشريعة.
+    # الملف شخصي ومحلي داخل مستودع المشروع؛ لا يتضمن أسرارًا أو بيانات المحفظة.
+    universe_path = C.SIGNALS / "universe.csv"
+    universe_path.parent.mkdir(parents=True, exist_ok=True)
+    uni.to_csv(universe_path, index=False)
+    print(
+        f"الأسهم المحللة: {len(codes)} "
+        f"(قائمة مرجعية {int(uni['in_list'].sum())} | EGX33 {int(uni['in_egx33'].sum())} "
+        f"| إضافات شريعة خارج المؤشر {int(uni['in_sharia_extra'].sum())} "
+        f"| وضع الدمج: {cfg['universe']['mode']})"
+    )
 
     bench = fetch_benchmark(cfg, state, offline=offline)
     market_indices = fetch_market_indices(cfg, state, offline=offline)
