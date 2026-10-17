@@ -241,7 +241,8 @@ if active_section == section_labels[0]:
 if active_section == section_labels[0]:
     picks, watch = latest["picks"], latest["watch"]
     st.markdown(ui.section("فرص الشراء", f"{len(picks)} فرصة بعد فلاتر السيولة والاتجاه والمقاومة والتشبّع"), unsafe_allow_html=True)
-    if picks:
+    has_picks = not picks.empty if isinstance(picks, pd.DataFrame) else bool(picks)
+    if has_picks:
         for p in picks:
             st.markdown(ui.pick_html(p, (notes.get("picks") or {}).get(p["code"])), unsafe_allow_html=True)
     else:
