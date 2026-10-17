@@ -33,6 +33,7 @@ from src import pipeline, report, telegram  # noqa: E402
 from src.backtest import run_backtest  # noqa: E402
 from src.indicators import atr, compute_indicators, rsi, sma  # noqa: E402
 from src.scoring import compute_scores  # noqa: E402
+from src.regime import compute_regime  # noqa: E402
 from src.signals import analyze, build_result, classify, latest_table  # noqa: E402
 from src.sim import simulate_trade  # noqa: E402
 from src.track_record import COMPONENTS, component_stats, load_history, log_signals, save_history, summarize, update_history  # noqa: E402
@@ -117,6 +118,28 @@ def test_indicators_are_causal():
         for col in ("score", "stop", "t1", "rsi14", "atr14", "sma50", "high20", "buy_raw"):
             a, b = full[col].iloc[i], part[col].iloc[-1]
             assert (pd.isna(a) and pd.isna(b)) or abs(float(a) - float(b)) < 1e-9, (col, i, a, b)
+
+
+
+def test_seasonality_has_no_future_leakage():
+    """تغيير السنوات المستقبلية لا يغير درجة الموسمية التاريخية."""
+    idx = pd.bdate_range("2015-01-01", "2025-12-31")
+    rng = np.random.default_rng(731)
+    returns = rng.normal(0.0003, 0.012, len(idx))
+    bench = pd.Series(100 * np.cumprod(1 + returns), index=idx)
+    panel = pd.DataFrame({"SYN": bench}, index=idx)
+    changed = bench.copy()
+    future = changed.index >= pd.Timestamp("2024-01-01")
+    changed.loc[future] *= np.linspace(1.0, 2.0, int(future.sum()))
+    changed_panel = pd.DataFrame({"SYN": changed}, index=idx)
+    original_regime = compute_regime(bench, panel, CFG)
+    changed_regime = compute_regime(changed, changed_panel, CFG)
+    cutoff = pd.Timestamp("2023-12-29")
+    a = original_regime.loc[:cutoff, "seasonality_score"]
+    b = changed_regime.loc[:cutoff, "seasonality_score"]
+    assert np.allclose(a.to_numpy(), b.to_numpy(), equal_nan=True)
+    # Ensure the fixture includes dates where historical seasonal observations exist.
+    assert original_regime.loc["2023-06-01":"2023-06-30", "seasonality_month_return"].notna().any()
 
 
 # ------------------------------------------------------------------ المحاكاة
