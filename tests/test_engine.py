@@ -18,6 +18,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 TMP = Path(tempfile.mkdtemp(prefix="egx_test_"))
 os.environ["EGX_DATA_DIR"] = str(TMP)
+# Keep the offline suite deterministic and avoid consuming personal Gemini/API quota.
+os.environ.pop("GEMINI_API_KEY", None)
+os.environ.pop("ANTHROPIC_API_KEY", None)
 
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
