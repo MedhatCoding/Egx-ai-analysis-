@@ -48,13 +48,29 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
     cols = [c for c in FEATURES if c in data.columns]
     X = data[cols].astype(float)
     y = data["target"].astype(int)
-    cut = max(int(len(X) * 0.8), 1)
-    if cut >= len(X):
-        cut = len(X) - 1
 
-    Xtr, Xva, ytr, yva = X.iloc[:cut], X.iloc[cut:], y.iloc[:cut], y.iloc[cut:]
+    # Split by dates, not rows: symbols from the same session must not leak across
+    # train/validation. Purge the target horizon before validation to prevent
+    # overlapping forward-return labels from crossing the boundary.
+    dates = pd.to_datetime(data["date"])
+    unique_dates = pd.Index(dates.drop_duplicates().sort_values())
+    cut_date_idx = max(int(len(unique_dates) * (1.0 - float(mcfg.get("validation_fraction", 0.20)))), 1)
+    if cut_date_idx >= len(unique_dates):
+        cut_date_idx = len(unique_dates) - 1
+    validation_start = unique_dates[cut_date_idx]
+    purge_horizon = horizon if mcfg.get("purge_horizon", True) else 0
+    train_end_idx = max(0, cut_date_idx - purge_horizon)
+    if train_end_idx < 2:
+        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تاريخ غير كافٍ بعد عزل فترة التحقق"}
+    train_cutoff = unique_dates[train_end_idx]
+    train_mask = dates < train_cutoff
+    validation_mask = dates >= validation_start
+    Xtr, ytr = X.loc[train_mask], y.loc[train_mask]
+    Xva, yva = X.loc[validation_mask], y.loc[validation_mask]
+    if len(Xtr) < int(mcfg.get("min_samples", 500)) * 0.5 or len(Xva) < 20:
+        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "عينات تدريب أو تحقق غير كافية بعد الفصل الزمني"}
     if ytr.nunique() < 2 or yva.nunique() < 2:
-        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تنوع الهدف غير كافٍ"}
+        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تنوع الهدف غير كافٍ في الفصل الزمني"}
 
     rf = RandomForestClassifier(
         n_estimators=int(mcfg.get("rf_trees", 120)),
