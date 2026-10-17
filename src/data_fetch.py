@@ -221,7 +221,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
     report = []
 
     for i, code in enumerate(codes, 1):
-        row = {"code": code, "source": "none", "bars": 0, "last_date": "", "note": ""}
+        row = {"code": code, "source": "none", "bars": 0, "first_date": "", "last_date": "", "coverage_years": 0.0, "note": ""}
         cached = read_cache(code)
         fresh = None
 
@@ -242,7 +242,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
                 merged = pd.concat([cached, fresh])
                 merged = merged[~merged.index.duplicated(keep="last")].sort_index()
             write_cache(code, merged)
-            row.update(source="yahoo" if cached is None else "cache+yahoo", bars=len(merged), last_date=str(merged.index[-1].date()))
+            row.update(source="yahoo" if cached is None else "cache+yahoo", bars=len(merged), first_date=str(merged.index[0].date()), last_date=str(merged.index[-1].date()), coverage_years=round((merged.index[-1] - merged.index[0]).days / 365.25, 2))
         elif cached is not None:
             merged, src = cached, "cache"
             # نحاول نكمّل آخر الشموع من EODHD لو فيه ميزانية
@@ -254,7 +254,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
                     merged = merged[~merged.index.duplicated(keep="last")].sort_index()
                     write_cache(code, merged)
                     src = "cache+eodhd"
-            row.update(source=src, bars=len(merged), last_date=str(merged.index[-1].date()))
+            row.update(source=src, bars=len(merged), first_date=str(merged.index[0].date()), last_date=str(merged.index[-1].date()), coverage_years=round((merged.index[-1] - merged.index[0]).days / 365.25, 2))
             row["note"] = "Yahoo فشل، استخدمنا الكاش"
         elif not offline and token and _eodhd_budget(state, cfg) > 0:
             state["eodhd"]["calls"] += 1
@@ -262,7 +262,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
             add = fetch_eodhd(code, token, start)
             if add is not None and len(add) > 0:
                 write_cache(code, add)
-                row.update(source="eodhd", bars=len(add), last_date=str(add.index[-1].date()))
+                row.update(source="eodhd", bars=len(add), first_date=str(add.index[0].date()), last_date=str(add.index[-1].date()), coverage_years=round((add.index[-1] - add.index[0]).days / 365.25, 2))
                 row["note"] = f"من EODHD فقط ({cfg['data']['history_years']} سنوات مطلوبة؛ التغطية الفعلية حسب المصدر)"
             else:
                 row["note"] = "لا بيانات (Yahoo وEODHD)"
