@@ -397,6 +397,11 @@ def test_pipeline_end_to_end():
     for f in ("signals/latest.json", "signals/table.csv", "signals/regime.csv", "signals/coverage.csv", "signals/history.csv",
               "report/latest.json", "backtest/summary.json"):
         assert (TMP / f).exists(), f
+    latest_payload = C.read_json(C.SIGNALS / "latest.json", {})
+    coverage = latest_payload.get("history_coverage", {})
+    assert coverage.get("requested_years") == float(CFG["data"]["history_years"])
+    assert "median_years" in coverage and "symbols_at_least_5y" in coverage
+    assert latest_payload.get("universe", {}).get("sharia_verified_total", 0) >= 0
     assert C.load_state()["last_sent_date"] == "2026-09-20"
     # نفس اليوم مرة ثانية = تخطي، ولا رسالة جديدة
     n = len(sent)
