@@ -9,6 +9,7 @@ market:
   session_close_hour: 15
 universe:
   mode: "sharia_union"
+  verification_max_age_days: 180
 data:
   history_years: 8
   yahoo_suffix: ".CA"
