@@ -12,11 +12,10 @@ on:
       - "requirements*.txt"
       - "run_daily.py"
 
-  # تشغيل تلقائي يوميًا في أيام التداول.
-  # 06:00 UTC = 09:00 القاهرة صيفًا، و07:00 UTC = 09:00 القاهرة شتاءً.
+  # تشغيل واحد يوميًا في أيام التداول. GitHub cron يعمل بتوقيت UTC ثابت:
+  # 06:00 UTC = 08:00 القاهرة شتاءً و09:00 صيفًا؛ في الحالتين قبل الافتتاح.
   schedule:
     - cron: "0 6 * * 0-4"
-    - cron: "0 7 * * 0-4"
 
   workflow_dispatch:
     inputs:
@@ -66,7 +65,7 @@ jobs:
       - name: Run daily report
         if: github.event_name != 'push'
         run: |
-          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.force }}" = "true" ]; then
+          if [ "${{ inputs.force }}" = "true" ]; then
             python run_daily.py --force
           else
             python run_daily.py
