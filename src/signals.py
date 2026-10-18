@@ -164,7 +164,11 @@ def classify(latest: pd.DataFrame, regime_label: str, regime_score: float, cfg: 
     df.loc[(df["score"] < sc["avoid_score"]) | trend_down, "signal"] = "AVOID"
     df.loc[(df["score"] >= sc["watch_score"]) & ~trend_down, "signal"] = "WATCH"
 
-    cand = df[df["buy_raw"] & ~df["stale"] & df["liquid"]].sort_values(["score", "rs_pct"], ascending=False)
+    eligible = df["sharia_verified"].fillna(False).astype(bool) if "sharia_verified" in df.columns else pd.Series(False, index=df.index)
+    # If the personal universe provides eligibility, only verified shares can
+    # consume scarce BUY slots. Unknown/unverified candidates remain WATCH.
+    # Fail closed if eligibility is absent: callers must explicitly verify first.
+    cand = df[df["buy_raw"] & ~df["stale"] & df["liquid"] & eligible].sort_values(["score", "rs_pct"], ascending=False)
     buy_idx = list(cand.index[:max_buys])
     df.loc[cand.index, "signal"] = "WATCH"      # المتبقي بعد الحد الأقصى يبقى مراقبة
     df.loc[buy_idx, "signal"] = "BUY"
