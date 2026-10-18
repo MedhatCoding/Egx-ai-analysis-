@@ -5,6 +5,8 @@
 """
 from __future__ import annotations
 
+from datetime import date
+
 import pandas as pd
 
 from .config import DATA
@@ -73,6 +75,14 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["name_en"] = df["name_en"].fillna("")
     df["sharia_source"] = df["sharia_source"].fillna("")
     df["sharia_verified_on"] = df["sharia_verified_on"].fillna("")
+    verified_date = pd.to_datetime(df["sharia_verified_on"], errors="coerce").dt.date
+    max_age = int(cfg.get("universe", {}).get("verification_max_age_days", 180))
+    age_days = verified_date.map(lambda d: (date.today() - d).days if pd.notna(d) else None)
+    extra_fresh = df["in_sharia_extra"] & age_days.map(lambda n: n is not None and 0 <= n <= max_age).fillna(False)
+    df["sharia_review_status"] = "مراجعة مطلوبة"
+    df.loc[df["in_sharia_extra"] & ~extra_fresh, "sharia_review_status"] = "اعتماد خارجي منتهي الصلاحية"
+    df.loc[extra_fresh, "sharia_review_status"] = "اعتماد خارجي حديث"
+    df.loc[df["in_egx33"], "sharia_review_status"] = "مكوّن في EGX33"
     df["name_ar"] = df["name_ar"].where(df["name_ar"] != "", df["extra_name_ar"])
     df["name"] = df["name_ar"].where(df["name_ar"] != "", df["name_en"])
 
@@ -93,11 +103,11 @@ def build_universe(cfg: dict) -> pd.DataFrame:
         raise ValueError(f"universe.mode غير معروف: {mode}")
 
     out = df[mask].sort_values("code").reset_index(drop=True)
-    # in_list is treated as the owner's curated Sharia universe only in sharia_union mode.
-    out["sharia_verified"] = out["in_egx33"] | out["in_sharia_extra"]
-    if mode == "sharia_union":
-        out["sharia_verified"] = out["in_list"] | out["in_egx33"] | out["in_sharia_extra"]
+    # universe.csv is a research candidate list, not proof of Sharia compliance.
+    # EGX33 constituents are index-screened; out-of-index additions require an
+    # explicit source and a recent verification date.
+    out["sharia_verified"] = out["in_egx33"] | (out["in_sharia_extra"] & out["sharia_review_status"].eq("اعتماد خارجي حديث"))
     return out[[
         "code", "name", "name_ar", "name_en", "in_list", "in_egx33",
-        "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_verified_on",
+        "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_verified_on", "sharia_review_status",
     ]]
