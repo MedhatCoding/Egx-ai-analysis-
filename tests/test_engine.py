@@ -540,6 +540,54 @@ def test_unverified_candidates_do_not_consume_buy_slots():
         assert len(cls[cls["signal"] == "BUY"]) == min(len(verified_eligible), int(CFG["risk"]["max_buys_by_regime"][last["regime"]]))
 
 
+def test_history_backfill_is_throttled_for_free_sources():
+    from src import data_fetch
+
+    path = data_fetch.cache_path("THROTTLE")
+    existed = path.exists()
+    backup = path.read_bytes() if existed else None
+    original_fetch = data_fetch.fetch_yahoo_from
+    calls = []
+    try:
+        old_idx = pd.date_range(
+            end=pd.Timestamp.today().normalize() - pd.Timedelta(days=3),
+            periods=1210, freq="B",
+        )
+        cached = pd.DataFrame({
+            "open": np.full(len(old_idx), 10.0), "high": np.full(len(old_idx), 11.0),
+            "low": np.full(len(old_idx), 9.0), "close": np.full(len(old_idx), 10.0),
+            "volume": np.full(len(old_idx), 1000.0),
+        }, index=old_idx)
+        data_fetch.write_cache("THROTTLE", cached)
+
+        def fake_fetch(symbol, start, retries=3):
+            calls.append(pd.Timestamp(start).date())
+            idx = pd.date_range(
+                end=pd.Timestamp.today().normalize() - pd.Timedelta(days=1),
+                periods=3, freq="B",
+            )
+            return pd.DataFrame({
+                "open": np.full(len(idx), 10.0), "high": np.full(len(idx), 11.0),
+                "low": np.full(len(idx), 9.0), "close": np.full(len(idx), 10.0),
+                "volume": np.full(len(idx), 1000.0),
+            }, index=idx)
+
+        data_fetch.fetch_yahoo_from = fake_fetch
+        cfg = {**CFG, "data": {**CFG["data"], "history_years": 8, "history_backfill_retry_days": 30, "request_sleep": 0}}
+        state = {}
+        data_fetch.refresh_all(cfg, ["THROTTLE"], state, offline=False)
+        data_fetch.refresh_all(cfg, ["THROTTLE"], state, offline=False)
+        assert len(calls) == 2
+        assert calls[1] > calls[0], "second run should refresh recent bars, not redownload full history"
+        assert state["history_backfill_attempted"]["THROTTLE"]
+    finally:
+        data_fetch.fetch_yahoo_from = original_fetch
+        if existed:
+            path.write_bytes(backup)
+        else:
+            path.unlink(missing_ok=True)
+
+
 def test_portfolio_requires_explicit_current_sharia_verification_to_increase():
     from src.portfolio import recommend_stock
 
