@@ -230,17 +230,32 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
             # Initial load: request the configured multi-year history. Daily refresh:
             # request only a small overlap, then merge, so the cache retains the full
             # history without downloading it again every morning.
+            backfill_state = state.setdefault("history_backfill_attempted", {})
+            retry_days = max(1, int(d.get("history_backfill_retry_days", 30)))
+            today = date.today()
             if cached is not None and len(cached):
-                # If the cache is shorter than the requested history, try backfilling
-                # from the target start. Otherwise fetch only a small overlap.
+                # Try to extend short history periodically, not every morning.
+                # Some free sources return only ~5 years even when asked for 8;
+                # repeating the same full download daily wastes time and requests.
                 cache_start = cached.index[0].date()
-                if cache_start > requested_start + timedelta(days=30):
+                last_attempt = None
+                try:
+                    last_attempt = date.fromisoformat(str(backfill_state.get(code, "")))
+                except ValueError:
+                    pass
+                backfill_due = last_attempt is None or (today - last_attempt).days >= retry_days
+                if cache_start > requested_start + timedelta(days=30) and backfill_due:
                     start = requested_start
+                    backfill_state[code] = today.isoformat()
                 else:
                     start = (cached.index[-1] - timedelta(days=7)).date()
                 fresh = fetch_yahoo_from(code + d["yahoo_suffix"], start)
             else:
                 fresh = fetch_yahoo(code + d["yahoo_suffix"], d["history_years"])
+                # Remember if the initial free-source response cannot reach the
+                # requested start, so the next daily run uses incremental refresh.
+                if fresh is not None and len(fresh) and fresh.index[0].date() > requested_start + timedelta(days=30):
+                    backfill_state[code] = today.isoformat()
             time.sleep(d["request_sleep"])
 
         if fresh is not None and len(fresh) >= 1:
@@ -258,11 +273,19 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
                 # If Yahoo failed while the cache is short, let the fallback attempt
                 # backfill the missing history instead of fetching only recent candles.
                 cache_start = cached.index[0].date()
-                fallback_start = (
-                    requested_start
-                    if cache_start > requested_start + timedelta(days=30)
-                    else (cached.index[-1] - timedelta(days=3)).date()
-                )
+                backfill_state = state.setdefault("history_backfill_attempted", {})
+                retry_days = max(1, int(d.get("history_backfill_retry_days", 30)))
+                last_attempt = None
+                try:
+                    last_attempt = date.fromisoformat(str(backfill_state.get(code, "")))
+                except ValueError:
+                    pass
+                backfill_due = last_attempt is None or (date.today() - last_attempt).days >= retry_days
+                if cache_start > requested_start + timedelta(days=30) and backfill_due:
+                    fallback_start = requested_start
+                    backfill_state[code] = date.today().isoformat()
+                else:
+                    fallback_start = (cached.index[-1] - timedelta(days=3)).date()
                 add = fetch_eodhd(code, token, fallback_start)
                 if add is not None and len(add) > 0:
                     merged = pd.concat([cached, add])
