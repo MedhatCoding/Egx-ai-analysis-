@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import config as C
-from .backtest import run_backtest
+from .backtest import run_backtest, performance_warning
 from .data_fetch import fetch_benchmark, fetch_market_indices, fetch_oanor_market, load_prices, refresh_all
 from .report import build_report, compose_alert
 from .signals import analyze, build_result, classify, latest_table
@@ -257,6 +257,17 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     ran_bt = maybe_backtest(cfg, state, frames, now, force=False)
     if ran_bt:
         print("تم تحديث نتائج الاختبار التاريخي.")
+    # Always expose weak historical evidence, even when the weekly backtest
+    # refresh is not due. Do not hide a poor comparison behind fresh signals.
+    try:
+        bt_path = C.BACKTEST / "summary.json"
+        if bt_path.exists():
+            bt_summary = json.loads(bt_path.read_text(encoding="utf-8"))
+            bt_warning = performance_warning(bt_summary)
+            if bt_warning:
+                warnings.append(bt_warning)
+    except Exception as e:
+        print(f"  [BACKTEST] تعذر تقييم ملخص الأداء: {type(e).__name__}")
 
     # ---- التقرير
     rep = build_report(result, track, cfg, now, warnings)
