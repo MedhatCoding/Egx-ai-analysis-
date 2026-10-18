@@ -20,6 +20,8 @@ def recommend_stock(row: dict, regime: str, avg_cost: float | None = None) -> tu
     if regime == "down" and score < 60:
         return "SELL", "اتجاه السوق هابط والسهم لا يملك قوة كافية لتبرير الاحتفاظ."
     if signal == "BUY" and score >= 75 and regime not in {"down", "weak"}:
+        if row.get("sharia_verified") is False or str(row.get("sharia_verified", "true")).strip().lower() in {"false", "0", "no"}:
+            return "HOLD", "لا توجد مراجعة شرعية حديثة موثقة لهذا السهم؛ لا تزِد المركز قبل التحقق من مصدر موثوق."
         if avg_cost and close > avg_cost * 1.20:
             return "HOLD", "السهم قوي، لكن الربح المتحقق كبير؛ الاحتفاظ أفضل من زيادة المركز الآن."
         return "INCREASE", "الإشارة قوية والسوق يسمح بزيادة انتقائية للمركز."
