@@ -819,7 +819,21 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
     )
     cov = load_csv(C.SIGNALS / "coverage.csv")
     if cov is not None:
-        years = pd.to_numeric(cov.get("coverage_years", pd.Series(0, index=cov.index)), errors="coerce").fillna(0)
+        # Backward-compatible with older committed coverage.csv files that only
+        # stored bars/source/last_date. Estimate years from trading sessions until
+        # the next live refresh writes exact first_date/coverage_years fields.
+        if "coverage_years" not in cov.columns:
+            bars = pd.to_numeric(cov.get("bars", pd.Series(0, index=cov.index)), errors="coerce").fillna(0)
+            cov["coverage_years"] = (bars / 252.0).round(2)
+        if "first_date" not in cov.columns:
+            cov["first_date"] = "غير متاح في السجل القديم"
+        if "last_date" not in cov.columns:
+            cov["last_date"] = ""
+        if "note" not in cov.columns:
+            cov["note"] = ""
+        if "source" not in cov.columns:
+            cov["source"] = "unknown"
+        years = pd.to_numeric(cov["coverage_years"], errors="coerce").fillna(0)
         weak_mask = (cov["source"] != "yahoo") | (cov["note"].fillna("") != "") | (years < 3.0)
         weak = cov[weak_mask].copy()
         if len(weak):
