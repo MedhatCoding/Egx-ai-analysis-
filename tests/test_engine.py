@@ -519,16 +519,22 @@ def test_backtest_underperformance_is_reported():
     assert performance_warning({}) is None
 
 
-def test_portfolio_does_not_increase_unverified_shares():
+def test_portfolio_requires_explicit_current_sharia_verification_to_increase():
     from src.portfolio import recommend_stock
 
-    row = {
-        "score": 90, "signal": "BUY", "close": 100, "stop": 90,
-        "sharia_verified": False,
-    }
-    action, reason = recommend_stock(row, "up", avg_cost=95)
-    assert action == "HOLD"
-    assert "مراجعة شرعية" in reason
+    base = {"score": 90, "signal": "BUY", "close": 100, "stop": 90}
+    # False, missing, and null are all unknown/unapproved; none may increase.
+    for status in (False, None, "pending"):
+        row = {**base, "sharia_verified": status}
+        action, reason = recommend_stock(row, "up", avg_cost=95)
+        assert action == "HOLD"
+        assert "مراجعة شرعية" in reason
+    action, reason = recommend_stock(base, "up", avg_cost=95)
+    assert action == "HOLD" and "مراجعة شرعية" in reason
+
+    # An explicit, current verification preserves the normal decision path.
+    action, _ = recommend_stock({**base, "sharia_verified": True}, "up", avg_cost=95)
+    assert action == "INCREASE"
 
 
 # ------------------------------------------------------------------ القائمة
