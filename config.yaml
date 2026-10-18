@@ -74,7 +74,9 @@ ml:
   horizon_days: 10
   positive_return: 0.03
   min_samples: 500
-  validation_fraction: 0.20
+  validation_fraction: 0.10
+  validation_folds: 3
+  mlp_max_iter: 120
   purge_horizon: true
   min_auc: 0.52
   min_brier_improvement: 0.02
