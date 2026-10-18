@@ -12,6 +12,7 @@ universe:
   verification_max_age_days: 180
 data:
   history_years: 8
+  history_backfill_retry_days: 30
   yahoo_suffix: ".CA"
   benchmark_yahoo_symbol: "^CASE30"
   benchmark_eodhd_symbol: "CASE30.INDX"
