@@ -55,28 +55,16 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
     X = data[cols].astype(float)
     y = data["target"].astype(int)
 
-    # Split by dates, not rows: symbols from the same session must not leak across
-    # train/validation. Purge the target horizon before validation to prevent
-    # overlapping forward-return labels from crossing the boundary.
+    # Walk-forward validation: evaluate several consecutive unseen periods.
+    # Split by session date (all symbols from a date stay together) and purge the
+    # forward-return horizon before each validation window to reduce label overlap.
     dates = pd.to_datetime(data["date"])
     unique_dates = pd.Index(dates.drop_duplicates().sort_values())
-    cut_date_idx = max(int(len(unique_dates) * (1.0 - float(mcfg.get("validation_fraction", 0.20)))), 1)
-    if cut_date_idx >= len(unique_dates):
-        cut_date_idx = len(unique_dates) - 1
-    validation_start = unique_dates[cut_date_idx]
     purge_horizon = horizon if mcfg.get("purge_horizon", True) else 0
-    train_end_idx = max(0, cut_date_idx - purge_horizon)
-    if train_end_idx < 2:
-        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تاريخ غير كافٍ بعد عزل فترة التحقق"}
-    train_cutoff = unique_dates[train_end_idx]
-    train_mask = dates < train_cutoff
-    validation_mask = dates >= validation_start
-    Xtr, ytr = X.loc[train_mask], y.loc[train_mask]
-    Xva, yva = X.loc[validation_mask], y.loc[validation_mask]
-    if len(Xtr) < int(mcfg.get("min_samples", 500)) * 0.5 or len(Xva) < 20:
-        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "عينات تدريب أو تحقق غير كافية بعد الفصل الزمني"}
-    if ytr.nunique() < 2 or yva.nunique() < 2:
-        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تنوع الهدف غير كافٍ في الفصل الزمني"}
+    fold_count = max(2, int(mcfg.get("validation_folds", 3)))
+    fold_fraction = float(mcfg.get("validation_fraction", 0.10))
+    if len(unique_dates) < max(60, purge_horizon * fold_count + 30):
+        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "تاريخ غير كافٍ لاختبار زمني متعدد النوافذ"}
 
     rf = RandomForestClassifier(
         n_estimators=int(mcfg.get("rf_trees", 120)),
@@ -86,42 +74,94 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
         random_state=42,
         n_jobs=-1,
     )
-    deep = Pipeline([
-        ("scale", StandardScaler()),
-        ("mlp", MLPClassifier(
-            hidden_layer_sizes=(32, 16),
-            activation="relu",
-            solver="adam",
-            alpha=0.0005,
-            batch_size=128,
-            learning_rate_init=0.001,
-            max_iter=120,
-            early_stopping=True,
-            validation_fraction=0.15,
-            random_state=42,
-        )),
-    ])
+    def make_deep():
+        return Pipeline([
+            ("scale", StandardScaler()),
+            ("mlp", MLPClassifier(
+                hidden_layer_sizes=(32, 16),
+                activation="relu",
+                solver="adam",
+                alpha=0.0005,
+                batch_size=128,
+                learning_rate_init=0.001,
+                max_iter=int(mcfg.get("mlp_max_iter", 120)),
+                # Internal random early stopping can mix overlapping forward labels
+                # across its split; external chronological folds decide model quality.
+                early_stopping=False,
+                random_state=42,
+            )),
+        ])
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        rf.fit(Xtr, ytr)
-        deep.fit(Xtr, ytr)
+    fold_predictions = []
+    fold_meta = []
+    n_dates = len(unique_dates)
+    fold_size = max(10, int(n_dates * fold_fraction))
+    # Latest fold ends at the final available label; prior folds use the same width.
+    first_start = n_dates - fold_size * fold_count
+    if first_start <= purge_horizon + 20:
+        first_start = max(int(n_dates * 0.50), purge_horizon + 21)
+        fold_size = max(10, (n_dates - first_start) // fold_count)
+    for fold in range(fold_count):
+        start_idx = first_start + fold * fold_size
+        end_idx = min(n_dates, start_idx + fold_size)
+        train_end_idx = start_idx - purge_horizon
+        if train_end_idx < 20 or end_idx - start_idx < 10:
+            continue
+        train_cutoff = unique_dates[train_end_idx]
+        validation_start = unique_dates[start_idx]
+        validation_end = unique_dates[end_idx - 1]
+        train_mask = dates < train_cutoff
+        validation_mask = (dates >= validation_start) & (dates <= validation_end)
+        Xtr, ytr = X.loc[train_mask], y.loc[train_mask]
+        Xva, yva = X.loc[validation_mask], y.loc[validation_mask]
+        if len(Xtr) < int(mcfg.get("min_samples", 500)) * 0.35 or len(Xva) < 20:
+            continue
+        if ytr.nunique() < 2 or yva.nunique() < 2:
+            continue
+        fold_rf = RandomForestClassifier(
+            n_estimators=int(mcfg.get("rf_trees", 120)),
+            max_depth=int(mcfg.get("rf_depth", 6)),
+            min_samples_leaf=8,
+            class_weight="balanced_subsample",
+            random_state=42 + fold,
+            n_jobs=-1,
+        )
+        fold_deep = make_deep()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            fold_rf.fit(Xtr, ytr)
+            fold_deep.fit(Xtr, ytr)
+        prob = 0.55 * fold_rf.predict_proba(Xva)[:, 1] + 0.45 * fold_deep.predict_proba(Xva)[:, 1]
+        fold_predictions.append(pd.DataFrame({
+            "y": yva.to_numpy(),
+            "p": prob,
+            "baseline": float(ytr.mean()),
+            "fold": fold,
+        }, index=yva.index))
+        fold_meta.append({
+            "fold": fold + 1,
+            "train_samples": int(len(Xtr)),
+            "validation_samples": int(len(Xva)),
+            "validation_start": str(validation_start.date()),
+            "validation_end": str(validation_end.date()),
+        })
 
-    p_rf = rf.predict_proba(Xva)[:, 1]
-    p_deep = deep.predict_proba(Xva)[:, 1]
-    p = 0.55 * p_rf + 0.45 * p_deep
+    if len(fold_predictions) < 2:
+        return {}, {"enabled": True, "samples": int(len(data)), "auc": None, "error": "نوافذ الاختبار الزمني الصالحة أقل من نافذتين"}
+    oof = pd.concat(fold_predictions).sort_index()
+    yva = oof["y"].astype(int)
+    p = oof["p"].astype(float)
     auc = float(roc_auc_score(yva, p))
     brier = float(brier_score_loss(yva, p))
-    # مرجع احتمالي بسيط: توقع معدل النجاح في بيانات التدريب لكل عينات التحقق.
-    baseline_rate = float(ytr.mean())
-    baseline_brier = float(brier_score_loss(yva, np.full(len(yva), baseline_rate)))
+    baseline_brier = float(brier_score_loss(yva, oof["baseline"].astype(float)))
     validation_meta = {
         "auc": round(auc, 4),
         "brier": round(brier, 4),
         "baseline_brier": round(baseline_brier, 4),
-        "validation_samples": int(len(yva)),
-        "validation_start": str(validation_start.date()),
-        "validation_end": str(dates.loc[validation_mask].max().date()),
+        "validation_samples": int(len(oof)),
+        "validation_start": str(min(m["validation_start"] for m in fold_meta)),
+        "validation_end": str(max(m["validation_end"] for m in fold_meta)),
+        "validation_folds": fold_meta,
     }
 
     # لا نسمح للنموذج بتغيير ترتيب الفرص إلا إذا اجتاز AUC وحسّن
@@ -140,9 +180,14 @@ def train_predict(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict[str,
             "model_used": False, "error": reason,
         }
 
+    # Only after the walk-forward gate passes do we fit production models on all
+    # available labelled history.
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         rf.fit(X, y)
+    deep = make_deep()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         deep.fit(X, y)
 
     latest_rows = []
