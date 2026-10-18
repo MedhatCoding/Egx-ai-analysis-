@@ -519,6 +519,24 @@ def test_backtest_underperformance_is_reported():
     assert performance_warning({}) is None
 
 
+def test_unverified_candidates_do_not_consume_buy_slots():
+    frames, regime_df, _, _ = _analysis()
+    names = {c: c for c in frames}
+    latest = latest_table(frames, names, CFG)
+    candidates = latest[latest["buy_raw"] & ~latest["stale"] & latest["liquid"]].sort_values(["score", "rs_pct"], ascending=False)
+    if len(candidates) < 2:
+        return
+    latest["sharia_verified"] = True
+    # Highest-scoring candidate is unverified; the next eligible one must retain the slot.
+    latest.loc[candidates.index[0], "sharia_verified"] = False
+    last = regime_df.iloc[-1]
+    cls = classify(latest, last["regime"], last["regime_score"], CFG)
+    assert not ((cls["signal"] == "BUY") & ~cls["sharia_verified"]).any()
+    if int(CFG["risk"]["max_buys_by_regime"][last["regime"]]) > 0:
+        verified_eligible = latest.loc[latest["sharia_verified"] & latest["buy_raw"] & ~latest["stale"] & latest["liquid"]]
+        assert len(cls[cls["signal"] == "BUY"]) == min(len(verified_eligible), int(CFG["risk"]["max_buys_by_regime"][last["regime"]]))
+
+
 def test_portfolio_requires_explicit_current_sharia_verification_to_increase():
     from src.portfolio import recommend_stock
 
