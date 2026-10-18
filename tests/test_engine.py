@@ -510,6 +510,18 @@ def test_backtest_underperformance_is_reported():
     assert performance_warning({}) is None
 
 
+def test_portfolio_does_not_increase_unverified_shares():
+    from src.portfolio import recommend_stock
+
+    row = {
+        "score": 90, "signal": "BUY", "close": 100, "stop": 90,
+        "sharia_verified": False,
+    }
+    action, reason = recommend_stock(row, "up", avg_cost=95)
+    assert action == "HOLD"
+    assert "مراجعة شرعية" in reason
+
+
 # ------------------------------------------------------------------ القائمة
 def test_universe_modes_on_real_files():
     real = ROOT / "data"
