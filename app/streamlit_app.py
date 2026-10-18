@@ -819,10 +819,30 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
     )
     cov = load_csv(C.SIGNALS / "coverage.csv")
     if cov is not None:
-        weak = cov[(cov["source"] != "yahoo") | (cov["note"].fillna("") != "")]
+        years = pd.to_numeric(cov.get("coverage_years", pd.Series(0, index=cov.index)), errors="coerce").fillna(0)
+        weak_mask = (cov["source"] != "yahoo") | (cov["note"].fillna("") != "") | (years < 3.0)
+        weak = cov[weak_mask].copy()
         if len(weak):
-            st.markdown(ui.section("أسهم بها ملاحظات في البيانات"), unsafe_allow_html=True)
-            render_cards(weak.rename(columns={"code": "الرمز", "source": "المصدر", "bars": "الشموع", "last_date": "آخر تاريخ", "note": "ملاحظة"}), title_candidates=("الرمز",))
+            st.markdown(ui.section("أسهم بها فجوات واضحة في البيانات", "تظهر هنا المصادر البديلة، والأخطاء، والأسهم التي لديها أقل من 3 سنوات تاريخية."), unsafe_allow_html=True)
+            weak = weak.sort_values("coverage_years", ascending=True)
+            render_cards(
+                weak.rename(columns={
+                    "code": "الرمز", "source": "المصدر", "bars": "عدد الجلسات",
+                    "first_date": "أول تاريخ", "last_date": "آخر تاريخ",
+                    "coverage_years": "سنوات التاريخ", "note": "ملاحظة",
+                }),
+                title_candidates=("الرمز",),
+            )
+        with st.expander("تفاصيل التغطية التاريخية لكل سهم"):
+            all_cov = cov.sort_values("coverage_years", ascending=True)
+            render_cards(
+                all_cov.rename(columns={
+                    "code": "الرمز", "source": "المصدر", "bars": "عدد الجلسات",
+                    "first_date": "أول تاريخ", "last_date": "آخر تاريخ",
+                    "coverage_years": "سنوات التاريخ", "note": "ملاحظة",
+                }),
+                title_candidates=("الرمز",),
+            )
 
 
 # ================================================================== مراجعة الشريعة خارج EGX33
