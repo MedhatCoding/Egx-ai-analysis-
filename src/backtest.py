@@ -103,3 +103,32 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
         },
     }
     return summary, st, bs
+
+
+
+def performance_warning(summary: dict) -> str | None:
+    """Warn when the current rule set fails to beat its baseline on core metrics."""
+    strategy = summary.get("strategy") or {}
+    baseline = summary.get("baseline") or {}
+    if not strategy or not baseline:
+        return None
+    try:
+        strategy_avg = float(strategy["avg_r"])
+        baseline_avg = float(baseline["avg_r"])
+        strategy_pf = float(strategy["profit_factor"])
+        baseline_pf = float(baseline["profit_factor"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if strategy_avg < baseline_avg and strategy_pf < baseline_pf:
+        period = summary.get("period") or {}
+        start, end = period.get("from"), period.get("to")
+        period_text = f" خلال {start} إلى {end}" if start and end else ""
+        return (
+            "مراجعة أداء الاستراتيجية: الاختبار التاريخي الحالي"
+            f"{period_text} لا يتفوق على خط الأساس في متوسط R "
+            f"({strategy_avg:.3f} مقابل {baseline_avg:.3f}) أو عامل الربح "
+            f"({strategy_pf:.2f} مقابل {baseline_pf:.2f}). "
+            "لا تعتبر كثرة الإشارات دليلًا على الجودة؛ راجع نتائج الاختبار وتحيز البقاء "
+            "والتكاليف قبل الاعتماد على الاستراتيجية."
+        )
+    return None
