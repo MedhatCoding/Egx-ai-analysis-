@@ -156,8 +156,22 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
 
     frames, regime_df, _panel = analyze(prices, bench, cfg)
     latest = latest_table(frames, names, cfg, regime_df.attrs.get("ml_probs", {}), regime_df.attrs.get("ml_meta", {}))
+    # Sharia eligibility is a hard gate for BUY labels, not merely a ranking feature.
+    # Unverified candidates remain visible in WATCH with an explicit review reason.
+    eligibility = uni[["code", "sharia_verified", "sharia_review_status"]].copy()
+    latest = latest.merge(eligibility, on="code", how="left")
+    latest["sharia_verified"] = latest["sharia_verified"].fillna(False).astype(bool)
+    latest["sharia_review_status"] = latest["sharia_review_status"].fillna("مراجعة مطلوبة")
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], cfg)
+    unverified = ~cls["sharia_verified"]
+    cls.loc[unverified & cls["signal"].eq("BUY"), "signal"] = "WATCH"
+    for idx in cls.index[unverified]:
+        reasons = cls.at[idx, "why_not_buy"]
+        if not isinstance(reasons, list):
+            reasons = []
+        reasons.append("لا توجد مراجعة شرعية حديثة موثقة؛ للمراقبة فقط وليس توصية شراء")
+        cls.at[idx, "why_not_buy"] = reasons
     result = build_result(frames, regime_df, cls, len(codes), cfg)
     sharia_codes = uni.loc[uni["sharia_verified"], "code"].tolist()
     sharia_parts = [prices[c]["close"].rename(c) for c in sharia_codes if c in prices]
