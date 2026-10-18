@@ -30,7 +30,7 @@ from tests.synth import make_prices  # noqa: E402
 
 from src import config as C  # noqa: E402
 from src import pipeline, report, telegram  # noqa: E402
-from src.backtest import run_backtest  # noqa: E402
+from src.backtest import performance_warning, run_backtest  # noqa: E402
 from src.indicators import atr, compute_indicators, rsi, sma  # noqa: E402
 from src.scoring import compute_scores  # noqa: E402
 from src.regime import compute_regime  # noqa: E402
@@ -492,6 +492,22 @@ def test_pipeline_dry_run_and_missing_secrets_and_alerts():
     finally:
         pipeline.load_prices = orig
     assert alerts and "تعذّر" in alerts[0]
+
+
+def test_backtest_underperformance_is_reported():
+    weak = {
+        "period": {"from": "2021-10-14", "to": "2026-10-14"},
+        "strategy": {"avg_r": 0.109, "profit_factor": 1.20},
+        "baseline": {"avg_r": 0.165, "profit_factor": 1.31},
+    }
+    warning = performance_warning(weak)
+    assert warning and "لا يتفوق على خط الأساس" in warning
+    assert "2021-10-14" in warning and "1.20" in warning
+    assert performance_warning({
+        "strategy": {"avg_r": 0.20, "profit_factor": 1.4},
+        "baseline": {"avg_r": 0.10, "profit_factor": 1.2},
+    }) is None
+    assert performance_warning({}) is None
 
 
 # ------------------------------------------------------------------ القائمة
