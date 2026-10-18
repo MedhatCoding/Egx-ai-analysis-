@@ -96,6 +96,9 @@ def _analysis(prices=None):
     prices = prices or {c: p for c, p in _bull_prices().items()}
     frames, regime_df, _ = analyze(prices, None, CFG)
     latest = latest_table(frames, {c: c for c in frames}, CFG)
+    # Test universe is explicitly approved by _setup_data_dir().
+    latest["sharia_verified"] = True
+    latest["sharia_review_status"] = "اعتماد اختبار حديث"
     last = regime_df.iloc[-1]
     cls = classify(latest, last["regime"], last["regime_score"], CFG)
     result = build_result(frames, regime_df, cls, len(prices), CFG)
