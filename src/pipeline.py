@@ -75,7 +75,9 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
     tbl = latest_cls.copy()
     tbl["why_not_buy"] = tbl["why_not_buy"].apply(lambda x: " | ".join(x) if isinstance(x, list) else "")
     tbl["date"] = pd.to_datetime(tbl["date"]).dt.date.astype(str)
-    tbl = tbl.merge(uni[["code", "in_list", "in_egx33"]], on="code", how="left")
+    metadata_cols = ["code", "in_list", "in_egx33", "in_sharia_extra", "sharia_review_status", "sharia_source", "sharia_verified_on"]
+    metadata_cols = [c for c in metadata_cols if c in uni.columns]
+    tbl = tbl.merge(uni[metadata_cols], on="code", how="left")
     tbl.round(4).to_csv(C.SIGNALS / "table.csv", index=False)
 
     reg = regime_df.tail(400).copy()
@@ -92,6 +94,10 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
         "both": int((uni["in_list"] & uni["in_egx33"]).sum()),
         "sharia_verified_total": int(uni["sharia_verified"].sum()) if "sharia_verified" in uni else 0,
         "sharia_extra_outside_egx33": int((uni["in_sharia_extra"] & ~uni["in_egx33"]).sum()) if "in_sharia_extra" in uni else 0,
+        "verified_outside_egx33": int((uni["sharia_verified"] & ~uni["in_egx33"]).sum()) if {"sharia_verified", "in_egx33"} <= set(uni.columns) else 0,
+        "external_review_expired": int(uni["sharia_review_status"].eq("اعتماد خارجي منتهي الصلاحية").sum()) if "sharia_review_status" in uni else 0,
+        "external_review_current": int(uni["sharia_review_status"].eq("اعتماد خارجي حديث").sum()) if "sharia_review_status" in uni else 0,
+        "sharia_review_required": int((~uni["sharia_verified"] & ~uni["in_egx33"]).sum()) if {"sharia_verified", "in_egx33"} <= set(uni.columns) else 0,
     }
     # Expose the actual historical coverage instead of implying that every ticker
     # has the configured lookback. These values feed diagnostics and are auditable.
