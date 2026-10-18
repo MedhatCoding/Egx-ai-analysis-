@@ -215,6 +215,16 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     missing = [c for c in codes if c not in prices]
     if missing:
         warnings.append(f"{len(missing)} سهم بدون بيانات كافية (منها: {', '.join(missing[:6])}).")
+    # Requested lookback is not the same as actual coverage; report the gap explicitly.
+    if "coverage_years" in cov.columns and len(cov):
+        coverage = pd.to_numeric(cov["coverage_years"], errors="coerce").fillna(0.0)
+        requested_years = float(cfg["data"].get("history_years", 5))
+        short_history = int((coverage < max(0.0, requested_years - 0.25)).sum())
+        if short_history:
+            warnings.append(
+                f"التغطية التاريخية: {short_history} من {len(cov)} رمزًا أقل من "
+                f"{requested_years:g} سنوات المطلوبة؛ الاختبار التاريخي لا يستخدم إلا الفترات المتاحة فعليًا لكل سهم."
+            )
     n_cache = int(cov["source"].astype(str).str.startswith("cache").sum())
     if n_cache:
         warnings.append(f"{n_cache} سهم اتحلل ببيانات محفوظة لأن Yahoo فشل معها.")
