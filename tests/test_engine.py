@@ -69,6 +69,16 @@ def _setup_data_dir() -> list[str]:
     listed = codes[:45] + ["ILLQ", "STAL", "SHRT"]
     pd.DataFrame({"code": listed, "name_ar": [f"شركة {c}" for c in listed]}).to_csv(TMP / "universe.csv", index=False)
     (TMP / "egx33.txt").write_text("# test\n" + "\n".join(f"{c},Company {c}" for c in codes[40:]) + "\n", encoding="utf-8")
+    # Synthetic fixtures explicitly screened as Sharia-compliant so the production
+    # sharia_union gate can be tested without weakening eligibility in test code.
+    pd.DataFrame({
+        "code": codes,
+        "name_ar": [f"شركة {c}" for c in codes],
+        "verification_source": ["test fixture: approved screening"] * len(codes),
+        "verified_on": ["2026-09-01"] * len(codes),
+        "notes": ["synthetic test data"] * len(codes),
+        "status": ["approved"] * len(codes),
+    }).to_csv(TMP / "sharia_extra.csv", index=False)
     (TMP / "holidays.txt").write_text("# none\n2026-10-06\n", encoding="utf-8")
     return codes
 
@@ -436,10 +446,9 @@ def _run(**kw):
     pipeline.send_message = lambda token, chat, text: (sent.append(text) or 1)
     os.environ["TELEGRAM_BOT_TOKEN"], os.environ["TELEGRAM_CHAT_ID"] = "t", "1"
     os.environ.pop("ANTHROPIC_API_KEY", None)
-    # This fixture contains synthetic symbols that are not Sharia-screened; test
-    # pipeline behavior with the explicit legacy union, not the production universe.
-    test_cfg = {**CFG, "universe": {"mode": "union"}}
-    return pipeline.run(test_cfg, offline=True, now=kw.pop("now", SUN_9AM), **kw), sent
+    # Exercise the production Sharia-only universe with explicitly screened
+    # synthetic fixtures; do not bypass the eligibility gate in end-to-end tests.
+    return pipeline.run(CFG, offline=True, now=kw.pop("now", SUN_9AM), **kw), sent
 
 
 def test_pipeline_end_to_end():
