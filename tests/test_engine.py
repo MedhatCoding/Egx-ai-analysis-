@@ -530,9 +530,11 @@ def test_universe_modes_on_real_files():
         assert len(only_l) == len(lst) and len(both) > 0 and len(u) >= len(lst)
         assert set(both["code"]) <= set(only_l["code"]) and set(only_l["code"]) <= set(u["code"])
         assert (u["in_list"] | u["in_egx33"]).all()
-        # Personal Sharia universe includes the owner's curated list, EGX33,
-        # and approved additions; do not silently drop vetted out-of-index names.
-        assert len(sharia) >= len(lst) and sharia["sharia_verified"].all()
+        # Research universe includes candidates, but the reference list itself is not
+        # proof of Sharia status; only EGX33 and recently audited external names verify.
+        assert len(sharia) >= len(lst)
+        assert sharia.loc[sharia["in_egx33"], "sharia_verified"].all()
+        assert (~sharia.loc[~sharia["in_egx33"] & ~sharia["in_sharia_extra"], "sharia_verified"]).all()
         assert (sharia["in_list"] | sharia["in_egx33"] | sharia["in_sharia_extra"]).all()
         assert len(sharia.loc[sharia["in_sharia_extra"]]) == 73
     finally:
@@ -561,6 +563,11 @@ def test_sharia_extra_requires_audited_approval():
         assert "OUT1" in set(sharia["code"])
         assert "OUT2" not in set(sharia["code"])
         assert bool(sharia.loc[sharia["code"] == "OUT1", "sharia_verified"].iloc[0])
+        stale = pd.DataFrame([{"code":"OUT3","name_ar":"سهم انتهت مراجعته","verification_source":"مصدر موثق","verified_on":"2025-01-01","notes":"","status":"approved"}])
+        stale.to_csv(path,index=False)
+        expired = build_universe({**CFG,"universe":{"mode":"sharia_union","verification_max_age_days":180}})
+        assert "OUT3" in set(expired["code"])
+        assert not bool(expired.loc[expired["code"]=="OUT3","sharia_verified"].iloc[0])
     finally:
         if existed:
             path.write_bytes(backup)
