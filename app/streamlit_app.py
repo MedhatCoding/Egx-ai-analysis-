@@ -813,7 +813,9 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
             ("أقل من سنة تاريخية", ui.bdi(hc.get("symbols_under_1y", 0))),
             ("أقدم تاريخ متاح", ui.bdi(hc.get("oldest_first_date") or "غير متاح")),
             ("أحدث تاريخ ضمن التغطية", ui.bdi(hc.get("newest_last_date") or "غير متاح")),
-            ("أسهم شرعية خارج EGX33", ui.bdi(u.get("sharia_extra_outside_egx33", 0))),
+            ("أسهم خارج EGX33 باعتماد حديث", ui.bdi(u.get("verified_outside_egx33", u.get("sharia_extra_outside_egx33", 0)))),
+            ("مراجعات شرعية خارج المؤشر منتهية", ui.bdi(u.get("external_review_expired", 0))),
+            ("أسهم تحتاج مراجعة شرعية", ui.bdi(u.get("sharia_review_required", 0))),
         ]),
         unsafe_allow_html=True,
     )
