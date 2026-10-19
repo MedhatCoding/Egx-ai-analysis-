@@ -87,10 +87,11 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["name"] = df["name_ar"].where(df["name_ar"] != "", df["name_en"])
 
     if mode == "sharia_union":
-        # Personal universe: user's curated Sharia list + EGX33 + independently
-        # screened additions. The owner is responsible for keeping universe.csv
-        # as a vetted Sharia list; unreviewed general-market symbols belong elsewhere.
-        mask = df["in_list"] | df["in_egx33"] | df["in_sharia_extra"]
+        # Strict personal Sharia universe: current EGX33 constituents plus
+        # externally screened additions with an auditable, non-expired review.
+        # universe.csv is only a candidate/reference list and must never expand
+        # the Sharia universe by itself.
+        mask = df["in_egx33"] | extra_fresh
     elif mode == "union":
         mask = df["in_list"] | df["in_egx33"]
     elif mode == "intersection":
