@@ -541,6 +541,21 @@ def test_unverified_candidates_do_not_consume_buy_slots():
         assert len(cls[cls["signal"] == "BUY"]) == min(len(verified_eligible), int(CFG["risk"]["max_buys_by_regime"][last["regime"]]))
 
 
+def test_price_clean_rejects_impossible_ohlc_candles():
+    from src.data_fetch import _clean
+
+    idx = pd.date_range("2026-01-01", periods=3, freq="D")
+    frame = pd.DataFrame({
+        "open": [10.0, 10.0, 10.0],
+        "high": [11.0, 9.0, 11.0],
+        "low": [9.0, 8.0, 9.0],
+        "close": [10.5, 10.5, 10.0],
+        "volume": [100.0, 100.0, -1.0],
+    }, index=idx)
+    clean = _clean(frame)
+    assert list(clean.index) == [idx[0]], "invalid high/low or negative volume must be excluded"
+
+
 def test_history_backfill_is_throttled_for_free_sources():
     from src import data_fetch
 
