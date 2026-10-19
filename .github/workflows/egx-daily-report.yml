@@ -26,7 +26,7 @@ on:
         type: boolean
 
 concurrency:
-  group: egx-daily-report
+  group: egx-daily-report-v2
   # Prevent a stalled old test run from blocking the newest code revision.
   cancel-in-progress: true
 
