@@ -27,7 +27,8 @@ on:
 
 concurrency:
   group: egx-daily-report
-  cancel-in-progress: false
+  # Prevent a stalled old test run from blocking the newest code revision.
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -35,6 +36,7 @@ permissions:
 jobs:
   daily:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       EODHD_API_TOKEN: ${{ secrets.EODHD_API_TOKEN || secrets.EODHD_API_KEY }}
