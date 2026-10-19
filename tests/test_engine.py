@@ -39,6 +39,7 @@ from src.signals import analyze, build_result, classify, latest_table  # noqa: E
 from src.sim import simulate_trade  # noqa: E402
 from src.track_record import COMPONENTS, component_stats, load_history, log_signals, save_history, summarize, update_history  # noqa: E402
 from src.universe import build_universe  # noqa: E402
+from src.funds import SHARIA_FUNDS, GOLD_FUNDS, FUND_SOURCE_MATCHES  # noqa: E402
 
 CFG = C.load_config()
 CAIRO = ZoneInfo("Africa/Cairo")
@@ -846,6 +847,15 @@ def _run_app():
         for m in [k for k in sys.modules if k in ("app.charts", "app.ui")]:
             del sys.modules[m]
 
+
+
+def test_fund_catalog_has_published_sharia_and_gold_entries():
+    sharia_names = {f["name"] for f in SHARIA_FUNDS}
+    gold_names = {f["name"] for f in GOLD_FUNDS}
+    assert "بشائر الإسلامي – الأهلي/البركة" in sharia_names
+    assert "هيرميس لأسهم الشريعة" in sharia_names
+    assert all(name in FUND_SOURCE_MATCHES for name in sharia_names | gold_names)
+    assert FUND_SOURCE_MATCHES["بشائر الإسلامي – الأهلي/البركة"][0] == "BAS"
 
 def test_streamlit_app_smoke_run():
     """تشغيل صفحة Streamlit كاملة ببيانات اختبار وهمية لاكتشاف أخطاء منطق الواجهة."""
