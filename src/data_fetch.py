@@ -23,12 +23,16 @@ def read_cache(code: str) -> pd.DataFrame | None:
     if not p.exists():
         return None
     df = pd.read_csv(p, parse_dates=["date"], index_col="date")
-    return df[COLS].sort_index()
+    # Sanitize older cached files too; don't let malformed candles poison indicators.
+    clean = _clean(df)
+    if len(clean) != len(df):
+        print(f"  [cache] {code}: تم استبعاد {len(df) - len(clean)} شمعة غير منطقية")
+    return clean.sort_index()
 
 
 def write_cache(code: str, df: pd.DataFrame) -> None:
     PRICES.mkdir(parents=True, exist_ok=True)
-    out = df[COLS].copy()
+    out = _clean(df)
     out.index.name = "date"
     out.round(4).to_csv(cache_path(code))
 
@@ -40,9 +44,21 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
     df = df[~df.index.duplicated(keep="last")].sort_index()
     df = df.dropna(subset=["close", "high", "low", "open"])
     df["volume"] = df["volume"].fillna(0)
-    # شموع غير منطقية
-    df = df[(df["close"] > 0) & (df["high"] >= df["low"])]
-    return df
+    # شموع غير منطقية: High يجب أن يغطي Open/Close وLow يجب أن يغطيهما من الأسفل.
+    # هذا يكشف انزياح الأعمدة أو اختلاف تعديل الأسعار بين المصادر.
+    valid = (
+        (df["open"] > 0)
+        & (df["high"] > 0)
+        & (df["low"] > 0)
+        & (df["close"] > 0)
+        & (df["high"] >= df[["open", "close", "low"]].max(axis=1))
+        & (df["low"] <= df[["open", "close", "high"]].min(axis=1))
+        & (df["volume"] >= 0)
+    )
+    invalid_count = int((~valid).sum())
+    if invalid_count:
+        print(f"  [data] تم استبعاد {invalid_count} شمعة OHLCV غير منطقية")
+    return df.loc[valid]
 
 
 # ---------------------------------------------------------------- Yahoo
