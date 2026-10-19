@@ -32,8 +32,8 @@ from src import config as C  # noqa: E402
 from src import pipeline, report, telegram  # noqa: E402
 from src.backtest import performance_warning, run_backtest  # noqa: E402
 from src.indicators import atr, compute_indicators, rsi, sma  # noqa: E402
+from src.ml_model import _dataset, train_predict  # noqa: E402
 from src.scoring import compute_scores  # noqa: E402
-from src.regime import compute_regime  # noqa: E402
 from src.regime import compute_regime  # noqa: E402
 from src.signals import analyze, build_result, classify, latest_table  # noqa: E402
 from src.sim import simulate_trade  # noqa: E402
@@ -605,6 +605,46 @@ def test_portfolio_requires_explicit_current_sharia_verification_to_increase():
     action, _ = recommend_stock({**base, "sharia_verified": True}, "up", avg_cost=95)
     assert action == "INCREASE"
 
+
+
+# ------------------------------------------------------------------ التعلم الآلي: تسميات صحيحة واختبار زمني
+def test_ml_dataset_uses_forward_returns_and_drops_unlabelled_tail():
+    dates = pd.bdate_range("2024-01-01", periods=40)
+    close = pd.Series(np.linspace(10.0, 20.0, len(dates)), index=dates)
+    frame = pd.DataFrame({"close": close}, index=dates)
+    for col in (
+        "score", "rsi14", "macd_hist", "atr_pct", "ret1", "ret5", "ret20",
+        "ret60", "vol_ratio", "updown_vol", "rs_rank", "dist_high252", "sma50_slope",
+    ):
+        frame[col] = 1.0
+    horizon = 5
+    ds = _dataset({"TEST": frame}, horizon=horizon, threshold=0.01)
+    assert len(ds) == len(frame) - horizon
+    assert ds["date"].max() == dates[-horizon - 1]
+    assert (ds["code"] == "TEST").all()
+    expected = (close.shift(-horizon) / close - 1.0 >= 0.01).iloc[:-horizon].to_numpy()
+    assert np.array_equal(ds["target"].astype(bool).to_numpy(), expected)
+    # The final horizon has no known future outcome and must never be labelled negative.
+    assert not (ds["date"] >= dates[-horizon]).any()
+
+
+def test_ml_fails_closed_when_history_is_too_short():
+    dates = pd.bdate_range("2025-01-01", periods=30)
+    frame = pd.DataFrame(index=dates)
+    frame["close"] = np.linspace(10.0, 12.0, len(dates))
+    for col in (
+        "score", "rsi14", "macd_hist", "atr_pct", "ret1", "ret5", "ret20",
+        "ret60", "vol_ratio", "updown_vol", "rs_rank", "dist_high252", "sma50_slope",
+    ):
+        frame[col] = 1.0
+    probs, meta = train_predict(
+        {"TEST": frame},
+        {**CFG, "ml": {**CFG["ml"], "enabled": True, "min_samples": 500}},
+    )
+    assert probs == {}
+    assert meta["enabled"] is True
+    assert meta.get("model_used") is not True
+    assert meta.get("error") == "عينات غير كافية"
 
 # ------------------------------------------------------------------ القائمة
 def test_universe_modes_on_real_files():
