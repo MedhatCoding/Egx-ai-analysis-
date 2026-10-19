@@ -23,6 +23,8 @@ SHARIA_FUNDS = [
     {"name": "ألفا المتوافق مع الشريعة – بيت التمويل الكويتي", "category": "sharia_equity", "proxy": "EGX33"},
     {"name": "هلال – بنك نكست", "category": "sharia_equity", "proxy": "EGX33"},
     {"name": "هيرميس لأسهم الشريعة", "category": "sharia_equity", "proxy": "EGX33"},
+    # FRA-listed weekly equity fund described as Islamic; its NAV remains unavailable unless a published value is matched.
+    {"name": "بشائر الإسلامي – الأهلي/البركة", "category": "sharia_equity", "proxy": "EGX33"},
 ]
 GOLD_FUNDS = [
     {"name": "أزيموت جولد", "category": "gold", "proxy": "XAUUSD"},
@@ -101,7 +103,8 @@ FUND_SOURCE_MATCHES = {
     "أمان المتوافق مع الشريعة": ("AMAN", ("أمان المتوافق مع الشريعة",)),
     "ألفا المتوافق مع الشريعة – بيت التمويل الكويتي": ("ALF", ("ألفا للاستثمار فى الأسهم", "ألفا للاستثمار في الأسهم")),
     "هلال – بنك نكست": ("HEL", ("صندوق هلال",)),
-    "هيرميس لأسهم الشريعة": ("HES", ("هيرميس لأسهم الشريعة",)),
+    "هيرميس لأسهم الشريعة": ("HES", ("هيرميس لأسهم الشريعة", "هيرميس أسهم شريعة EGX 33")),
+    "بشائر الإسلامي – الأهلي/البركة": ("BAS", ("بشائر – الإسلامي", "بشائر الإسلامي", "بشائر الاسلامي", "بشائر")),
     "أزيموت جولد": ("AZG", ("ازيموت جولد المتوافق مع الشريعة", "Azimut Gold")),
     "بلتون سبائك": ("BSB", ("بلتون سبائك", "Beltone Sabayek")),
     "الأهلي دهب": ("ADF", ("الأهلي دهب",)),
