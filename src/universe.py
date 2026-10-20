@@ -38,7 +38,7 @@ def read_egx33() -> pd.DataFrame:
 def read_sharia_extra() -> pd.DataFrame:
     """Return only externally screened, explicitly approved shares outside EGX33."""
     path = DATA / "sharia_extra.csv"
-    columns = ["code", "name_ar", "verification_source", "verified_on", "notes"]
+    columns = ["code", "name_ar", "verification_source", "verification_url", "verified_on", "notes"]
     if not path.exists():
         return pd.DataFrame(columns=columns)
     df = pd.read_csv(path, dtype=str).fillna("")
@@ -59,11 +59,12 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     extra = read_sharia_extra()
     mode = cfg["universe"]["mode"]
 
-    extra_merge = extra[["code", "name_ar", "verification_source", "verified_on"]].rename(
+    extra_merge = extra[["code", "name_ar", "verification_source", "verification_url", "verified_on"]].rename(
         columns={
             "name_ar": "extra_name_ar",
             "verification_source": "sharia_source",
             "verified_on": "sharia_verified_on",
+            "verification_url": "sharia_source_url",
         }
     )
     df = lst.merge(e33, on="code", how="outer").merge(extra_merge, on="code", how="outer")
@@ -74,6 +75,7 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["extra_name_ar"] = df["extra_name_ar"].fillna("")
     df["name_en"] = df["name_en"].fillna("")
     df["sharia_source"] = df["sharia_source"].fillna("")
+    df["sharia_source_url"] = df["sharia_source_url"].fillna("")
     df["sharia_verified_on"] = df["sharia_verified_on"].fillna("")
     verified_date = pd.to_datetime(df["sharia_verified_on"], errors="coerce").dt.date
     max_age = int(cfg.get("universe", {}).get("verification_max_age_days", 180))
@@ -110,5 +112,5 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     out["sharia_verified"] = out["in_egx33"] | (out["in_sharia_extra"] & out["sharia_review_status"].eq("اعتماد خارجي حديث"))
     return out[[
         "code", "name", "name_ar", "name_en", "in_list", "in_egx33",
-        "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_verified_on", "sharia_review_status",
+        "in_sharia_extra", "sharia_verified", "sharia_source", "sharia_source_url", "sharia_verified_on", "sharia_review_status",
     ]]
