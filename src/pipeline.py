@@ -103,7 +103,23 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
     reg = regime_df.tail(400).copy()
     reg.index.name = "date"
     reg.round(4).to_csv(C.SIGNALS / "regime.csv")
-    cov.to_csv(C.SIGNALS / "coverage.csv", index=False)
+    # Per-symbol audit: actual history coverage joined to Sharia-universe provenance.
+    coverage = cov.copy()
+    if "code" in coverage.columns and "code" in uni.columns:
+        universe_cols = [
+            "code", "name", "in_egx33", "in_sharia_extra",
+            "sharia_review_status", "sharia_source", "sharia_verified_on",
+        ]
+        universe_cols = [col for col in universe_cols if col in uni.columns]
+        coverage = coverage.merge(uni[universe_cols], on="code", how="left")
+    if "coverage_years" in coverage.columns:
+        coverage["coverage_years"] = pd.to_numeric(coverage["coverage_years"], errors="coerce")
+        requested = float(cfg.get("data", {}).get("history_years", 0))
+        coverage["history_status"] = "لا توجد بيانات"
+        coverage.loc[coverage["coverage_years"] >= max(0.0, requested - 0.25), "history_status"] = "تغطية قريبة من المطلوب"
+        coverage.loc[(coverage["coverage_years"] >= 3) & (coverage["coverage_years"] < max(0.0, requested - 0.25)), "history_status"] = "تغطية 3 سنوات فأكثر"
+        coverage.loc[(coverage["coverage_years"] > 0) & (coverage["coverage_years"] < 3), "history_status"] = "تاريخ محدود"
+    coverage.to_csv(C.SIGNALS / "coverage.csv", index=False)
 
     out = dict(result)
     out["universe"] = {
