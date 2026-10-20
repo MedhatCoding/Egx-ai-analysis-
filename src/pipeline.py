@@ -151,8 +151,9 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         f"| وضع الدمج: {cfg['universe']['mode']})"
     )
 
-    bench = fetch_benchmark(cfg, state, offline=offline)
+    # Refresh index caches first so Sharia analysis can use EGX33 as its benchmark.
     market_indices = fetch_market_indices(cfg, state, offline=offline)
+    bench = fetch_benchmark(cfg, state, offline=offline)
     live_market = fetch_oanor_market() if not offline else None
     funds = build_fund_overlay(bench, cfg, state=state)
     cov = refresh_all(cfg, codes, state, offline=offline)
