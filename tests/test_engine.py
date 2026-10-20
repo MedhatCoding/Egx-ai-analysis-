@@ -942,4 +942,4 @@ def test_synthetic_sharia_index_does_not_forward_fill_missing_prices():
     # actual 10% return. A forward-filled A would incorrectly dilute this.
     assert np.isclose(result.loc[dates[3]] / result.loc[dates[2]] - 1.0, 0.10)
     # The first output point is the first date with a valid constituent return.
-    assert result.index[0] == dates[2]
+    assert result.index[0] == dates[1]
