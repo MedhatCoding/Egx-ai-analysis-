@@ -847,7 +847,7 @@ if active_section == section_labels[2] and more_section == more_labels[3]:
                     "first_date": "أول تاريخ", "last_date": "آخر تاريخ",
                     "coverage_years": "سنوات التاريخ", "history_status": "حالة التغطية",
                     "sharia_review_status": "حالة المراجعة الشرعية",
-                    "sharia_source": "مصدر التحقق الشرعي",
+                    "sharia_source": "مصدر التحقق الشرعي", "sharia_source_url": "رابط مصدر التحقق",
                     "sharia_verified_on": "تاريخ التحقق الشرعي", "note": "ملاحظة",
                 }),
                 title_candidates=("الرمز",),
