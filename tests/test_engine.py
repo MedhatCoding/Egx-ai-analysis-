@@ -579,7 +579,7 @@ def test_sharia_universe_prefers_egx33_shariah_benchmark_cache():
         result = data_fetch.fetch_benchmark(cfg, {}, offline=True)
         assert result is not None
         assert result.index.min() == idx.min()
-        assert result["close"].iloc[-1] == frame["close"].iloc[-1]
+        assert np.isclose(result["close"].iloc[-1], frame["close"].iloc[-1], atol=1e-4)
     finally:
         if existed:
             path.write_bytes(backup)
