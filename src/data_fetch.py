@@ -203,6 +203,9 @@ def fetch_market_indices(cfg: dict, state: dict, offline: bool = False) -> dict:
     """يجرب المؤشرات الرئيسية، ويحفظ ما ينجح منها بدون اختلاق بيانات."""
     names = {
         "EGX30": "CASE30.INDX",
+        # EGX33 Shariah index history starts at its base date (2022-01-01).
+        # Use it as the most relevant benchmark for the personal Sharia universe.
+        "EGX33_SHARIAH": "SHARIAH.INDX",
     }
     token = _eodhd_token()
     result = {}
