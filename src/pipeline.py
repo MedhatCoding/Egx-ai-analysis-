@@ -69,7 +69,23 @@ def expected_last_session(now: datetime, cfg: dict) -> date:
     return d
 
 
-# ------------------------------------------------------------------ مخرجات اللوحة
+# ------------------------------------------------------------------ def build_equal_weight_index(close_series: list[pd.Series], min_constituents: int = 5) -> pd.Series | None:
+    """Synthetic current-universe proxy; never forward-fill missing prices."""
+    if not close_series:
+        return None
+    panel = pd.concat(close_series, axis=1).sort_index()
+    returns = panel.pct_change(fill_method=None)
+    valid_count = returns.notna().sum(axis=1)
+    daily = returns.mean(axis=1, skipna=True).where(valid_count >= max(1, int(min_constituents)))
+    if not daily.notna().any():
+        return None
+    daily = daily.loc[daily.first_valid_index():].fillna(0.0)
+    index = (1.0 + daily).cumprod() * 100.0
+    index.name = "synthetic_sharia_equal_weight"
+    return index
+
+
+مخرجات اللوحة
 def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame, cov: pd.DataFrame, uni: pd.DataFrame, cfg: dict) -> None:
     C.SIGNALS.mkdir(parents=True, exist_ok=True)
     tbl = latest_cls.copy()
@@ -182,11 +198,9 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     result = build_result(frames, regime_df, cls, len(codes), cfg)
     sharia_codes = uni.loc[uni["sharia_verified"], "code"].tolist()
     sharia_parts = [prices[c]["close"].rename(c) for c in sharia_codes if c in prices]
-    sharia_close = None
-    if len(sharia_parts) >= 5:
-        panel = pd.concat(sharia_parts, axis=1).sort_index()
-        daily = panel.pct_change().mean(axis=1).fillna(0.0)
-        sharia_close = (1.0 + daily).cumprod() * 100.0
+    # Proxy only: current constituents are not historical index membership.
+    # Missing prices are not forward-filled, preventing artificial zero returns.
+    sharia_close = build_equal_weight_index(sharia_parts, min_constituents=5)
     result["funds"] = funds
     if sharia_close is not None:
         result["funds"]["sharia_equity"].update(_score(sharia_close))
