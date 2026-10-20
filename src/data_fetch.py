@@ -337,7 +337,15 @@ def _eodhd_token() -> str:
     return os.environ.get("EODHD_API_TOKEN") or os.environ.get("EODHD_API_KEY") or ""
 
 def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFrame | None:
-    """EGX30: Yahoo أولًا، ثم EODHD كاحتياطي، ثم آخر كاش صالح."""
+    """Prefer the Sharia index for the Sharia universe; fall back to the broad EGX30 benchmark."""
+    if cfg.get("universe", {}).get("mode") == "sharia_union":
+        try:
+            sharia = read_cache("_INDEX_EGX33_SHARIAH")
+            if sharia is not None and len(sharia) > 60:
+                return sharia
+        except Exception:
+            pass
+
     sym = cfg["data"].get("benchmark_yahoo_symbol", "^CASE30")
     eodhd_sym = cfg["data"].get("benchmark_eodhd_symbol", "CASE30.INDX")
     p = PRICES / "_BENCH.csv"
@@ -356,7 +364,7 @@ def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFra
                     add[COLS].round(4).to_csv(p)
                     return add
             except Exception as e:
-                print(f"  [EODHD] تعذر جلب EGX30: {e}")
+                print(f"  [EODHD] تعذر جلب مؤشر EGX المرجعي: {e}")
     if p.exists():
         try:
             df = pd.read_csv(p, parse_dates=["date"], index_col="date")[COLS]
@@ -365,7 +373,6 @@ def fetch_benchmark(cfg: dict, state: dict, offline: bool = False) -> pd.DataFra
         except Exception:
             pass
     return None
-
 
 def drop_incomplete_bar(df: pd.DataFrame, now: datetime, close_hour: int) -> pd.DataFrame:
     """نتجاهل شمعة اليوم لو الجلسة لسه ما خلصتش."""
