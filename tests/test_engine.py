@@ -560,6 +560,32 @@ def test_price_clean_rejects_impossible_ohlc_candles():
     assert list(clean.index) == [idx[0]], "invalid high/low or negative volume must be excluded"
 
 
+def test_sharia_universe_prefers_egx33_shariah_benchmark_cache():
+    from src import data_fetch
+
+    code = "_INDEX_EGX33_SHARIAH"
+    path = data_fetch.cache_path(code)
+    existed = path.exists()
+    backup = path.read_bytes() if existed else None
+    try:
+        idx = pd.date_range("2022-01-03", periods=80, freq="B")
+        frame = pd.DataFrame({
+            "open": np.full(len(idx), 100.0), "high": np.full(len(idx), 102.0),
+            "low": np.full(len(idx), 99.0), "close": np.linspace(100, 130, len(idx)),
+            "volume": np.full(len(idx), 1000.0),
+        }, index=idx)
+        data_fetch.write_cache(code, frame)
+        cfg = {**CFG, "universe": {**CFG["universe"], "mode": "sharia_union"}}
+        result = data_fetch.fetch_benchmark(cfg, {}, offline=True)
+        assert result is not None
+        assert result.index.min() == idx.min()
+        assert result["close"].iloc[-1] == frame["close"].iloc[-1]
+    finally:
+        if existed:
+            path.write_bytes(backup)
+        else:
+            path.unlink(missing_ok=True)
+
 def test_history_backfill_is_throttled_for_free_sources():
     from src import data_fetch
 
