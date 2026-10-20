@@ -72,13 +72,17 @@ def _setup_data_dir() -> list[str]:
     (TMP / "egx33.txt").write_text("# test\n" + "\n".join(f"{c},Company {c}" for c in codes[40:]) + "\n", encoding="utf-8")
     # Synthetic fixtures explicitly screened as Sharia-compliant so the production
     # sharia_union gate can be tested without weakening eligibility in test code.
+    # Include the illiquid/stale/short-history test symbols in the approved
+    # synthetic universe so the end-to-end pipeline can assert their exclusion
+    # reasons. Their presence here is test-only, not a real-world Sharia claim.
+    screened_codes = codes + ["ILLQ", "STAL", "SHRT"]
     pd.DataFrame({
-        "code": codes,
-        "name_ar": [f"شركة {c}" for c in codes],
-        "verification_source": ["test fixture: approved screening"] * len(codes),
-        "verified_on": ["2026-09-01"] * len(codes),
-        "notes": ["synthetic test data"] * len(codes),
-        "status": ["approved"] * len(codes),
+        "code": screened_codes,
+        "name_ar": [f"شركة {c}" for c in screened_codes],
+        "verification_source": ["test fixture: approved screening"] * len(screened_codes),
+        "verified_on": ["2026-09-01"] * len(screened_codes),
+        "notes": ["synthetic test data"] * len(screened_codes),
+        "status": ["approved"] * len(screened_codes),
     }).to_csv(TMP / "sharia_extra.csv", index=False)
     (TMP / "holidays.txt").write_text("# none\n2026-10-06\n", encoding="utf-8")
     return codes
