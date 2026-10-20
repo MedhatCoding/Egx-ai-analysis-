@@ -69,7 +69,8 @@ def expected_last_session(now: datetime, cfg: dict) -> date:
     return d
 
 
-# ------------------------------------------------------------------ def build_equal_weight_index(close_series: list[pd.Series], min_constituents: int = 5) -> pd.Series | None:
+# ------------------------------------------------------------------
+def build_equal_weight_index(close_series: list[pd.Series], min_constituents: int = 5) -> pd.Series | None:
     """Synthetic current-universe proxy; never forward-fill missing prices."""
     if not close_series:
         return None
@@ -85,7 +86,7 @@ def expected_last_session(now: datetime, cfg: dict) -> date:
     return index
 
 
-مخرجات اللوحة
+# ------------------------------------------------------------------ مخرجات اللوحة
 def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame, cov: pd.DataFrame, uni: pd.DataFrame, cfg: dict) -> None:
     C.SIGNALS.mkdir(parents=True, exist_ok=True)
     tbl = latest_cls.copy()
