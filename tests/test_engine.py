@@ -569,9 +569,9 @@ def test_sharia_universe_prefers_egx33_shariah_benchmark_cache():
     backup = path.read_bytes() if existed else None
     try:
         idx = pd.date_range("2022-01-03", periods=80, freq="B")
+        close = np.linspace(100, 130, len(idx))
         frame = pd.DataFrame({
-            "open": np.full(len(idx), 100.0), "high": np.full(len(idx), 102.0),
-            "low": np.full(len(idx), 99.0), "close": np.linspace(100, 130, len(idx)),
+            "open": close, "high": close + 2.0, "low": close - 1.0, "close": close,
             "volume": np.full(len(idx), 1000.0),
         }, index=idx)
         data_fetch.write_cache(code, frame)
