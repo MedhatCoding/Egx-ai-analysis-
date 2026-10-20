@@ -81,6 +81,9 @@ def build_equal_weight_index(close_series: list[pd.Series], min_constituents: in
     if not daily.notna().any():
         return None
     daily = daily.loc[daily.first_valid_index():].fillna(0.0)
+    # Normalize the first valid observation to 100; apply returns from the next bar.
+    if len(daily):
+        daily.iloc[0] = 0.0
     index = (1.0 + daily).cumprod() * 100.0
     index.name = "synthetic_sharia_equal_weight"
     return index
