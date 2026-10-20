@@ -208,6 +208,11 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     result["funds"] = funds
     if sharia_close is not None:
         result["funds"]["sharia_equity"].update(_score(sharia_close))
+        result["funds"]["sharia_equity"].update({
+            "reference": "EGX33 Shariah proxy",
+            "reference_method": "equal_weight_current_verified_universe",
+            "historical_constituent_membership": "not_available",
+        })
     result["market_indices"] = market_indices
     result["live_market"] = live_market
     # المحفظة مشفرة؛ لا تُحفظ بيانات المالك أو الكميات كنص صريح داخل المستودع.
@@ -269,6 +274,8 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         warnings.append(f"{n_cache} سهم اتحلل ببيانات محفوظة لأن Yahoo فشل معها.")
     if bench is None or len(bench) < 60:
         warnings.append("لم تتوفر سلسلة EGX30 التاريخية من المزود؛ التحليل استخدم مؤشرًا داخليًا متساوي الأوزان من الأسهم المحللة.")
+    if sharia_close is not None:
+        warnings.append("مرجع الأسهم الشرعية بديل حسابي متساوي الأوزان من المكونات الحالية ذات البيانات المتاحة، وليس السجل الرسمي التاريخي لمكونات EGX33؛ قد يتأثر بانحياز بقاء الشركات.")
     if not result.get("news", {}).get("market"):
         warnings.append("مصدر الأخبار غير متاح؛ لم تُستخدم الأخبار في أي قرار رقمي.")
     n_stale = int(result["signal_counts"].get("STALE", 0))
