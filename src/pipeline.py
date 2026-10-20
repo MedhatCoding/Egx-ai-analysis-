@@ -95,7 +95,7 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
     tbl = latest_cls.copy()
     tbl["why_not_buy"] = tbl["why_not_buy"].apply(lambda x: " | ".join(x) if isinstance(x, list) else "")
     tbl["date"] = pd.to_datetime(tbl["date"]).dt.date.astype(str)
-    metadata_cols = ["code", "in_list", "in_egx33", "in_sharia_extra", "sharia_review_status", "sharia_source", "sharia_verified_on"]
+    metadata_cols = ["code", "in_list", "in_egx33", "in_sharia_extra", "sharia_review_status", "sharia_source", "sharia_source_url", "sharia_verified_on"]
     metadata_cols = [c for c in metadata_cols if c in uni.columns]
     tbl = tbl.merge(uni[metadata_cols], on="code", how="left")
     tbl.round(4).to_csv(C.SIGNALS / "table.csv", index=False)
@@ -108,7 +108,7 @@ def save_outputs(result: dict, latest_cls: pd.DataFrame, regime_df: pd.DataFrame
     if "code" in coverage.columns and "code" in uni.columns:
         universe_cols = [
             "code", "name", "in_egx33", "in_sharia_extra",
-            "sharia_review_status", "sharia_source", "sharia_verified_on",
+            "sharia_review_status", "sharia_source", "sharia_source_url", "sharia_verified_on",
         ]
         universe_cols = [col for col in universe_cols if col in uni.columns]
         coverage = coverage.merge(uni[universe_cols], on="code", how="left")
