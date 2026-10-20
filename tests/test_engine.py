@@ -924,3 +924,22 @@ if __name__ == "__main__":
     print(f"\n{len(tests) - failed}/{len(tests)} passed")
     shutil.rmtree(TMP, ignore_errors=True)
     sys.exit(1 if failed else 0)
+
+
+
+def test_synthetic_sharia_index_does_not_forward_fill_missing_prices():
+    from src.pipeline import build_equal_weight_index
+
+    dates = pd.date_range("2024-01-01", periods=5, freq="D")
+    # B starts late and A has a missing observation. Neither gap may be turned
+    # into an artificial 0% return by pandas' pct_change default behavior.
+    a = pd.Series([100.0, 110.0, np.nan, 121.0, 133.1], index=dates, name="A")
+    b = pd.Series([np.nan, np.nan, 50.0, 55.0, 60.5], index=dates, name="B")
+    result = build_equal_weight_index([a, b], min_constituents=1)
+    assert result is not None
+    assert result.name == "synthetic_sharia_equal_weight"
+    # On the date A is missing, A contributes no return; B contributes its
+    # actual 10% return. A forward-filled A would incorrectly dilute this.
+    assert np.isclose(result.loc[dates[3]] / result.loc[dates[2]] - 1.0, 0.10)
+    # The first output point is the first date with a valid constituent return.
+    assert result.index[0] == dates[2]
