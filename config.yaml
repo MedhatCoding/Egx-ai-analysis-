@@ -5,7 +5,7 @@
 market:
   timezone: "Africa/Cairo"
   trading_weekdays: [6, 0, 1, 2, 3]
-  report_window: ["08:55", "14:30"] # allow delayed GitHub Actions runs; state prevents duplicate daily reports
+  report_window: ["07:30", "14:30"] # year-round window for 06:00 UTC cron plus delayed GitHub Actions; state prevents duplicates
   session_close_hour: 15
 universe:
   mode: "sharia_union"
