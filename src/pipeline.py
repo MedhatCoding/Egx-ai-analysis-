@@ -197,7 +197,8 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     if len(prices) < max(5, int(0.5 * len(codes))):
         raise DataError(f"بيانات غير كافية: {len(prices)} سهم فقط من {len(codes)} وصلت بيانات كافية (Yahoo/EODHD).")
 
-    frames, regime_df, _panel = analyze(prices, bench, cfg)
+    ml_eligible_codes = set(uni.loc[uni["sharia_verified"], "code"].astype(str))
+    frames, regime_df, _panel = analyze(prices, bench, cfg, eligible_ml_codes=ml_eligible_codes)
     latest = latest_table(frames, names, cfg, regime_df.attrs.get("ml_probs", {}), regime_df.attrs.get("ml_meta", {}))
     # Sharia eligibility is a hard gate for BUY labels, not merely a ranking feature.
     # Unverified candidates remain visible in WATCH with an explicit review reason.
