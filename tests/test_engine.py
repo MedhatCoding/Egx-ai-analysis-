@@ -464,8 +464,14 @@ def test_pipeline_end_to_end():
     res, sent = _run()
     assert res["status"] == "sent" and sent and res["buys"]
     for f in ("signals/latest.json", "signals/table.csv", "signals/regime.csv", "signals/coverage.csv", "signals/history.csv",
-              "report/latest.json", "backtest/summary.json"):
+              "signals/universe.csv", "report/latest.json", "backtest/summary.json"):
         assert (TMP / f).exists(), f
+    # A dated universe snapshot is kept for point-in-time audits and to track
+    # future EGX33 / external-screen membership changes without overwriting history.
+    snap = TMP / "universe_history" / "2026-09-20.csv"
+    assert snap.exists(), "dated Sharia-universe snapshot missing"
+    snap_df = pd.read_csv(snap)
+    assert "snapshot_date" in snap_df.columns and "sharia_verified" in snap_df.columns
     latest_payload = json.loads((C.SIGNALS / "latest.json").read_text(encoding="utf-8"))
     coverage = latest_payload.get("history_coverage", {})
     assert coverage.get("requested_years") == float(CFG["data"]["history_years"])
