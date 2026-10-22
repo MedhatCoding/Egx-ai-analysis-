@@ -180,6 +180,19 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     universe_path = C.SIGNALS / "universe.csv"
     universe_path.parent.mkdir(parents=True, exist_ok=True)
     uni.to_csv(universe_path, index=False)
+
+    # Preserve a dated constituent/eligibility snapshot. This builds an auditable
+    # point-in-time history going forward, instead of silently replacing the
+    # current universe every day. It does not pretend to reconstruct old members
+    # for years where no historical constituent source exists.
+    snapshot_dir = C.DATA / "universe_history"
+    snapshot_dir.mkdir(parents=True, exist_ok=True)
+    snapshot_path = snapshot_dir / f"{now.date().isoformat()}.csv"
+    if not snapshot_path.exists():
+        snapshot = uni.copy()
+        snapshot.insert(0, "snapshot_date", now.date().isoformat())
+        snapshot.to_csv(snapshot_path, index=False)
+
     print(
         f"الأسهم المحللة: {len(codes)} "
         f"(قائمة مرجعية {int(uni['in_list'].sum())} | EGX33 {int(uni['in_egx33'].sum())} "
