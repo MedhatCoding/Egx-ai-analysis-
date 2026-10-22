@@ -89,11 +89,11 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["name"] = df["name_ar"].where(df["name_ar"] != "", df["name_en"])
 
     if mode == "sharia_union":
-        # Strict personal Sharia universe: current EGX33 constituents plus
-        # externally screened additions with an auditable, non-expired review.
-        # universe.csv is only a candidate/reference list and must never expand
-        # the Sharia universe by itself.
-        mask = df["in_egx33"] | extra_fresh
+        # Keep all explicitly screened external candidates visible for technical
+        # analysis even after their review date ages out. Fresh verification is a
+        # separate gate (sharia_verified) that blocks BUY recommendations until
+        # the screening is renewed. universe.csv alone never establishes compliance.
+        mask = df["in_egx33"] | df["in_sharia_extra"]
     elif mode == "union":
         mask = df["in_list"] | df["in_egx33"]
     elif mode == "intersection":
