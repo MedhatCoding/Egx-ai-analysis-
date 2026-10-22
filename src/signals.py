@@ -43,7 +43,7 @@ def clean(x):
 
 
 # --------------------------------------------------------------------------- التحليل
-def analyze(prices: dict[str, pd.DataFrame], bench_df: pd.DataFrame | None, cfg: dict):
+def analyze(prices: dict[str, pd.DataFrame], bench_df: pd.DataFrame | None, cfg: dict, eligible_ml_codes: set[str] | None = None):
     inds = {code: compute_indicators(df) for code, df in prices.items()}
     close_panel = pd.DataFrame({c: i["close"] for c, i in inds.items()}).sort_index()
 
@@ -60,7 +60,11 @@ def analyze(prices: dict[str, pd.DataFrame], bench_df: pd.DataFrame | None, cfg:
         f = compute_scores(ind, rs_rank[code], regime_df["bench_ret60"], cfg)
         f["regime_ok"] = regime_ok.reindex(f.index).fillna(False)
         frames[code] = f
-    ml_probs, ml_meta = train_predict(frames, cfg)
+    # Train/score the ML layer only on symbols currently eligible under the configured Sharia screen.
+    # Technical analysis remains available for stale/unverified candidates, but they must not
+    # influence the model trained for currently eligible personal-universe opportunities.
+    ml_frames = frames if eligible_ml_codes is None else {k: v for k, v in frames.items() if k in eligible_ml_codes}
+    ml_probs, ml_meta = train_predict(ml_frames, cfg)
     regime_df.attrs["ml_probs"] = ml_probs
     regime_df.attrs["ml_meta"] = ml_meta
     return frames, regime_df, close_panel
