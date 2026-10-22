@@ -748,7 +748,10 @@ def test_sharia_extra_requires_audited_approval():
         stale = pd.DataFrame([{"code":"OUT3","name_ar":"سهم انتهت مراجعته","verification_source":"مصدر موثق","verified_on":"2025-01-01","notes":"","status":"approved"}])
         stale.to_csv(path,index=False)
         expired = build_universe({**CFG,"universe":{"mode":"sharia_union","verification_max_age_days":180}})
-        assert "OUT3" not in set(expired["code"])
+        assert "OUT3" in set(expired["code"])
+        stale_row = expired.loc[expired["code"] == "OUT3"].iloc[0]
+        assert not bool(stale_row["sharia_verified"])
+        assert stale_row["sharia_review_status"] == "اعتماد خارجي منتهي الصلاحية"
     finally:
         if existed:
             path.write_bytes(backup)
