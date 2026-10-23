@@ -101,6 +101,19 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
             "round_trip_cost_pct": cfg["risk"]["round_trip_cost_pct"],
             "target_r": cfg["risk"]["target_r"][0],
         },
+        # Current universe is not a historical point-in-time membership database.
+        # Surface this caveat alongside metrics so historical results aren't
+        # mistaken for a survivorship-bias-free simulation.
+        "universe_scope": {
+            "mode": cfg.get("universe", {}).get("mode", "unspecified"),
+            "membership_basis": "current_universe_applied_to_available_history",
+            "point_in_time_membership": False,
+            "survivorship_bias_warning": (
+                "الاختبار يطبق قائمة الأسهم الحالية على التاريخ المتاح؛ "
+                "لا يشمل تلقائيًا الشركات المشطوبة أو تغيرات التوافق/العضوية التاريخية. "
+                "النتائج استكشافية وليست اختبارًا تاريخيًا خاليًا من تحيز البقاء."
+            ),
+        },
     }
     return summary, st, bs
 
