@@ -24,6 +24,11 @@ on:
         required: false
         default: false
         type: boolean
+      dry_run:
+        description: "Fetch and analyze data without sending Telegram or committing report output"
+        required: false
+        default: true
+        type: boolean
 
 concurrency:
   group: egx-daily-report-v2
@@ -64,7 +69,13 @@ jobs:
       - name: Run daily report
         if: github.event_name != 'push'
         run: |
-          if [ "${{ inputs.force }}" = "true" ]; then
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            if [ "${{ inputs.force }}" = "true" ]; then
+              python run_daily.py --force --dry-run
+            else
+              python run_daily.py --dry-run
+            fi
+          elif [ "${{ inputs.force }}" = "true" ]; then
             python run_daily.py --force
           else
             python run_daily.py
