@@ -243,6 +243,7 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
         row = {"code": code, "source": "none", "bars": 0, "first_date": "", "last_date": "", "coverage_years": 0.0, "note": ""}
         cached = read_cache(code)
         fresh = None
+        backfill_requested = False
         requested_start = date.today() - timedelta(days=int(d["history_years"] * 365.25))
 
         if not offline:
@@ -265,16 +266,34 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
                 backfill_due = last_attempt is None or (today - last_attempt).days >= retry_days
                 if cache_start > requested_start + timedelta(days=30) and backfill_due:
                     start = requested_start
+                    backfill_requested = True
                     backfill_state[code] = today.isoformat()
                 else:
                     start = (cached.index[-1] - timedelta(days=7)).date()
                 fresh = fetch_yahoo_from(code + d["yahoo_suffix"], start)
             else:
+                backfill_requested = True
                 fresh = fetch_yahoo(code + d["yahoo_suffix"], d["history_years"])
                 # Remember if the initial free-source response cannot reach the
                 # requested start, so the next daily run uses incremental refresh.
                 if fresh is not None and len(fresh) and fresh.index[0].date() > requested_start + timedelta(days=30):
                     backfill_state[code] = today.isoformat()
+            # A successful Yahoo response can still be shorter than requested (for
+            # example, only ~5 years when 8 were requested). Use EODHD as a bounded
+            # backfill fallback only on scheduled backfill attempts, respecting the
+            # shared daily budget. Never discard the newer Yahoo bars.
+            if (
+                fresh is not None and len(fresh) and backfill_requested
+                and fresh.index[0].date() > requested_start + timedelta(days=30)
+                and token and _eodhd_budget(state, cfg) > 0
+            ):
+                state["eodhd"]["calls"] += 1
+                older = fetch_eodhd(code, token, requested_start)
+                if older is not None and len(older):
+                    fresh = pd.concat([older, fresh])
+                    fresh = fresh[~fresh.index.duplicated(keep="last")].sort_index()
+                    row["note"] = "استكمال التاريخ الأقدم من EODHD بعد أن أعاد Yahoo تاريخًا أقصر من المطلوب"
+
             time.sleep(d["request_sleep"])
 
         if fresh is not None and len(fresh) >= 1:
@@ -283,7 +302,10 @@ def refresh_all(cfg: dict, codes: list[str], state: dict, offline: bool = False)
                 merged = pd.concat([cached, fresh])
                 merged = merged[~merged.index.duplicated(keep="last")].sort_index()
             write_cache(code, merged)
-            row.update(source="yahoo" if cached is None else "cache+yahoo", bars=len(merged), first_date=str(merged.index[0].date()), last_date=str(merged.index[-1].date()), coverage_years=round((merged.index[-1] - merged.index[0]).days / 365.25, 2))
+            source = "yahoo" if cached is None else "cache+yahoo"
+            if row["note"].startswith("استكمال التاريخ الأقدم"):
+                source += "+eodhd"
+            row.update(source=source, bars=len(merged), first_date=str(merged.index[0].date()), last_date=str(merged.index[-1].date()), coverage_years=round((merged.index[-1] - merged.index[0]).days / 365.25, 2))
         elif cached is not None:
             merged, src = cached, "cache"
             # نحاول نكمّل آخر الشموع من EODHD لو فيه ميزانية
