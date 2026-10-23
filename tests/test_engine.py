@@ -909,10 +909,18 @@ def _run_app():
 def test_fund_catalog_has_published_sharia_and_gold_entries():
     sharia_names = {f["name"] for f in SHARIA_FUNDS}
     gold_names = {f["name"] for f in GOLD_FUNDS}
-    assert "بشائر الإسلامي – الأهلي/البركة" in sharia_names
+    assert "بشائر – صندوق البنك الأهلي السادس وبنك البركة" in sharia_names
     assert "هيرميس لأسهم الشريعة" in sharia_names
+    assert "الحياة المتوافق مع الشريعة – بنك الكويت الوطني" in sharia_names
+    assert "صندوق استثمار بنك فيصل الإسلامي" in sharia_names
+    assert "الشكمجية بكرة للذهب" in gold_names
     assert all(name in FUND_SOURCE_MATCHES for name in sharia_names | gold_names)
-    assert FUND_SOURCE_MATCHES["بشائر الإسلامي – الأهلي/البركة"][0] == "BAS"
+    # Validate codes against the public SNDUK catalogue, not old guessed labels.
+    assert FUND_SOURCE_MATCHES["بشائر – صندوق البنك الأهلي السادس وبنك البركة"][0] == "BSF"
+    assert FUND_SOURCE_MATCHES["هيرميس لأسهم الشريعة"][0] == "HSE"
+    assert FUND_SOURCE_MATCHES["أمان المتوافق مع الشريعة"][0] == "FCA"
+    assert FUND_SOURCE_MATCHES["الحصن – بنك مصر"][0] == "BM4"
+    assert FUND_SOURCE_MATCHES["الشكمجية بكرة للذهب"][0] == "SHK"
 
 def test_streamlit_app_smoke_run():
     """تشغيل صفحة Streamlit كاملة ببيانات اختبار وهمية لاكتشاف أخطاء منطق الواجهة."""
