@@ -921,6 +921,10 @@ def test_fund_catalog_has_published_sharia_and_gold_entries():
     assert FUND_SOURCE_MATCHES["أمان المتوافق مع الشريعة"][0] == "FCA"
     assert FUND_SOURCE_MATCHES["الحصن – بنك مصر"][0] == "BM4"
     assert FUND_SOURCE_MATCHES["الشكمجية بكرة للذهب"][0] == "SHK"
+    assert FUND_SOURCE_MATCHES["الحياة المتوافق مع الشريعة – بنك الكويت الوطني"][0] == "NHE"
+    assert FUND_SOURCE_MATCHES["صندوق استثمار بنك فيصل الإسلامي"][0] == "FIF"
+    assert FUND_SOURCE_MATCHES["دهب مباشر"][0] == "MGF"
+    assert FUND_SOURCE_MATCHES["جولد مصر"][0] == "CGF"
 
 def test_streamlit_app_smoke_run():
     """تشغيل صفحة Streamlit كاملة ببيانات اختبار وهمية لاكتشاف أخطاء منطق الواجهة."""
