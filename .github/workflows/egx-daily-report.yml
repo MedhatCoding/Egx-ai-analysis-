@@ -11,6 +11,10 @@ on:
       - "tests/**"
       - "requirements*.txt"
       - "run_daily.py"
+      - "data/universe.csv"
+      - "data/egx33.txt"
+      - "data/sharia_extra.csv"
+      - "tests/**"
 
   # تشغيل واحد يوميًا في أيام التداول. GitHub cron يعمل بتوقيت UTC ثابت:
   # 06:00 UTC = 08:00 القاهرة شتاءً و09:00 صيفًا؛ في الحالتين قبل الافتتاح.
