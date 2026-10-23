@@ -36,9 +36,9 @@ def read_egx33() -> pd.DataFrame:
 
 
 def read_sharia_extra() -> pd.DataFrame:
-    """Return only externally screened, explicitly approved shares outside EGX33."""
+    """Return all explicitly listed external candidates; approval is checked separately."""
     path = DATA / "sharia_extra.csv"
-    columns = ["code", "name_ar", "verification_source", "verification_url", "verified_on", "notes"]
+    columns = ["code", "name_ar", "verification_source", "verification_url", "verified_on", "notes", "status"]
     if not path.exists():
         return pd.DataFrame(columns=columns)
     df = pd.read_csv(path, dtype=str).fillna("")
@@ -47,10 +47,10 @@ def read_sharia_extra() -> pd.DataFrame:
             df[col] = ""
     df["code"] = df["code"].str.strip().str.upper()
     df["verification_source"] = df["verification_source"].str.strip()
-    df["status"] = df.get("status", pd.Series("", index=df.index)).str.strip().str.lower()
-    # Don't silently classify a share as Sharia-compliant without an auditable source.
-    approved = df[(df["code"] != "") & (df["status"] == "approved") & (df["verification_source"] != "")]
-    return approved[columns].drop_duplicates("code")
+    df["verification_url"] = df["verification_url"].str.strip()
+    df["status"] = df["status"].str.strip().str.lower()
+    # Preserve rejected/incomplete entries for audit, but never treat them as verified.
+    return df[df["code"] != ""].drop_duplicates("code")
 
 
 def build_universe(cfg: dict) -> pd.DataFrame:
@@ -59,12 +59,13 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     extra = read_sharia_extra()
     mode = cfg["universe"]["mode"]
 
-    extra_merge = extra[["code", "name_ar", "verification_source", "verification_url", "verified_on"]].rename(
+    extra_merge = extra[["code", "name_ar", "verification_source", "verification_url", "verified_on", "status"]].rename(
         columns={
             "name_ar": "extra_name_ar",
             "verification_source": "sharia_source",
             "verified_on": "sharia_verified_on",
             "verification_url": "sharia_source_url",
+            "status": "sharia_external_status",
         }
     )
     df = lst.merge(e33, on="code", how="outer").merge(extra_merge, on="code", how="outer")
@@ -77,10 +78,18 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     df["sharia_source"] = df["sharia_source"].fillna("")
     df["sharia_source_url"] = df["sharia_source_url"].fillna("")
     df["sharia_verified_on"] = df["sharia_verified_on"].fillna("")
+    df["sharia_source_url"] = df["sharia_source_url"].fillna("")
+    df["sharia_external_status"] = df["sharia_external_status"].fillna("").str.lower()
     verified_date = pd.to_datetime(df["sharia_verified_on"], errors="coerce").dt.date
     max_age = int(cfg.get("universe", {}).get("verification_max_age_days", 180))
     age_days = verified_date.map(lambda d: (date.today() - d).days if pd.notna(d) else None)
-    extra_fresh = df["in_sharia_extra"] & age_days.map(lambda n: n is not None and 0 <= n <= max_age).fillna(False)
+    has_auditable_source = df["sharia_source"].str.strip().ne("")
+    extra_fresh = (
+        df["in_sharia_extra"]
+        & df["sharia_external_status"].eq("approved")
+        & has_auditable_source
+        & age_days.map(lambda n: n is not None and 0 <= n <= max_age).fillna(False)
+    )
     df["sharia_review_status"] = "مراجعة مطلوبة"
     df.loc[df["in_sharia_extra"] & ~extra_fresh, "sharia_review_status"] = "اعتماد خارجي منتهي الصلاحية"
     df.loc[extra_fresh, "sharia_review_status"] = "اعتماد خارجي حديث"
