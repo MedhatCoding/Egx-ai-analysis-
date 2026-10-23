@@ -917,22 +917,7 @@ def test_streamlit_app_smoke_run():
     _run_app()
 
 
-if __name__ == "__main__":
-    tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
-    failed = 0
-    for name, fn in tests:
-        try:
-            fn()
-            print(f"  ok   {name}")
-        except Exception as e:  # noqa: BLE001
-            failed += 1
-            import traceback
 
-            print(f"  FAIL {name}: {type(e).__name__}: {e}")
-            traceback.print_exc()
-    print(f"\n{len(tests) - failed}/{len(tests)} passed")
-    shutil.rmtree(TMP, ignore_errors=True)
-    sys.exit(1 if failed else 0)
 
 
 
@@ -993,3 +978,20 @@ def test_synthetic_sharia_index_does_not_forward_fill_missing_prices():
     assert np.isclose(result.loc[dates[3]] / result.loc[dates[2]] - 1.0, 0.10)
     # The first output point is the first date with a valid constituent return.
     assert result.index[0] == dates[1]
+
+if __name__ == "__main__":
+    tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
+    failed = 0
+    for name, fn in tests:
+        try:
+            fn()
+            print(f"  ok   {name}")
+        except Exception as e:  # noqa: BLE001
+            failed += 1
+            import traceback
+
+            print(f"  FAIL {name}: {type(e).__name__}: {e}")
+            traceback.print_exc()
+    print(f"\n{len(tests) - failed}/{len(tests)} passed")
+    shutil.rmtree(TMP, ignore_errors=True)
+    sys.exit(1 if failed else 0)
