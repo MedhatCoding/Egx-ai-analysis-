@@ -749,7 +749,11 @@ def test_sharia_extra_requires_audited_approval():
         sharia = build_universe({**CFG, "universe": {"mode": "sharia_union"}})
         assert "OUT1" not in set(union["code"])
         assert "OUT1" in set(sharia["code"])
-        assert "OUT2" not in set(sharia["code"])
+        # Incomplete candidates remain visible for research, but never qualify as Sharia-verified.
+        assert "OUT2" in set(sharia["code"])
+        out2 = sharia.loc[sharia["code"] == "OUT2"].iloc[0]
+        assert not bool(out2["sharia_verified"])
+        assert out2["sharia_review_status"] == "اعتماد خارجي منتهي الصلاحية"
         assert bool(sharia.loc[sharia["code"] == "OUT1", "sharia_verified"].iloc[0])
         stale = pd.DataFrame([{"code":"OUT3","name_ar":"سهم انتهت مراجعته","verification_source":"مصدر موثق","verified_on":"2025-01-01","notes":"","status":"approved"}])
         stale.to_csv(path,index=False)
