@@ -983,6 +983,67 @@ def test_synthetic_sharia_index_does_not_forward_fill_missing_prices():
     # The first output point is the first date with a valid constituent return.
     assert result.index[0] == dates[1]
 
+
+def test_short_yahoo_backfill_uses_budgeted_eodhd_for_older_history():
+    """A successful-but-short Yahoo response must not silently cap the 8-year cache."""
+    from src import data_fetch
+
+    code = "BACKFILL"
+    path = data_fetch.cache_path(code)
+    existed = path.exists()
+    backup = path.read_bytes() if existed else None
+    old_token = os.environ.get("EODHD_API_TOKEN")
+    original_yahoo = data_fetch.fetch_yahoo_from
+    original_eodhd = data_fetch.fetch_eodhd
+    original_sleep = data_fetch.time.sleep
+    calls = []
+    today = pd.Timestamp.today().normalize()
+    try:
+        os.environ["EODHD_API_TOKEN"] = "test-token"
+        # Simulate a cache with only five years, despite an eight-year request.
+        cached_idx = pd.date_range(end=today - pd.Timedelta(days=4), periods=1200, freq="B")
+        cached = pd.DataFrame({
+            "open": 10.0, "high": 11.0, "low": 9.0, "close": 10.0, "volume": 1000.0,
+        }, index=cached_idx)
+        data_fetch.write_cache(code, cached)
+
+        def short_yahoo(symbol, start, retries=3):
+            idx = pd.date_range(end=today - pd.Timedelta(days=1), periods=4, freq="B")
+            return pd.DataFrame({
+                "open": 10.0, "high": 11.0, "low": 9.0, "close": 10.0, "volume": 1000.0,
+            }, index=idx)
+
+        def older_eodhd(symbol, token, start):
+            calls.append((symbol, token, pd.Timestamp(start).date()))
+            idx = pd.date_range(start=pd.Timestamp(start), end=today - pd.Timedelta(days=5), freq="B")
+            return pd.DataFrame({
+                "open": 10.0, "high": 11.0, "low": 9.0, "close": 10.0, "volume": 1000.0,
+            }, index=idx)
+
+        data_fetch.fetch_yahoo_from = short_yahoo
+        data_fetch.fetch_eodhd = older_eodhd
+        data_fetch.time.sleep = lambda *_args, **_kwargs: None
+        cfg = {**CFG, "data": {**CFG["data"], "history_years": 8, "history_backfill_retry_days": 30, "request_sleep": 0, "eodhd_daily_budget": 2}}
+        state = {"eodhd": {"date": today.date().isoformat(), "calls": 0}}
+        coverage = data_fetch.refresh_all(cfg, [code], state, offline=False)
+        assert len(calls) == 1, "EODHD should be used once when Yahoo returns a short backfill"
+        assert state["eodhd"]["calls"] == 1, "fallback must count against the daily EODHD budget"
+        assert float(coverage.iloc[0]["coverage_years"]) >= 7.7
+        assert "eodhd" in str(coverage.iloc[0]["source"]).lower()
+    finally:
+        data_fetch.fetch_yahoo_from = original_yahoo
+        data_fetch.fetch_eodhd = original_eodhd
+        data_fetch.time.sleep = original_sleep
+        if old_token is None:
+            os.environ.pop("EODHD_API_TOKEN", None)
+        else:
+            os.environ["EODHD_API_TOKEN"] = old_token
+        if existed:
+            path.write_bytes(backup)
+        else:
+            path.unlink(missing_ok=True)
+
+
 if __name__ == "__main__":
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
     failed = 0
