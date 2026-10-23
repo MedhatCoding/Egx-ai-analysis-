@@ -936,6 +936,47 @@ if __name__ == "__main__":
 
 
 
+
+def test_sharia_universe_requires_recent_source_for_out_of_index_shares():
+    """Reference universe alone must not imply Sharia eligibility; external approvals expire."""
+    import src.universe as universe_module
+
+    old_data = universe_module.DATA
+    test_data = TMP / "universe_gate"
+    test_data.mkdir(parents=True, exist_ok=True)
+    try:
+        universe_module.DATA = test_data
+        pd.DataFrame([
+            {"code": "INLIST", "name_ar": "مرشح مرجعي فقط"},
+            {"code": "OUTOLD", "name_ar": "اعتماد قديم"},
+            {"code": "OUTNEW", "name_ar": "اعتماد حديث"},
+            {"code": "OUTBAD", "name_ar": "بلا مصدر"},
+        ]).to_csv(test_data / "universe.csv", index=False)
+        (test_data / "egx33.txt").write_text("INDEX,عضو المؤشر\n", encoding="utf-8")
+        pd.DataFrame([
+            {"code": "OUTOLD", "name_ar": "اعتماد قديم", "verification_source": "اختبار", "verification_url": "https://example.org/old", "verified_on": "2024-01-01", "notes": "", "status": "approved"},
+            {"code": "OUTNEW", "name_ar": "اعتماد حديث", "verification_source": "اختبار", "verification_url": "https://example.org/new", "verified_on": datetime.now().date().isoformat(), "notes": "", "status": "approved"},
+            {"code": "OUTBAD", "name_ar": "بلا مصدر", "verification_source": "", "verification_url": "", "verified_on": datetime.now().date().isoformat(), "notes": "", "status": "approved"},
+        ]).to_csv(test_data / "sharia_extra.csv", index=False)
+        cfg = {"universe": {"mode": "sharia_union", "verification_max_age_days": 180}}
+        result = universe_module.build_universe(cfg).set_index("code")
+        assert bool(result.loc["INDEX", "sharia_verified"])
+        assert "INLIST" not in result.index  # universe.csv is not proof of compliance
+        assert not bool(result.loc["OUTOLD", "sharia_verified"])
+        assert bool(result.loc["OUTNEW", "sharia_verified"])
+        assert not bool(result.loc["OUTBAD", "sharia_verified"])
+    finally:
+        universe_module.DATA = old_data
+
+
+def test_history_lookback_and_walk_forward_ml_are_configured():
+    """Eight-year lookback is a request, not a claim that every symbol has eight years."""
+    cfg = C.load_config()
+    assert int(cfg["data"]["history_years"]) >= 8
+    assert cfg["ml"].get("purge_horizon", True)
+    assert int(cfg["ml"].get("validation_folds", 0)) >= 2
+
+
 def test_synthetic_sharia_index_does_not_forward_fill_missing_prices():
     from src.pipeline import build_equal_weight_index
 
