@@ -925,6 +925,14 @@ def test_fund_catalog_has_published_sharia_and_gold_entries():
     assert FUND_SOURCE_MATCHES["صندوق استثمار بنك فيصل الإسلامي"][0] == "FIF"
     assert FUND_SOURCE_MATCHES["دهب مباشر"][0] == "MGF"
     assert FUND_SOURCE_MATCHES["جولد مصر"][0] == "CGF"
+    # The checked-in catalog must stay synchronized with the full code-level catalog.
+    catalog = pd.read_csv(ROOT / "data" / "funds.csv", dtype=str).fillna("")
+    catalog_names = set(catalog["name_ar"])
+    assert catalog_names == sharia_names | gold_names
+    assert len(catalog) == len(catalog_names) == 23
+    assert set(catalog.loc[catalog["category"] == "sharia_equity", "reference"]) == {"EGX33"}
+    assert set(catalog.loc[catalog["category"] == "gold", "reference"]) == {"XAUUSD"}
+    assert catalog["source_code"].is_unique
 
 def test_streamlit_app_smoke_run():
     """تشغيل صفحة Streamlit كاملة ببيانات اختبار وهمية لاكتشاف أخطاء منطق الواجهة."""
