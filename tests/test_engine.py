@@ -960,12 +960,14 @@ def test_sharia_universe_requires_recent_source_for_out_of_index_shares():
             {"code": "OUTOLD", "name_ar": "اعتماد قديم"},
             {"code": "OUTNEW", "name_ar": "اعتماد حديث"},
             {"code": "OUTBAD", "name_ar": "بلا مصدر"},
+            {"code": "NOURL", "name_ar": "مصدر بلا رابط"},
         ]).to_csv(test_data / "universe.csv", index=False)
         (test_data / "egx33.txt").write_text("INDEX,عضو المؤشر\n", encoding="utf-8")
         pd.DataFrame([
             {"code": "OUTOLD", "name_ar": "اعتماد قديم", "verification_source": "اختبار", "verification_url": "https://example.org/old", "verified_on": "2024-01-01", "notes": "", "status": "approved"},
             {"code": "OUTNEW", "name_ar": "اعتماد حديث", "verification_source": "اختبار", "verification_url": "https://example.org/new", "verified_on": datetime.now().date().isoformat(), "notes": "", "status": "approved"},
             {"code": "OUTBAD", "name_ar": "بلا مصدر", "verification_source": "", "verification_url": "", "verified_on": datetime.now().date().isoformat(), "notes": "", "status": "approved"},
+            {"code": "NOURL", "name_ar": "مصدر بلا رابط", "verification_source": "مصدر مسمى فقط", "verification_url": "", "verified_on": datetime.now().date().isoformat(), "notes": "", "status": "approved"},
         ]).to_csv(test_data / "sharia_extra.csv", index=False)
         cfg = {"universe": {"mode": "sharia_union", "verification_max_age_days": 180}}
         result = universe_module.build_universe(cfg).set_index("code")
@@ -974,6 +976,7 @@ def test_sharia_universe_requires_recent_source_for_out_of_index_shares():
         assert not bool(result.loc["OUTOLD", "sharia_verified"])
         assert bool(result.loc["OUTNEW", "sharia_verified"])
         assert not bool(result.loc["OUTBAD", "sharia_verified"])
+        assert not bool(result.loc["NOURL", "sharia_verified"])
     finally:
         universe_module.DATA = old_data
 
