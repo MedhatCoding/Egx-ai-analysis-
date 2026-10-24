@@ -1,10 +1,24 @@
-category,name_ar,reference
-sharia_equity,مصر مؤشر شريعة إكويتي – CI,EGX33
-sharia_equity,بلتون وفرة – EGX33,EGX33
-sharia_equity,كنز شريعة EGX33 – AAIH,EGX33
-sharia_equity,AZ فرص الشريعة,EGX33
-gold,سبيكة – Beltone Evolve Gold,XAUUSD
-gold,Gold Misr – CI,XAUUSD
-gold,AZ Gold,XAUUSD
-gold,EFG Hermes Gold Fund,XAUUSD
-sharia_equity,بشائر الإسلامي – الأهلي/البركة,EGX33
+category,name_ar,reference,source_code
+sharia_equity,مصر شريعة إكويتي – CI,EGX33,CSF
+sharia_equity,بلتون وفرة – EGX33,EGX33,BWA
+sharia_equity,كنز شريعة EGX33 – AAIH,EGX33,KSF
+sharia_equity,أزيموت فرص الشريعة AZ,EGX33,ASO
+sharia_equity,نعيم مصر للأسهم المتوافق مع الشريعة,EGX33,NMF
+sharia_equity,سنابل الإسلامي,EGX33,SSF
+sharia_equity,الوفاق الإسلامي,EGX33,WSF
+sharia_equity,البركات – بنك البركة مصر,EGX33,BEF
+sharia_equity,الحصن – بنك مصر,EGX33,BM4
+sharia_equity,أمان المتوافق مع الشريعة,EGX33,FCA
+sharia_equity,ألفا المتوافق مع الشريعة – بيت التمويل الكويتي,EGX33,KAE
+sharia_equity,هلال – بنك نكست,EGX33,NHF
+sharia_equity,هيرميس لأسهم الشريعة,EGX33,HSE
+sharia_equity,الحياة المتوافق مع الشريعة – بنك الكويت الوطني,EGX33,NHE
+sharia_equity,صندوق استثمار بنك فيصل الإسلامي,EGX33,FIF
+sharia_equity,بشائر – صندوق البنك الأهلي السادس وبنك البركة,EGX33,BSF
+gold,أزيموت جولد,XAUUSD,AZG
+gold,بلتون سبائك,XAUUSD,BSB
+gold,الأهلي دهب,XAUUSD,ADF
+gold,جولد مصر,XAUUSD,CGF
+gold,دهب مباشر,XAUUSD,MGF
+gold,هيرميس للاستثمار في الذهب,XAUUSD,HGF
+gold,الشكمجية بكرة للذهب,XAUUSD,SHK
