@@ -83,7 +83,10 @@ def build_universe(cfg: dict) -> pd.DataFrame:
     verified_date = pd.to_datetime(df["sharia_verified_on"], errors="coerce").dt.date
     max_age = int(cfg.get("universe", {}).get("verification_max_age_days", 180))
     age_days = verified_date.map(lambda d: (date.today() - d).days if pd.notna(d) else None)
-    has_auditable_source = df["sharia_source"].str.strip().ne("")
+    # Require a clickable HTTP(S) source as well as a dated approval.
+    source_url = df["sharia_source_url"].str.strip()
+    has_http_source = source_url.str.match(r"^https?://[^\\s]+$", case=False, na=False)
+    has_auditable_source = df["sharia_source"].str.strip().ne("") & has_http_source
     extra_fresh = (
         df["in_sharia_extra"]
         & df["sharia_external_status"].eq("approved")
