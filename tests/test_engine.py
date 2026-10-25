@@ -740,7 +740,7 @@ def test_sharia_extra_requires_audited_approval():
     backup = path.read_bytes() if existed else None
     try:
         pd.DataFrame([
-            {"code": "OUT1", "name_ar": "سهم خارجي معتمد", "verification_source": "مصدر شرعي موثق",
+            {"code": "OUT1", "name_ar": "سهم خارجي معتمد", "verification_source": "مصدر شرعي موثق", "verification_url": "https://example.com/sharia-screening",
              "verified_on": "2026-10-01", "notes": "test", "status": "approved"},
             {"code": "OUT2", "name_ar": "سهم غير معتمد", "verification_source": "",
              "verified_on": "", "notes": "test", "status": "pending"},
