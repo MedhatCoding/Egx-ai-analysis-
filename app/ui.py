@@ -247,7 +247,7 @@ def header_html(latest: dict, report: dict | None) -> str:
     close_label = f"بيانات إغلاق {e(ar_date(dd))}" if dd else "بيانات الإغلاق غير متاحة"
     return (
         '<div class="topbar"><div class="topbar-in">'
-        '<div><span class="brand-name">مستشار البورصة</span><span class="brand-sub">EGX Advisor</span></div>'
+        '<div><span class="brand-name">GPT-Mi</span><span class="brand-sub">Sharia Market Intelligence</span></div>'
         f'<div class="asof">{close_label}<br>{e(upd)}</div>'
         "</div></div>"
     )
