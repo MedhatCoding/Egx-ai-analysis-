@@ -17,8 +17,22 @@ def read_list() -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame(columns=["code", "name_ar"])
     df = pd.read_csv(path, dtype=str).fillna("")
-    df["code"] = df["code"].str.strip().str.upper()
-    return df[["code", "name_ar"]].drop_duplicates("code")
+    # Personal lists may contain codes only or use alternate name headings.
+    if "code" not in df.columns:
+        if len(df.columns) == 1:
+            df = df.rename(columns={df.columns[0]: "code"})
+        else:
+            return pd.DataFrame(columns=["code", "name_ar"])
+    if "name_ar" not in df.columns:
+        for candidate in ("name", "name_en", "company", "company_name", "اسم الشركة"):
+            if candidate in df.columns:
+                df = df.rename(columns={candidate: "name_ar"})
+                break
+    if "name_ar" not in df.columns:
+        df["name_ar"] = ""
+    df["code"] = df["code"].astype(str).str.strip().str.upper()
+    df["name_ar"] = df["name_ar"].astype(str).fillna("").str.strip()
+    return df[["code", "name_ar"]].query("code != ''").drop_duplicates("code")
 
 
 def read_egx33() -> pd.DataFrame:
