@@ -88,7 +88,11 @@ def main():
             else:
                 result = opening_review(cfg, now)
     else:
-        result = pipeline.run(cfg=cfg, force=args.force, dry_run=args.dry_run, offline=args.offline, now=now)
+        local = now.timetz().replace(tzinfo=None)
+        if not args.force and not args.dry_run and not (time(8, 50) <= local <= time(9, 20)):
+            result = {"status": "skipped", "detail": "التقرير التلقائي محدد 09:00 صباحًا بتوقيت القاهرة"}
+        else:
+            result = pipeline.run(cfg=cfg, force=args.force, dry_run=args.dry_run, offline=args.offline, now=now)
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     return 1 if result.get("status") == "not_sent" else 0
 
