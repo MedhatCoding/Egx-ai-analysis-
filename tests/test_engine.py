@@ -1067,6 +1067,41 @@ def test_short_yahoo_backfill_uses_budgeted_eodhd_for_older_history():
             path.unlink(missing_ok=True)
 
 
+
+def test_personal_sharia_universe_includes_index_and_audited_extras_only():
+    """EGX33 members + fresh audited additions; generic watchlist is not a Sharia pass."""
+    from datetime import date
+    from src import universe as U
+
+    U.DATA.mkdir(parents=True, exist_ok=True)
+    (U.DATA / "universe.csv").write_text(
+        "code,name_ar\\nGENERIC,مرشح عام\\nIN33,اسم المؤشر\\n",
+        encoding="utf-8",
+    )
+    (U.DATA / "egx33.txt").write_text(
+        "# synthetic fixture\\nIN33,Index constituent\\n",
+        encoding="utf-8",
+    )
+    today = date.today().isoformat()
+    (U.DATA / "sharia_extra.csv").write_text(
+        "code,name_ar,verification_source,verification_url,verified_on,notes,status\\n"
+        f"EXTRA,إضافة موثقة,Test screening,https://example.org/screen.pdf,{today},fixture,approved\\n"
+        f"STALE,اعتماد قديم,Test screening,https://example.org/old.pdf,2020-01-01,fixture,approved\\n"
+        f"REJECT,مرفوض,Test screening,https://example.org/reject.pdf,{today},fixture,rejected\\n"
+        f"BADURL,رابط غير صالح,Test screening,not-a-url,{today},fixture,approved\\n",
+        encoding="utf-8",
+    )
+    out = U.build_universe({"universe": {"mode": "sharia_union", "verification_max_age_days": 180}})
+    by_code = out.set_index("code")
+    assert set(by_code.index) == {"IN33", "EXTRA", "STALE", "REJECT", "BADURL"}
+    assert bool(by_code.loc["IN33", "sharia_verified"])
+    assert bool(by_code.loc["EXTRA", "sharia_verified"])
+    assert not bool(by_code.loc["STALE", "sharia_verified"])
+    assert not bool(by_code.loc["REJECT", "sharia_verified"])
+    assert not bool(by_code.loc["BADURL", "sharia_verified"])
+    assert "GENERIC" not in by_code.index
+
+
 if __name__ == "__main__":
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
     failed = 0
