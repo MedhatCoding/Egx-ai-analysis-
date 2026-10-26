@@ -24,7 +24,7 @@ from src.track_record import HISTORY, load_history, summarize  # noqa: E402
 from src.portfolio import evaluate, totals, risk_summary  # noqa: E402
 from src.portfolio_store import github_load, github_save, local_load, encrypt, decrypt, has_credentials  # noqa: E402
 
-st.set_page_config(page_title="مستشار البورصة | EGX Advisor", page_icon="📈", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="GPT-Mi | Sharia Market Intelligence", page_icon="🟢", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(ui.CSS, unsafe_allow_html=True)
 
 
@@ -104,8 +104,8 @@ latest = load_json(C.SIGNALS / "latest.json")
 
 if not latest:
     st.markdown(
-        '<div class="topbar"><div class="topbar-in"><div><span class="brand-name">مستشار البورصة</span>'
-        '<span class="brand-sub">EGX Advisor</span></div></div></div>'
+        '<div class="topbar"><div class="topbar-in"><div><span class="brand-name">GPT-Mi</span>'
+        '<span class="brand-sub">Sharia Market Intelligence</span></div></div></div>'
         '<div class="empty"><b>لسه مفيش تقرير.</b><br>شغّل التشغيل اليومي مرة واحدة عشان تظهر البيانات: '
         'من تبويب Actions في GitHub اختر «EGX Daily Report» ثم Run workflow، أو محليًا: '
         '<bdi>python run_daily.py --force --dry-run</bdi></div>',
