@@ -18,13 +18,14 @@ import streamlit as st  # noqa: E402
 from app import charts, ui  # noqa: E402
 from src import config as C  # noqa: E402
 from src.data_fetch import read_cache  # noqa: E402
+from src.live_quotes import fetch_live_quotes, compare_snapshot  # noqa: E402
 from src.indicators import compute_indicators  # noqa: E402
 from src.signals import SETUP_AR, SIGNAL_AR  # noqa: E402
 from src.track_record import HISTORY, load_history, summarize  # noqa: E402
 from src.portfolio import evaluate, totals, risk_summary  # noqa: E402
 from src.portfolio_store import github_load, github_save, local_load, encrypt, decrypt, has_credentials  # noqa: E402
 
-st.set_page_config(page_title="GPT-Mi | Sharia Market Intelligence", page_icon="🟢", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="GPT-Mi | Sharia Market Intelligence", page_icon="app/assets/gpt-mi-logo.svg", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(ui.CSS, unsafe_allow_html=True)
 
 
@@ -259,6 +260,27 @@ if active_section == section_labels[0]:
             st.markdown(ui.pick_html(p, (notes.get("picks") or {}).get(p["code"])), unsafe_allow_html=True)
     else:
         st.markdown(ui.empty_picks_html(latest), unsafe_allow_html=True)
+
+    st.markdown(ui.section('مراجعة السعر قبل التنفيذ', 'لقطة مباشرة عند الطلب من OANOR، وليست تحديثًا مستمرًا.'), unsafe_allow_html=True)
+    if st.button('🔄 راجع أسعار فرص اليوم الآن', key='refresh_live_quote_snapshot', type='primary'):
+        live_codes = list(dict.fromkeys(str(p.get('code')).strip().upper() for p in pick_items if p.get('code')))[:20]
+        st.session_state['gptmi_live_snapshot'] = fetch_live_quotes(live_codes) if live_codes else {'ok': False, 'error': 'لا توجد فرص لإعادة فحصها.', 'quotes': []}
+    live_snapshot = st.session_state.get('gptmi_live_snapshot')
+    if isinstance(live_snapshot, dict):
+        if not live_snapshot.get('ok'):
+            st.warning(live_snapshot.get('error', 'تعذر جلب الأسعار اللحظية.'))
+        else:
+            st.caption('المصدر OANOR / EGX · وقت الجلب: ' + str(live_snapshot.get('retrieved_at', 'غير متاح')) + ' UTC. السعر لقطة ولا يضمن التنفيذ.')
+            quote_map = {q.get('code'): q for q in live_snapshot.get('quotes', [])}
+            for pick in pick_items:
+                q = quote_map.get(str(pick.get('code', '')).strip().upper())
+                if q:
+                    state = compare_snapshot(pick, q)
+                    st.markdown('### ' + q['code'] + ' · ' + q['company'])
+                    st.metric('السعر الحالي', round(q['price'], 4), None if q.get('change_percent') is None else f"{q['change_percent']:+.2f}%")
+                    st.write('**حالة الخطة السابقة:** ' + state['status'])
+                    st.caption('النطاق الأصلي: ' + str(pick.get('entry_low')) + '–' + str(pick.get('entry_high')) + ' | الوقف: ' + str(pick.get('stop')) + ' | الهدف الأول: ' + str(pick.get('t1')))
+            st.info('دي مراجعة للخطة القديمة فقط وليست توصية جديدة. افحص السيولة وسعر العرض/الطلب والأخبار وحدود السعر قبل التنفيذ.')
 
     if isinstance(watch, pd.DataFrame):
         watch_items = watch.to_dict("records")
