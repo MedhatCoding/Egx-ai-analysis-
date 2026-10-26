@@ -26,6 +26,16 @@ def fetch_live_quotes(codes: list[str], timeout: int = 12) -> dict[str, Any]:
         or ""
     ).strip().strip('"').strip("'")
     if not key:
+        try:
+            import streamlit as st
+            for name in ("OANOR_API_KEY", "OANOR_API_TOKEN", "OANOR_KEY"):
+                candidate = str(st.secrets.get(name, "")).strip().strip('"').strip("'")
+                if candidate:
+                    key = candidate
+                    break
+        except Exception:
+            pass
+    if not key:
         return {"ok": False, "error": "مفتاح OANOR غير مضبوط في بيئة التطبيق", "quotes": []}
     try:
         response = requests.get(
