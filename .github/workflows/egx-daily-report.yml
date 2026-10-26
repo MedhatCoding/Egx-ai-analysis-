@@ -16,10 +16,10 @@ on:
       - "data/sharia_extra.csv"
       - "tests/**"
 
-  # Schedule UTC 06-09; local runner chooses 09:00 Cairo report and 11:00 review.
-  # Covers Cairo UTC+2 and UTC+3 with local-time guards.
+  # Schedule UTC 06-09 every day because Cairo Sunday 09:00 can fall on UTC Saturday.
+  # Local runner enforces Cairo weekday, holiday, and target-time guards (UTC+2/UTC+3).
   schedule:
-    - cron: "0 6-9 * * 0-4"
+    - cron: "0 6-9 * * *"
 
   workflow_dispatch:
     inputs:
