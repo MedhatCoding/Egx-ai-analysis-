@@ -981,6 +981,27 @@ def test_sharia_universe_requires_recent_source_for_out_of_index_shares():
         universe_module.DATA = old_data
 
 
+def test_market_freshness_gate_suppresses_buys_and_preserves_fresh_signals():
+    from datetime import date
+    from src.data_quality import apply_market_freshness_gate
+
+    sample = pd.DataFrame({
+        "code": ["A", "B"],
+        "signal": ["BUY", "WATCH"],
+        "why_not_buy": [[], ["existing rationale"]],
+    })
+    blocked, did_block = apply_market_freshness_gate(sample, "2026-10-27", date(2026, 10, 28))
+    assert did_block
+    assert blocked["signal"].tolist() == ["WATCH", "WATCH"]
+    assert any("توقف آمن" in x for x in blocked.loc[0, "why_not_buy"])
+    assert blocked.loc[1, "why_not_buy"] == ["existing rationale"]
+    # A snapshot at or beyond the expected session must remain unchanged.
+    fresh, did_block = apply_market_freshness_gate(sample, "2026-10-28", date(2026, 10, 28))
+    assert not did_block
+    assert fresh is sample
+    assert fresh["signal"].tolist() == ["BUY", "WATCH"]
+
+
 def test_history_lookback_and_walk_forward_ml_are_configured():
     """Eight-year lookback is a request, not a claim that every symbol has eight years."""
     cfg = C.load_config()

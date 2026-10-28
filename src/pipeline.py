@@ -24,6 +24,7 @@ from .news import fetch_news
 from .portfolio import evaluate as evaluate_portfolio, risk_summary as portfolio_risk_summary
 from .portfolio_store import github_load, local_load
 from .portfolio import evaluate, risk_summary
+from .data_quality import apply_market_freshness_gate
 
 
 class DataError(RuntimeError):
@@ -230,6 +231,12 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
         reasons.append("لا توجد مراجعة شرعية حديثة موثقة؛ للمراقبة فقط وليس توصية شراء")
         cls.at[idx, "why_not_buy"] = reasons
     result = build_result(frames, regime_df, cls, len(codes), cfg)
+    # Fail closed: a late/stale overall market snapshot must never produce fresh BUYs.
+    exp_session = expected_last_session(now, cfg)
+    cls, freshness_blocked = apply_market_freshness_gate(cls, result["data_date"], exp_session)
+    if freshness_blocked:
+        result = build_result(frames, regime_df, cls, len(codes), cfg)
+        print(f"  [DATA QUALITY] تم إيقاف الشراء: البيانات {result['data_date']} أقدم من الجلسة المتوقعة {exp_session}.")
     sharia_codes = uni.loc[uni["sharia_verified"], "code"].tolist()
     sharia_parts = [prices[c]["close"].rename(c) for c in sharia_codes if c in prices]
     # Proxy only: current constituents are not historical index membership.
@@ -285,7 +292,7 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
     data_d = date.fromisoformat(result["data_date"])
     exp = expected_last_session(now, cfg)
     if data_d < exp:
-        warnings.append(f"آخر جلسة في البيانات {data_d} بينما المتوقع {exp}؛ قد تكون البيانات متأخرة أو الجلسة إجازة غير مسجلة.")
+        warnings.append(f"إيقاف آمن: آخر جلسة في البيانات {data_d} أقدم من الجلسة المتوقعة {exp}؛ تم تحويل كل توصيات الشراء إلى مراقبة لحين تحديث البيانات. تحقق أيضًا من data/holidays.txt.")
     missing = [c for c in codes if c not in prices]
     if missing:
         warnings.append(f"{len(missing)} سهم بدون بيانات كافية (منها: {', '.join(missing[:6])}).")
