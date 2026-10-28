@@ -2,7 +2,7 @@
 
 تحذيرات مهمة (تظهر أيضًا في التطبيق):
 - القائمة الحالية للأسهم = تحيّز البقاء (الأسهم اللي اختفت أو اتوقفت مش موجودة).
-- لا نحاكي الانزلاق السعري في الأسهم قليلة السيولة، لذلك التكلفة الفعلية قد تكون أعلى.
+- لا يوجد نموذج انزلاق خاص بسيولة كل سهم؛ يعرض التقرير اختبارات ضغط باحتكاك إضافي لتوضيح حساسية النتائج.
 - النتائج السابقة لا تضمن المستقبل.
 """
 from __future__ import annotations
@@ -75,19 +75,28 @@ def _run_symbol(code: str, f: pd.DataFrame, mask: np.ndarray, cfg: dict, step: i
     return out
 
 
-def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
-    """يرجع (ملخص، صفقات الاستراتيجية، صفقات خط الأساس)."""
+def _collect_trades(frames: dict[str, pd.DataFrame], cfg: dict, cost_pct: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Run both strategy and baseline under the same all-in round-trip friction."""
     strat, base = [], []
+    scenario_cfg = {**cfg, "risk": {**cfg["risk"], "round_trip_cost_pct": float(cost_pct)}}
     step = cfg["backtest"]["baseline_every_n_bars"]
     for code, f in frames.items():
         if len(f) < 260:
             continue
         valid = f["stop"].notna() & f["liquid"]
-        strat += _run_symbol(code, f, (f["buy_raw"] & f["regime_ok"]).to_numpy(), cfg)
-        base += _run_symbol(code, f, valid.to_numpy(), cfg, step=step)
+        strat += _run_symbol(code, f, (f["buy_raw"] & f["regime_ok"]).to_numpy(), scenario_cfg)
+        base += _run_symbol(code, f, valid.to_numpy(), scenario_cfg, step=step)
+    return pd.DataFrame(strat), pd.DataFrame(base)
 
-    st = pd.DataFrame(strat)
-    bs = pd.DataFrame(base)
+
+def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
+    """يرجع (ملخص، صفقات الاستراتيجية، صفقات خط الأساس).
+
+    يعرض أيضًا حساسية الأداء لاحتكاك تداول إضافي. هذه سيناريوهات ضغط للتكلفة،
+    وليست نموذج انزلاق سعري خاصًا بكل سهم أو تقديرًا دقيقًا لتأثير السوق.
+    """
+    base_cost = float(cfg["risk"]["round_trip_cost_pct"])
+    st, bs = _collect_trades(frames, cfg, base_cost)
     summary = {
         "strategy": _stats(st),
         "baseline": _stats(bs),
@@ -98,8 +107,17 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
         "assumptions": {
             "entry": "افتتاح الجلسة التالية",
             "max_hold_days": cfg["risk"]["max_hold_days"],
-            "round_trip_cost_pct": cfg["risk"]["round_trip_cost_pct"],
+            "round_trip_cost_pct": base_cost,
             "target_r": cfg["risk"]["target_r"][0],
+            "extra_friction_scenarios_pct": [0.25, 0.50],
+            "friction_note": (
+                "اختبارات ضغط باحتكاك إضافي على الصفقة ذهابًا وإيابًا؛ "
+                "ليست محاكاة انزلاق تعتمد على سيولة كل سهم أو حجم الأمر."
+            ),
+        },
+        "cost_sensitivity": {
+            "base_round_trip_cost_pct": base_cost,
+            "scenarios": [],
         },
         # Current universe is not a historical point-in-time membership database.
         # Surface this caveat alongside metrics so historical results aren't
@@ -115,8 +133,15 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
             ),
         },
     }
+    for extra in (0.25, 0.50):
+        stress_strategy, stress_baseline = _collect_trades(frames, cfg, base_cost + extra)
+        summary["cost_sensitivity"]["scenarios"].append({
+            "additional_friction_pct": extra,
+            "total_round_trip_cost_pct": round(base_cost + extra, 4),
+            "strategy": _stats(stress_strategy),
+            "baseline": _stats(stress_baseline),
+        })
     return summary, st, bs
-
 
 
 def performance_warning(summary: dict) -> str | None:
