@@ -50,7 +50,7 @@ body.open-app .welcome{display:none}body.open-app .workspace{display:flex}.mobil
     <button class="card" data-page="portfolio"><span class="ico">▤</span><b>المحفظة</b><small>متابعة المراكز وتوزيع المخاطر</small></button>
     <button class="card" data-page="market"><span class="ico">◷</span><b>السوق والبيانات</b><small>تاريخ الأسعار وجودة التغطية</small></button>
    </div>
-   <div class="notice"><strong>تنبيه:</strong> صفحة GitHub Pages هي غلاف التثبيت والهوية، أما تحليل السوق الفعلي فيعمل على Streamlit. لو رابط Streamlit لم يُنشر أو كان عنوانه مختلفًا، افتح التطبيق بعد نشره وعدّل قيمة <code>APP_URL</code> في هذا الملف إلى العنوان الحقيقي.</div>
+   <div class="notice"><strong>تنبيه:</strong> صفحة GitHub Pages هي غلاف التثبيت والهوية، أما تحليل السوق الفعلي فيعمل على Streamlit. لو رابط اللوحة مختلف عن الافتراضي، اضغط <button class="pill" id="configureApp" type="button">إعداد رابط لوحة Streamlit</button> والصق عنوان التطبيق المنشور؛ سيُحفظ على هذا الجهاز.</div>
   </section>
   <section class="workspace" aria-label="تطبيق gpt-Mi"><div class="frame-note"><span id="frameTitle">gpt-Mi — لوحة تحليل السوق</span><a id="externalLink" href="https://gpt-mi.streamlit.app/" target="_blank" rel="noopener">فتح في نافذة مستقلة ↗</a></div><iframe id="appFrame" title="gpt-Mi — التطبيق الكامل" src="about:blank" allow="clipboard-read; clipboard-write"></iframe></section>
  </main>
@@ -59,9 +59,9 @@ body.open-app .welcome{display:none}body.open-app .workspace{display:flex}.mobil
  <button class="active" data-page="overview"><span>⌂</span>الرئيسية</button><button data-page="opportunities"><span>↗</span>الفرص</button><button data-page="portfolio"><span>▤</span>المحفظة</button><button data-page="market"><span>◷</span>السوق</button>
 </nav>
 <script>
-const APP_URL='https://gpt-mi.streamlit.app/';
+let APP_URL=localStorage.getItem('gptmi_app_url')||'https://gpt-mi.streamlit.app/';
 const body=document.body,frame=document.getElementById('appFrame'),home=document.getElementById('homeBtn'),openLink=document.getElementById('openLink'),externalLink=document.getElementById('externalLink'),pageTitle=document.getElementById('pageTitle'),frameTitle=document.getElementById('frameTitle');
-let loaded=false,deferred;
+let loaded=false,deferred;\nfunction setAppUrl(value){try{const u=new URL(value);if(u.protocol!=='https:')throw new Error('https required');APP_URL=u.href.endsWith('/')?u.href:u.href+'/';localStorage.setItem('gptmi_app_url',APP_URL);openLink.href=APP_URL;externalLink.href=APP_URL;loaded=false;frame.src='about:blank';return true}catch(e){alert('أدخل رابط HTTPS صحيحًا لتطبيق Streamlit.');return false}}\nopenLink.href=APP_URL;externalLink.href=APP_URL;\ndocument.getElementById('configureApp').addEventListener('click',()=>{const value=prompt('الصق رابط لوحة gpt-Mi المنشورة على Streamlit:',APP_URL);if(value&&setAppUrl(value.trim()))alert('تم حفظ رابط اللوحة على هذا الجهاز.')});
 function openApp(page='overview',prompt=''){body.classList.add('open-app');home.hidden=false;openLink.hidden=true;pageTitle.textContent=({overview:'الرئيسية',opportunities:'فرص الأسهم',portfolio:'المحفظة',market:'السوق والبيانات'})[page]||'لوحة gpt-Mi';frameTitle.textContent='gpt-Mi — '+pageTitle.textContent;document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));try{sessionStorage.setItem('gptmi_open_app','1');if(prompt)sessionStorage.setItem('gptmi_prompt',prompt)}catch(e){}if(!loaded){frame.src=APP_URL+(APP_URL.includes('?')?'&':'?')+'embed=true';loaded=true}}
 function goHome(){body.classList.remove('open-app');home.hidden=true;openLink.hidden=false;pageTitle.textContent='الرئيسية';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page==='overview'))}
 document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>openApp(b.dataset.page)));
