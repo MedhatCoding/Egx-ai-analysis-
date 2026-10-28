@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111a"><meta name="description" content="gpt-Mi — ذكاء وتحليل منضبط للسوق المصري">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon.svg">
+<title>gpt-Mi | Sharia Market Intelligence</title>
+<style>
+:root{color-scheme:dark;--bg:#07111a;--panel:#0c1b26;--line:#1a3946;--text:#f4f8fb;--muted:#9bb1bd;--mint:#16e0ad;--blue:#0aa7f7}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#103c48 0,transparent 55%),var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;color:var(--text);display:flex;justify-content:center}.wrap{width:min(100%,760px);padding:24px 18px 40px}.top{display:flex;align-items:center;gap:14px;margin:12px 0 38px}.logo{width:66px;height:66px;border-radius:18px;border:1px solid #168e89;box-shadow:0 0 32px #00d3a41c}.brand{font-size:1.5rem;font-weight:850;letter-spacing:-.04em}.brand span{background:linear-gradient(100deg,var(--mint),var(--blue));color:transparent;background-clip:text}.sub{color:var(--muted);font-size:.82rem;margin-top:3px}.hero{text-align:center;padding:18px 0 28px}.hero img{width:132px;height:132px;filter:drop-shadow(0 10px 36px #00d7b329)}h1{font-size:clamp(2rem,8vw,3.1rem);line-height:1.2;margin:18px 0 12px;letter-spacing:-.04em}h1 span{background:linear-gradient(100deg,#20e8b2,#12aaf9);color:transparent;background-clip:text}.lead{color:#b4c7d0;line-height:1.9;max-width:520px;margin:0 auto}.actions{display:grid;gap:12px;margin:26px auto 18px;max-width:440px}.btn{display:block;width:100%;border:1px solid #176a69;border-radius:15px;padding:15px 18px;background:linear-gradient(110deg,#08b98c,#0788ce);color:#001a20;text-decoration:none;font-weight:800;font-size:1rem;cursor:pointer}.btn.secondary{background:#10232f;color:var(--text);border-color:var(--line)}.note{background:#0a1923;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:right;line-height:1.85;color:#b7c9d1;font-size:.92rem}.note strong{color:var(--text)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.tile{border:1px solid var(--line);border-radius:15px;padding:14px 10px;text-align:center;background:#0a1923}.tile b{display:block;font-size:.95rem;margin-bottom:6px}.tile small{color:var(--muted);line-height:1.5}footer{text-align:center;color:#718b99;font-size:.78rem;padding:25px 0 0}@media(max-width:420px){.grid{grid-template-columns:1fr}.tile{text-align:right;display:flex;gap:12px;align-items:center}.tile b{min-width:100px;margin:0}}@media(prefers-reduced-motion:no-preference){.hero img{animation:float 5s ease-in-out infinite}@keyframes float{50%{transform:translateY(-5px)}}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><img class="logo" src="./icon.svg" alt="gpt-Mi"><div><div class="brand">gpt-<span>Mi</span></div><div class="sub">Sharia Market Intelligence</div></div></header>
+<section class="hero"><img src="./icon.svg" alt="" aria-hidden="true"><h1>قرارات أوضح.<br><span>ومخاطر محسوبة.</span></h1><p class="lead">منصة تحليل ومتابعة للأسهم المصرية المتوافقة مع الشريعة، مع توضيح مصدر البيانات وتاريخها وأسباب الإشارة ومخاطرها.</p>
+<div class="actions"><button class="btn" id="install" hidden>تثبيت gpt-Mi على الجهاز</button><a class="btn secondary" href="https://github.com/MedhatCoding/gpt-Mi" target="_blank" rel="noopener">فتح مستودع المشروع</a></div></section>
+<div class="grid"><div class="tile"><b>تحليل السوق</b><small>مؤشرات فنية وسياق السوق</small></div><div class="tile"><b>انضباط شرعي</b><small>منع شراء الأسهم غير المعتمدة</small></div><div class="tile"><b>إدارة المخاطر</b><small>وقف خسارة ومراجعة الإشارة</small></div></div>
+<section class="note"><strong>تنبيه بخصوص النسخة الحالية:</strong><br>هذه صفحة تثبيت وهوية gpt-Mi على GitHub Pages. GitHub Pages يستضيف الملفات الثابتة ولا يشغّل تطبيق Python/Streamlit نفسه؛ لذلك يلزم ربط عنوان نشر Streamlit الفعلي حتى يفتح التطبيق الكامل من الأيقونة. لن نعرض بيانات سوق تجريبية على أنها بيانات حقيقية.</section>
+<footer>gpt-Mi · Sharia Market Intelligence<br>أداة معلومات وتحليل وليست ضمانًا للعائد أو نصيحة استثمارية.</footer>
+</main><script>
+let promptEvent;const installButton=document.getElementById('install');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;installButton.hidden=false});
+installButton.addEventListener('click',async()=>{if(!promptEvent)return;promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;installButton.hidden=true});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
