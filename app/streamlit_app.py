@@ -767,14 +767,28 @@ if active_section == section_labels[2] and more_section == more_labels[2]:
         cmp_df = pd.DataFrame({"المقياس": [r[0] for r in rows], "قواعد النظام": [cell(a, r[1], r[2]) for r in rows],
                                "خط الأساس (دخول بدون فلاتر)": [cell(b, r[1], r[2]) for r in rows]})
         render_cards(cmp_df, title_candidates=("المقياس",))
+        sensitivity = (bt.get("cost_sensitivity") or {}).get("scenarios") or []
+        if sensitivity:
+            st.markdown(ui.section("اختبار حساسية تكلفة التنفيذ", "هل تظل النتائج مقبولة إذا زادت التكلفة الفعلية؟"), unsafe_allow_html=True)
+            stress_rows = []
+            for scenario in sensitivity:
+                sa, sb = scenario.get("strategy") or {}, scenario.get("baseline") or {}
+                stress_rows.append({
+                    "السيناريو": f"تكلفة كلية {scenario.get('total_round_trip_cost_pct', '-')}%",
+                    "عائد النظام %": cell(sa, "avg_ret_pct", "{:+.2f}"),
+                    "عائد الأساس %": cell(sb, "avg_ret_pct", "{:+.2f}"),
+                    "عامل ربح النظام": cell(sa, "profit_factor", "{:.2f}"),
+                    "عامل ربح الأساس": cell(sb, "profit_factor", "{:.2f}"),
+                })
+            render_cards(pd.DataFrame(stress_rows), title_candidates=("السيناريو",))
+            st.caption("هذه سيناريوهات ضغط باحتكاك إضافي ذهابًا وإيابًا، وليست تقديرًا فعليًا للانزلاق حسب سيولة السهم وحجم الأمر.")
         per = bt.get("period", {})
         st.caption(f"الفترة من {per.get('from', '')} إلى {per.get('to', '')} على {bt.get('stocks', '')} سهم، وتكلفة الدخول والخروج {bt['assumptions']['round_trip_cost_pct']}%.")
         tr_csv = load_csv(C.BACKTEST / "strategy_trades.csv")
         if tr_csv is not None and len(tr_csv) > 5:
             wide(st.plotly_chart, charts.equity_chart(tr_csv), config={"displayModeBar": False})
         st.markdown(
-            '<div class="flag">تحفّظات مهمة: القائمة الحالية فقط (الأسهم اللي اختفت أو اتوقفت مش موجودة فالنتائج أفضل من الواقع)، '
-            "ولا يوجد انزلاق سعري في الأسهم قليلة السيولة، والتاريخ المتاح يصل إلى 8 سنوات عندما يوفره المصدر، وقد تختلف التغطية من سهم لآخر. النتائج للاسترشاد فقط.</div>",
+            '<div class="flag">تحفّظات مهمة: القائمة الحالية فقط (الأسهم التي اختفت أو اتوقفت غير ممثلة)، لذلك يوجد تحيز بقاء. اختبار التكلفة الإضافية هو ضغط افتراضي وليس نموذج انزلاق سعري خاصًا بسيولة السهم وحجم الأمر. التاريخ يصل إلى 8 سنوات عندما يوفره المصدر وقد تختلف التغطية من سهم لآخر. النتائج للاسترشاد فقط.</div>',
             unsafe_allow_html=True,
         )
 
