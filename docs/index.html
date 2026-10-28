@@ -43,7 +43,7 @@ body.open-app .welcome{display:none}body.open-app .workspace{display:flex}.mobil
    <div class="eyebrow"><span class="dot"></span> تحليل فني · توافق شرعي · إدارة مخاطر</div>
    <h1>السوق أوضح.<br><span>والقرار أكثر انضباطًا.</span></h1>
    <p class="lead">gpt-Mi يحوّل بيانات السوق المصري إلى لوحة متابعة واضحة: فرص، مخاطر، حالة البيانات، وتفاصيل تساعدك على تقييم القرار بدل الاعتماد على إشارة عمياء.</p>
-   <div class="composer"><textarea id="quickPrompt" rows="2" placeholder="مثال: افتح فرص الأسهم وراجع حداثة البيانات..."></textarea><div class="compose-row"><span class="hint">يفتح التطبيق الكامل مع سؤالك عند دعم الرابط</span><button class="send" id="sendBtn">فتح التحليل ←</button></div></div>
+   <div class="composer"><div class="compose-row"><span class="hint">افتح لوحة Streamlit الكاملة من داخل gpt-Mi</span><button class="send" id="launchBtn">فتح لوحة التحليل ←</button></div></div>
    <div class="section-head"><b>مساحات gpt-Mi</b><small>واجهة مصممة للهاتف والكمبيوتر</small></div>
    <div class="cards">
     <button class="card" data-page="opportunities"><span class="ico">↗</span><b>فرص الأسهم</b><small>التوصيات وأسبابها وحدود المخاطرة</small></button>
@@ -65,7 +65,7 @@ let loaded=false,deferred;
 function openApp(page='overview',prompt=''){body.classList.add('open-app');home.hidden=false;openLink.hidden=true;pageTitle.textContent=({overview:'الرئيسية',opportunities:'فرص الأسهم',portfolio:'المحفظة',market:'السوق والبيانات'})[page]||'لوحة gpt-Mi';frameTitle.textContent='gpt-Mi — '+pageTitle.textContent;document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));try{sessionStorage.setItem('gptmi_open_app','1');if(prompt)sessionStorage.setItem('gptmi_prompt',prompt)}catch(e){}if(!loaded){frame.src=APP_URL+(APP_URL.includes('?')?'&':'?')+'embed=true';loaded=true}}
 function goHome(){body.classList.remove('open-app');home.hidden=true;openLink.hidden=false;pageTitle.textContent='الرئيسية';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page==='overview'))}
 document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>openApp(b.dataset.page)));
-document.getElementById('sendBtn').addEventListener('click',()=>openApp('opportunities',document.getElementById('quickPrompt').value.trim()));
+document.getElementById('launchBtn').addEventListener('click',()=>openApp('overview'));
 home.addEventListener('click',goHome);
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;document.getElementById('installBtn').hidden=false});
 document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;document.getElementById('installBtn').hidden=true});
