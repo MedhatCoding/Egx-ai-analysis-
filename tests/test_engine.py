@@ -286,6 +286,17 @@ def test_backtest_runs_and_no_overlap_per_symbol():
     frames, *_ = _analysis()
     summary, strat, base = run_backtest(frames, CFG)
     assert summary["strategy"].get("trades", 0) > 0 and summary["baseline"]["trades"] > 0
+    sensitivity = summary["cost_sensitivity"]["scenarios"]
+    assert [x["additional_friction_pct"] for x in sensitivity] == [0.25, 0.50]
+    assert sensitivity[0]["total_round_trip_cost_pct"] > summary["cost_sensitivity"]["base_round_trip_cost_pct"]
+    assert sensitivity[1]["total_round_trip_cost_pct"] > sensitivity[0]["total_round_trip_cost_pct"]
+    # Higher friction must not improve average net return when the same trades are replayed.
+    base_avg = summary["strategy"]["avg_ret_pct"]
+    stress_1 = sensitivity[0]["strategy"]["avg_ret_pct"]
+    stress_2 = sensitivity[1]["strategy"]["avg_ret_pct"]
+    if base_avg is not None and stress_1 is not None and stress_2 is not None:
+        assert stress_1 < base_avg
+        assert stress_2 < stress_1
     for _, g in strat.groupby("code"):
         g = g.sort_values("entry_date")
         assert (pd.to_datetime(g["entry_date"].iloc[1:].values) > pd.to_datetime(g["exit_date"].iloc[:-1].values)).all()
