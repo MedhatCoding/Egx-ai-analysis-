@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "gpt-Mi | Sharia Market Intelligence",
+  "short_name": "gpt-Mi",
+  "description": "تحليل ومتابعة الأسهم المصرية المتوافقة مع الشريعة",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07111a",
+  "theme_color": "#07111a",
+  "icons": [
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
