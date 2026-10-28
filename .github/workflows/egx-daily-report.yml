@@ -16,10 +16,10 @@ on:
       - "data/sharia_extra.csv"
       - "tests/**"
 
-  # تشغيل واحد يوميًا في أيام التداول. GitHub cron يعمل بتوقيت UTC ثابت:
-  # 06:00 UTC = 08:00 القاهرة شتاءً و09:00 صيفًا؛ في الحالتين قبل الافتتاح.
+  # Schedule UTC 06-09 every day because Cairo Sunday 09:00 can fall on UTC Saturday.
+  # Local runner enforces Cairo weekday, holiday, and target-time guards (UTC+2/UTC+3).
   schedule:
-    - cron: "0 6 * * 0-4"
+    - cron: "0 6-9 * * *"
 
   workflow_dispatch:
     inputs:
@@ -70,10 +70,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-job.txt
 
-      - name: Run daily report
+      - name: Run scheduled report or opening review
         if: github.event_name != 'push'
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            UTC_HOUR="$(date -u +%H)"
+            if [ "$UTC_HOUR" = "06" ] || [ "$UTC_HOUR" = "07" ]; then
+              python run_daily.py
+            else
+              python run_daily.py --opening-review
+            fi
+          elif [ "${{ inputs.dry_run }}" = "true" ]; then
             if [ "${{ inputs.force }}" = "true" ]; then
               python run_daily.py --force --dry-run
             else
