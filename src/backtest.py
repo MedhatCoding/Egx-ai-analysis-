@@ -61,6 +61,7 @@ def _run_symbol(code: str, f: pd.DataFrame, mask: np.ndarray, cfg: dict, step: i
                         "exit_date": dates[res["exit_idx"]].date().isoformat(),
                         "entry": res["entry"],
                         "exit": res["exit"],
+                        "risk": float(res["entry"] - stop[i]),
                         "reason": res["reason"],
                         "r_net": res["r_net"],
                         "ret_pct": res["ret_pct"],
@@ -75,18 +76,29 @@ def _run_symbol(code: str, f: pd.DataFrame, mask: np.ndarray, cfg: dict, step: i
     return out
 
 
-def _collect_trades(frames: dict[str, pd.DataFrame], cfg: dict, cost_pct: float) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Run both strategy and baseline under the same all-in round-trip friction."""
+def _collect_trades(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Run both strategy and baseline under the configured round-trip friction."""
     strat, base = [], []
-    scenario_cfg = {**cfg, "risk": {**cfg["risk"], "round_trip_cost_pct": float(cost_pct)}}
     step = cfg["backtest"]["baseline_every_n_bars"]
     for code, f in frames.items():
         if len(f) < 260:
             continue
         valid = f["stop"].notna() & f["liquid"]
-        strat += _run_symbol(code, f, (f["buy_raw"] & f["regime_ok"]).to_numpy(), scenario_cfg)
-        base += _run_symbol(code, f, valid.to_numpy(), scenario_cfg, step=step)
+        strat += _run_symbol(code, f, (f["buy_raw"] & f["regime_ok"]).to_numpy(), cfg)
+        base += _run_symbol(code, f, valid.to_numpy(), cfg, step=step)
     return pd.DataFrame(strat), pd.DataFrame(base)
+
+
+def _add_extra_friction(trades: pd.DataFrame, extra_pct: float) -> pd.DataFrame:
+    """Apply an additional fixed round-trip cost without replaying unchanged exits."""
+    out = trades.copy()
+    if out.empty:
+        return out
+    extra_cost = (float(extra_pct) / 100.0) * out["entry"].astype(float)
+    risk = out["risk"].astype(float).replace(0, np.nan)
+    out["r_net"] = out["r_net"].astype(float) - extra_cost / risk
+    out["ret_pct"] = out["ret_pct"].astype(float) - float(extra_pct)
+    return out
 
 
 def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
@@ -96,7 +108,7 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
     وليست نموذج انزلاق سعري خاصًا بكل سهم أو تقديرًا دقيقًا لتأثير السوق.
     """
     base_cost = float(cfg["risk"]["round_trip_cost_pct"])
-    st, bs = _collect_trades(frames, cfg, base_cost)
+    st, bs = _collect_trades(frames, cfg)
     summary = {
         "strategy": _stats(st),
         "baseline": _stats(bs),
@@ -134,7 +146,8 @@ def run_backtest(frames: dict[str, pd.DataFrame], cfg: dict) -> tuple[dict, pd.D
         },
     }
     for extra in (0.25, 0.50):
-        stress_strategy, stress_baseline = _collect_trades(frames, cfg, base_cost + extra)
+        stress_strategy = _add_extra_friction(st, extra)
+        stress_baseline = _add_extra_friction(bs, extra)
         summary["cost_sensitivity"]["scenarios"].append({
             "additional_friction_pct": extra,
             "total_round_trip_cost_pct": round(base_cost + extra, 4),
