@@ -2,23 +2,73 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111a"><meta name="description" content="gpt-Mi — ذكاء وتحليل منضبط للسوق المصري">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon.svg">
-<title>gpt-Mi | Sharia Market Intelligence</title>
+<meta name="theme-color" content="#07111a"><meta name="description" content="gpt-Mi — منصة تحليل السوق المصري والأسهم المتوافقة مع الشريعة">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/gpt-mi.jpg" type="image/jpeg"><link rel="apple-touch-icon" href="./icons/gpt-mi.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="gpt-Mi"><meta name="mobile-web-app-capable" content="yes">
+<title>gpt-Mi — Sharia Market Intelligence</title>
 <style>
-:root{color-scheme:dark;--bg:#07111a;--panel:#0c1b26;--line:#1a3946;--text:#f4f8fb;--muted:#9bb1bd;--mint:#16e0ad;--blue:#0aa7f7}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#103c48 0,transparent 55%),var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;color:var(--text);display:flex;justify-content:center}.wrap{width:min(100%,760px);padding:24px 18px 40px}.top{display:flex;align-items:center;gap:14px;margin:12px 0 38px}.logo{width:66px;height:66px;border-radius:18px;border:1px solid #168e89;box-shadow:0 0 32px #00d3a41c}.brand{font-size:1.5rem;font-weight:850;letter-spacing:-.04em}.brand span{background:linear-gradient(100deg,var(--mint),var(--blue));color:transparent;background-clip:text}.sub{color:var(--muted);font-size:.82rem;margin-top:3px}.hero{text-align:center;padding:18px 0 28px}.hero img{width:132px;height:132px;filter:drop-shadow(0 10px 36px #00d7b329)}h1{font-size:clamp(2rem,8vw,3.1rem);line-height:1.2;margin:18px 0 12px;letter-spacing:-.04em}h1 span{background:linear-gradient(100deg,#20e8b2,#12aaf9);color:transparent;background-clip:text}.lead{color:#b4c7d0;line-height:1.9;max-width:520px;margin:0 auto}.actions{display:grid;gap:12px;margin:26px auto 18px;max-width:440px}.btn{display:block;width:100%;border:1px solid #176a69;border-radius:15px;padding:15px 18px;background:linear-gradient(110deg,#08b98c,#0788ce);color:#001a20;text-decoration:none;font-weight:800;font-size:1rem;cursor:pointer}.btn.secondary{background:#10232f;color:var(--text);border-color:var(--line)}.note{background:#0a1923;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:right;line-height:1.85;color:#b7c9d1;font-size:.92rem}.note strong{color:var(--text)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.tile{border:1px solid var(--line);border-radius:15px;padding:14px 10px;text-align:center;background:#0a1923}.tile b{display:block;font-size:.95rem;margin-bottom:6px}.tile small{color:var(--muted);line-height:1.5}footer{text-align:center;color:#718b99;font-size:.78rem;padding:25px 0 0}@media(max-width:420px){.grid{grid-template-columns:1fr}.tile{text-align:right;display:flex;gap:12px;align-items:center}.tile b{min-width:100px;margin:0}}@media(prefers-reduced-motion:no-preference){.hero img{animation:float 5s ease-in-out infinite}@keyframes float{50%{transform:translateY(-5px)}}}
-</style>
-</head>
-<body><main class="wrap">
-<header class="top"><img class="logo" src="./icon.svg" alt="gpt-Mi"><div><div class="brand">gpt-<span>Mi</span></div><div class="sub">Sharia Market Intelligence</div></div></header>
-<section class="hero"><img src="./icon.svg" alt="" aria-hidden="true"><h1>قرارات أوضح.<br><span>ومخاطر محسوبة.</span></h1><p class="lead">منصة تحليل ومتابعة للأسهم المصرية المتوافقة مع الشريعة، مع توضيح مصدر البيانات وتاريخها وأسباب الإشارة ومخاطرها.</p>
-<div class="actions"><button class="btn" id="install" hidden>تثبيت gpt-Mi على الجهاز</button><a class="btn secondary" href="https://github.com/MedhatCoding/gpt-Mi" target="_blank" rel="noopener">فتح مستودع المشروع</a></div></section>
-<div class="grid"><div class="tile"><b>تحليل السوق</b><small>مؤشرات فنية وسياق السوق</small></div><div class="tile"><b>انضباط شرعي</b><small>منع شراء الأسهم غير المعتمدة</small></div><div class="tile"><b>إدارة المخاطر</b><small>وقف خسارة ومراجعة الإشارة</small></div></div>
-<section class="note"><strong>تنبيه بخصوص النسخة الحالية:</strong><br>هذه صفحة تثبيت وهوية gpt-Mi على GitHub Pages. GitHub Pages يستضيف الملفات الثابتة ولا يشغّل تطبيق Python/Streamlit نفسه؛ لذلك يلزم ربط عنوان نشر Streamlit الفعلي حتى يفتح التطبيق الكامل من الأيقونة. لن نعرض بيانات سوق تجريبية على أنها بيانات حقيقية.</section>
-<footer>gpt-Mi · Sharia Market Intelligence<br>أداة معلومات وتحليل وليست ضمانًا للعائد أو نصيحة استثمارية.</footer>
-</main><script>
-let promptEvent;const installButton=document.getElementById('install');
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;installButton.hidden=false});
-installButton.addEventListener('click',async()=>{if(!promptEvent)return;promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;installButton.hidden=true});
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+:root{color-scheme:dark;--bg:#07111a;--panel:#101d28;--panel2:#142431;--line:#243b48;--text:#f3f8fb;--muted:#9db1bd;--mint:#16dfad;--blue:#19a9f6;--warn:#f1c777}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--text)}body{display:flex;overflow:hidden}button,a{font:inherit}button{cursor:pointer}
+.sidebar{width:245px;flex:0 0 245px;background:#09151e;border-left:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px}.brand img{width:43px;height:43px;object-fit:cover;border-radius:13px}.brand b{display:block;font-size:17px;letter-spacing:-.04em}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.nav-label{font-size:10px;letter-spacing:.12em;color:#6f8a98;padding:0 11px;margin-bottom:6px}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:10px;text-align:right;border:1px solid transparent;background:transparent;color:#b8c8d0;border-radius:12px;padding:12px;font-size:13px}.nav button .ico{width:22px;text-align:center;font-size:17px;color:var(--mint)}.nav button:hover,.nav button.active{background:#152630;border-color:#284753;color:#fff}.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:11px;line-height:1.8}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:radial-gradient(ellipse at 58% -20%,rgba(22,223,173,.09),transparent 48%),var(--bg)}
+.topbar{height:64px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 24px;background:rgba(7,17,26,.8)}.page-title{font-size:14px;font-weight:800}.page-sub{font-size:10px;color:var(--muted);margin-top:4px}.actions{display:flex;gap:8px}.pill{border:1px solid #344b58;background:#12232e;color:#dce9ef;border-radius:22px;padding:9px 13px;font-size:11px;text-decoration:none}.pill.primary{background:var(--mint);color:#06221c;border-color:transparent;font-weight:850}
+.stage{flex:1;min-height:0;overflow:auto}.welcome{max-width:1020px;margin:auto;padding:clamp(28px,6vh,64px) 28px 32px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #294653;border-radius:30px;padding:7px 12px;color:#c4d6de;font-size:11px;background:#0e202a}.dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 13px #16dfad}
+h1{font-size:clamp(30px,4.7vw,49px);letter-spacing:-1.5px;line-height:1.2;margin:22px 0 13px;font-weight:800}h1 span{background:linear-gradient(100deg,var(--mint),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:14px;color:#afc2cc;line-height:1.9;max-width:600px;margin:0}
+.composer{margin:25px 0 25px;padding:13px;border:1px solid #2b4a58;border-radius:20px;background:linear-gradient(145deg,#122630,#0d1b25);box-shadow:0 18px 55px #0003}.composer textarea{display:block;width:100%;resize:vertical;min-height:60px;max-height:150px;background:transparent;border:0;outline:0;color:var(--text);font:inherit;font-size:14px;line-height:1.7;padding:7px}.composer textarea::placeholder{color:#8197a3}.compose-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:8px}.hint{font-size:10px;color:#8299a5}.send{border:0;border-radius:12px;background:var(--mint);color:#06221c;font-weight:850;padding:10px 16px;font-size:12px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 12px}.section-head b{font-size:13px}.section-head small{color:var(--muted);font-size:10px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.card{border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#12232d,#0d1a23);padding:17px 15px;min-height:126px;text-align:right;color:var(--text);transition:transform .15s,border-color .15s}.card:hover{transform:translateY(-2px);border-color:#3a6c75}.card .ico{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#1a343d;color:var(--mint);font-size:18px;margin-bottom:15px}.card b{display:block;font-size:12px}.card small{display:block;font-size:10px;line-height:1.7;color:var(--muted);margin-top:6px}
+.notice{margin-top:20px;padding:13px 15px;border:1px solid #2c4651;border-radius:14px;background:#0c1c25;color:#a8bdc7;font-size:11px;line-height:1.8}.notice strong{color:#eaf4f7}
+.workspace{display:none;height:100%;min-height:0;flex-direction:column}.workspace iframe{flex:1;width:100%;height:100%;border:0;background:#07111a}.frame-note{padding:9px 14px;border-bottom:1px solid var(--line);font-size:10px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:12px}.frame-note a{color:var(--mint);text-decoration:none;white-space:nowrap}
+body.open-app .welcome{display:none}body.open-app .workspace{display:flex}.mobilebar{display:none}
+@media(max-width:850px){.sidebar{width:210px;flex-basis:210px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.welcome{padding-top:32px}}
+@media(max-width:620px){body{display:block}.sidebar{display:none}.main{height:100dvh}.topbar{height:58px;padding:0 12px}.top-actions .install-label{display:none}.welcome{padding:28px 16px calc(92px + env(safe-area-inset-bottom))}h1{font-size:34px;letter-spacing:-1px}.lead{font-size:13px}.composer{margin:22px 0 19px;border-radius:18px}.cards{gap:9px}.card{padding:13px;min-height:116px}.card .ico{margin-bottom:12px}.mobilebar{position:fixed;z-index:10;bottom:0;right:0;left:0;display:flex;justify-content:space-around;gap:2px;padding:8px 5px max(9px,env(safe-area-inset-bottom));background:rgba(7,17,26,.95);backdrop-filter:blur(20px);border-top:1px solid #243b48}.mobilebar button{flex:1;min-width:0;border:0;background:transparent;color:#8da3ae;border-radius:11px;padding:6px 2px;font-size:9px}.mobilebar button span{display:block;font-size:18px;margin-bottom:3px}.mobilebar button.active{background:#18313b;color:var(--mint)}body.open-app .mobilebar{display:none}.frame-note{padding:8px 10px}.frame-note span{max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.actions .pill{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body>
+<aside class="sidebar">
+ <div class="brand"><img src="./icons/gpt-mi.jpg" alt="gpt-Mi"><div><b>gpt-Mi</b><small>Sharia Market Intelligence</small></div></div>
+ <div><div class="nav-label">تحليل السوق</div><nav class="nav" id="sideNav">
+  <button class="active" data-page="overview"><span class="ico">⌂</span>الرئيسية</button>
+  <button data-page="opportunities"><span class="ico">↗</span>فرص الأسهم</button>
+  <button data-page="portfolio"><span class="ico">▤</span>المحفظة</button>
+  <button data-page="market"><span class="ico">◷</span>السوق والبيانات</button>
+ </nav></div>
+ <div class="sidebar-bottom">نسخة شخصية لتحليل السوق المصري<br>بيانات التوصية وتاريخها أهم من شكل الإشارة.</div>
+</aside>
+<div class="main">
+ <header class="topbar"><div><div class="page-title" id="pageTitle">الرئيسية</div><div class="page-sub">Sharia Market Intelligence · تحليل ومخاطر منضبطة</div></div><div class="actions"><button class="pill" id="homeBtn" hidden>الرئيسية</button><button class="pill" id="installBtn" hidden>تثبيت gpt-Mi</button><a class="pill primary" id="openLink" href="https://gpt-mi.streamlit.app/" target="_blank" rel="noopener">فتح التطبيق ↗</a></div></header>
+ <main class="stage">
+  <section class="welcome" id="welcome" aria-label="صفحة البداية">
+   <div class="eyebrow"><span class="dot"></span> تحليل فني · توافق شرعي · إدارة مخاطر</div>
+   <h1>السوق أوضح.<br><span>والقرار أكثر انضباطًا.</span></h1>
+   <p class="lead">gpt-Mi يحوّل بيانات السوق المصري إلى لوحة متابعة واضحة: فرص، مخاطر، حالة البيانات، وتفاصيل تساعدك على تقييم القرار بدل الاعتماد على إشارة عمياء.</p>
+   <div class="composer"><textarea id="quickPrompt" rows="2" placeholder="مثال: افتح فرص الأسهم وراجع حداثة البيانات..."></textarea><div class="compose-row"><span class="hint">يفتح التطبيق الكامل مع سؤالك عند دعم الرابط</span><button class="send" id="sendBtn">فتح التحليل ←</button></div></div>
+   <div class="section-head"><b>مساحات gpt-Mi</b><small>واجهة مصممة للهاتف والكمبيوتر</small></div>
+   <div class="cards">
+    <button class="card" data-page="opportunities"><span class="ico">↗</span><b>فرص الأسهم</b><small>التوصيات وأسبابها وحدود المخاطرة</small></button>
+    <button class="card" data-page="portfolio"><span class="ico">▤</span><b>المحفظة</b><small>متابعة المراكز وتوزيع المخاطر</small></button>
+    <button class="card" data-page="market"><span class="ico">◷</span><b>السوق والبيانات</b><small>تاريخ الأسعار وجودة التغطية</small></button>
+   </div>
+   <div class="notice"><strong>تنبيه:</strong> صفحة GitHub Pages هي غلاف التثبيت والهوية، أما تحليل السوق الفعلي فيعمل على Streamlit. لو رابط Streamlit لم يُنشر أو كان عنوانه مختلفًا، افتح التطبيق بعد نشره وعدّل قيمة <code>APP_URL</code> في هذا الملف إلى العنوان الحقيقي.</div>
+  </section>
+  <section class="workspace" aria-label="تطبيق gpt-Mi"><div class="frame-note"><span id="frameTitle">gpt-Mi — لوحة تحليل السوق</span><a id="externalLink" href="https://gpt-mi.streamlit.app/" target="_blank" rel="noopener">فتح في نافذة مستقلة ↗</a></div><iframe id="appFrame" title="gpt-Mi — التطبيق الكامل" src="about:blank" allow="clipboard-read; clipboard-write"></iframe></section>
+ </main>
+</div>
+<nav class="mobilebar" id="mobileNav" aria-label="التنقل الرئيسي">
+ <button class="active" data-page="overview"><span>⌂</span>الرئيسية</button><button data-page="opportunities"><span>↗</span>الفرص</button><button data-page="portfolio"><span>▤</span>المحفظة</button><button data-page="market"><span>◷</span>السوق</button>
+</nav>
+<script>
+const APP_URL='https://gpt-mi.streamlit.app/';
+const body=document.body,frame=document.getElementById('appFrame'),home=document.getElementById('homeBtn'),openLink=document.getElementById('openLink'),externalLink=document.getElementById('externalLink'),pageTitle=document.getElementById('pageTitle'),frameTitle=document.getElementById('frameTitle');
+let loaded=false,deferred;
+function openApp(page='overview',prompt=''){body.classList.add('open-app');home.hidden=false;openLink.hidden=true;pageTitle.textContent=({overview:'الرئيسية',opportunities:'فرص الأسهم',portfolio:'المحفظة',market:'السوق والبيانات'})[page]||'لوحة gpt-Mi';frameTitle.textContent='gpt-Mi — '+pageTitle.textContent;document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));try{sessionStorage.setItem('gptmi_open_app','1');if(prompt)sessionStorage.setItem('gptmi_prompt',prompt)}catch(e){}if(!loaded){frame.src=APP_URL+(APP_URL.includes('?')?'&':'?')+'embed=true';loaded=true}}
+function goHome(){body.classList.remove('open-app');home.hidden=true;openLink.hidden=false;pageTitle.textContent='الرئيسية';document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page==='overview'))}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>openApp(b.dataset.page)));
+document.getElementById('sendBtn').addEventListener('click',()=>openApp('opportunities',document.getElementById('quickPrompt').value.trim()));
+home.addEventListener('click',goHome);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;document.getElementById('installBtn').hidden=false});
+document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;document.getElementById('installBtn').hidden=true});
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+try{if(sessionStorage.getItem('gptmi_open_app')==='1')openApp('overview')}catch(e){}
 </script></body></html>
