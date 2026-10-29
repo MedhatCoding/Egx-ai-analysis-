@@ -25,7 +25,7 @@ from src.track_record import HISTORY, load_history, summarize  # noqa: E402
 from src.portfolio import evaluate, totals, risk_summary  # noqa: E402
 from src.portfolio_store import github_load, github_save, local_load, encrypt, decrypt, has_credentials  # noqa: E402
 
-st.set_page_config(page_title="GPT-Mi | Sharia Market Intelligence", page_icon="app/assets/gpt-mi-logo.jpg", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="gpt-Mi", page_icon="app/assets/gpt-mi-logo.jpg", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(ui.CSS, unsafe_allow_html=True)
 
 
