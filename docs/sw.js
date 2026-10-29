@@ -1,5 +1,5 @@
-const CACHE_NAME='gpt-mi-pwa-v6';
-const APP_SHELL=['./','./index.html','./manifest.webmanifest','./icons/gpt-mi.svg','./icons/gpt-mi.jpg','./data/latest.json'];
+const CACHE_NAME='gpt-mi-pwa-v7';
+const APP_SHELL=['./','./index.html','./manifest.webmanifest','./icons/gpt-mi.svg?v=7','./icons/gpt-mi.jpg','./data/latest.json'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)))});
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key.startsWith('gpt-mi-pwa-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));await self.clients.claim()})())});
