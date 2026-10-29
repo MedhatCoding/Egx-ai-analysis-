@@ -6,13 +6,11 @@ self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=a
 self.addEventListener('fetch',event=>{
  const request=event.request,url=new URL(request.url);
  if(request.method!=='GET'||url.origin!==self.location.origin)return;
- if(request.mode==='navigate'){
-  event.respondWith((async()=>{try{const response=await fetch(request,{cache:'no-store'});if(response&&response.ok){const cache=await caches.open(CACHE_NAME);cache.put('./index.html',response.clone())}return response}catch(error){return (await caches.match('./index.html'))||(await caches.match('./'))}})());
-  return;
- }
  if(url.pathname.endsWith('/data/latest.json')){
-  event.respondWith((async()=>{const cache=await caches.open(CACHE_NAME);try{const response=await fetch(request,{cache:'no-store'});if(response&&response.ok)cache.put(request,response.clone());return response}catch(error){return (await cache.match(request))||Response.error()}})());
-  return;
+  event.respondWith((async()=>{const cache=await caches.open(CACHE_NAME);try{const response=await fetch(request,{cache:'no-store'});if(response&&response.ok){await cache.put('./data/latest.json',response.clone());return response}}catch(error){}return (await cache.match('./data/latest.json'))||Response.error()})());return;
+ }
+ if(request.mode==='navigate'){
+  event.respondWith((async()=>{try{const response=await fetch(request,{cache:'no-store'});if(response&&response.ok){const cache=await caches.open(CACHE_NAME);cache.put('./index.html',response.clone())}return response}catch(error){return (await caches.match('./index.html'))||(await caches.match('./'))}})());return;
  }
  if(APP_SHELL.some(path=>new URL(path,self.location.href).pathname===url.pathname)){
   event.respondWith((async()=>{const cached=await caches.match(request);const network=fetch(request).then(response=>{if(response&&response.ok)caches.open(CACHE_NAME).then(cache=>cache.put(request,response.clone()));return response}).catch(()=>null);return cached||await network||Response.error()})());
