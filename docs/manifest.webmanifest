@@ -5,14 +5,14 @@
   "description": "تحليل الأسهم المصرية ومتابعة فرص الشراء والمخاطر",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "./",
+  "start_url": "./?v=7",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#07111a",
   "theme_color": "#07111a",
   "icons": [
-    {"src":"./icons/gpt-mi.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"},
-    {"src":"./icons/gpt-mi.jpg","sizes":"any","type":"image/jpeg","purpose":"any"}
+    {"src":"./icons/gpt-mi.svg?v=7","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"./icons/gpt-mi.svg?v=7","sizes":"512x512","type":"image/svg+xml","purpose":"maskable"}
   ]
 }
