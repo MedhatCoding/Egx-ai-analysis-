@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "gpt-Mi | Sharia Market Intelligence",
+  "name": "gpt-Mi — محلل السوق المصري",
   "short_name": "gpt-Mi",
-  "description": "تحليل ومتابعة الأسهم المصرية المتوافقة مع الشريعة",
+  "description": "تحليل الأسهم المصرية ومتابعة فرص الشراء والمخاطر",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./",
@@ -12,17 +12,7 @@
   "background_color": "#07111a",
   "theme_color": "#07111a",
   "icons": [
-    {
-      "src": "./icons/gpt-mi.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/gpt-mi.jpg",
-      "sizes": "96x96",
-      "type": "image/jpeg",
-      "purpose": "any"
-    }
+    {"src":"./icons/gpt-mi.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"},
+    {"src":"./icons/gpt-mi.jpg","sizes":"any","type":"image/jpeg","purpose":"any"}
   ]
 }
