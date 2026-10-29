@@ -70,5 +70,6 @@ home.addEventListener('click',goHome);
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;document.getElementById('installBtn').hidden=false});
 document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;document.getElementById('installBtn').hidden=true});
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-try{if(sessionStorage.getItem('gptmi_open_app')==='1')openApp('overview')}catch(e){}
+// Launch the real Streamlit dashboard immediately; the PWA shell only provides installation/branding.
+openApp('overview');
 </script></body></html>
