@@ -74,11 +74,16 @@ jobs:
         if: github.event_name != 'push'
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            UTC_HOUR="$(date -u +%H)"
-            if [ "$UTC_HOUR" = "06" ] || [ "$UTC_HOUR" = "07" ]; then
+            # Pick the task from Cairo local time, not a hard-coded UTC hour.
+            # This remains correct when Egypt switches between UTC+2 and UTC+3.
+            CAIRO_HOUR="$(TZ=Africa/Cairo date +%H)"
+            if [ "$CAIRO_HOUR" = "09" ] || [ "$CAIRO_HOUR" = "10" ]; then
               python run_daily.py
-            else
+            elif [ "$CAIRO_HOUR" = "11" ] || [ "$CAIRO_HOUR" = "12" ]; then
               python run_daily.py --opening-review
+            else
+              echo "Outside Cairo report/review windows (local hour: $CAIRO_HOUR); runner will not perform either task."
+              python run_daily.py --dry-run
             fi
           elif [ "${{ inputs.dry_run }}" = "true" ]; then
             if [ "${{ inputs.force }}" = "true" ]; then
@@ -114,3 +119,22 @@ jobs:
       - name: Run offline engine tests
         run: python tests/test_engine.py
 
+      - name: Diagnose published report freshness
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("data/signals/latest.json")
+          if not p.exists():
+              print("REPORT_STATUS=missing")
+              raise SystemExit(0)
+          try:
+              report = json.loads(p.read_text(encoding="utf-8"))
+              print(f"REPORT_DATA_DATE={report.get('data_date', 'unknown')}")
+              print(f"REPORT_GENERATED_AT={report.get('generated_at', 'unknown')}")
+              print(f"REPORT_ANALYZED={report.get('analyzed', 'unknown')}")
+              print(f"REPORT_UNIVERSE={report.get('universe_size', 'unknown')}")
+          except Exception as exc:
+              print(f"REPORT_STATUS=invalid_json: {exc}")
+          PY
