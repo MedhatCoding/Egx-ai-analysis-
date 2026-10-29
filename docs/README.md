@@ -1,5 +1,21 @@
-# gpt-Mi GitHub Pages install shell
+# gpt-Mi — تطبيق ويب قابل للتثبيت (PWA)
 
-This is an installable, branded static PWA shell. GitHub Pages cannot execute the Python/Streamlit dashboard. Once the Streamlit app is deployed, update the main call-to-action in `index.html` to the verified live app URL; do not use a guessed URL.
+المجلد `docs/` هو التطبيق المنشور على GitHub Pages، بواجهة عربية RTL مصممة للموبايل، ويُفتح في وضع مستقل بعد التثبيت.
 
-The PWA caches only the static shell. It does not cache market data, make trading recommendations, or replace the Streamlit application.
+## الرابط
+https://medhatcoding.github.io/gpt-Mi/
+
+## التثبيت على أندرويد
+1. افتح الرابط في Chrome.
+2. افتح قائمة ⋮ ثم اختر **تثبيت التطبيق** أو **إضافة إلى الشاشة الرئيسية**.
+3. افتح gpt-Mi من الأيقونة. لا يوجد APK ولا حاجة لإعادة تنزيل التطبيق عند كل تعديل.
+
+## تحديثات التطبيق
+- تغييرات الواجهة تصل من GitHub Pages، ويتحقق Service Worker من التحديثات ويُفعّل النسخة الجديدة تلقائيًا عند توفرها.
+- بيانات التحليل تُقرأ من `docs/data/latest.json` المنشور بواسطة `.github/workflows/pages.yml`.
+- عند انقطاع الإنترنت، قد تتاح آخر بيانات محفوظة على الجهاز؛ لا تعتبر البيانات المحفوظة أسعارًا لحظية.
+
+## حدود مهمة
+- هذا تطبيق واجهة ويب ثابتة، ولا يشغّل Python أو Streamlit داخل GitHub Pages.
+- جودة وحداثة التقرير تعتمد على نجاح سير عمل التقرير اليومي ومصادر البيانات في المشروع. يجب التحقق من تاريخ التقرير الظاهر داخل التطبيق قبل الاعتماد عليه.
+- التثبيت لا يعني أن التطبيق يعمل دون إنترنت بكل الميزات؛ يلزم الاتصال لجلب أحدث تقرير.
