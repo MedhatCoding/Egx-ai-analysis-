@@ -105,6 +105,12 @@ jobs:
             git push
           fi
 
+      - name: Publish updated report to PWA
+        if: github.event_name != 'push' && inputs.dry_run != true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages.yml --ref main
+
       - name: Run offline engine tests
         run: python tests/test_engine.py
 
