@@ -41,6 +41,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   daily:
@@ -74,16 +75,16 @@ jobs:
         if: github.event_name != 'push'
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            # Pick the task from Cairo local time, not a hard-coded UTC hour.
-            # This remains correct when Egypt switches between UTC+2 and UTC+3.
+            # The UTC cron covers both Cairo UTC+2 and UTC+3 seasons.
+            # Python applies the exact 08:50-09:20 and 10:50-11:20 local windows,
+            # plus weekday/holiday and duplicate-send guards.
             CAIRO_HOUR="$(TZ=Africa/Cairo date +%H)"
-            if [ "$CAIRO_HOUR" = "09" ] || [ "$CAIRO_HOUR" = "10" ]; then
+            if [ "$CAIRO_HOUR" = "09" ]; then
               python run_daily.py
-            elif [ "$CAIRO_HOUR" = "11" ] || [ "$CAIRO_HOUR" = "12" ]; then
+            elif [ "$CAIRO_HOUR" = "11" ]; then
               python run_daily.py --opening-review
             else
-              echo "Outside Cairo report/review windows (local hour: $CAIRO_HOUR); runner will not perform either task."
-              python run_daily.py --dry-run
+              echo "No scheduled task for Cairo local hour $CAIRO_HOUR; safely skipping."
             fi
           elif [ "${{ inputs.dry_run }}" = "true" ]; then
             if [ "${{ inputs.force }}" = "true" ]; then
