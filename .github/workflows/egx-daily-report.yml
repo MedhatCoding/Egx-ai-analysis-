@@ -16,10 +16,11 @@ on:
       - "data/sharia_extra.csv"
       - "tests/**"
 
-  # Schedule UTC 06-09 every day because Cairo Sunday 09:00 can fall on UTC Saturday.
-  # Local runner enforces Cairo weekday, holiday, and target-time guards (UTC+2/UTC+3).
+  # Retry every 10 minutes across the UTC hours that cover Cairo 09:00 and 11:00
+  # in both UTC+2 (winter) and UTC+3 (summer). Python windows + state guards
+  # make retries idempotent and prevent duplicate reports/reviews.
   schedule:
-    - cron: "0 6-9 * * *"
+    - cron: "*/10 6-9 * * *"
 
   workflow_dispatch:
     inputs:
