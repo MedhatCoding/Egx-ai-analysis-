@@ -2,10 +2,10 @@
   "id": "./",
   "name": "gpt-Mi",
   "short_name": "gpt-Mi",
-  "description": "مساعد الذكاء الاصطناعي gpt-Mi",
+  "description": "تطبيق gpt-Mi الأصلي لتحليل الأسهم المصرية",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "./?v=11",
+  "start_url": "./?v=12",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
@@ -13,7 +13,7 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "./icons/gpt-mi.svg?v=11",
+      "src": "./icons/gpt-mi.svg?v=12",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
