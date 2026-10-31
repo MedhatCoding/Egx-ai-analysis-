@@ -86,6 +86,45 @@ def fetch_live_quotes(codes: list[str], timeout: int = 12) -> dict[str, Any]:
         return {"ok": False, "error": f"تعذر جلب الأسعار اللحظية ({type(exc).__name__})", "quotes": []}
 
 
+
+def parse_quote_timestamp(value: Any) -> datetime | None:
+    """Parse ISO-8601 or Unix provider timestamps; reject unknown formats."""
+    if value is None or value == "":
+        return None
+    try:
+        if isinstance(value, (int, float)) or (isinstance(value, str) and value.strip().isdigit()):
+            stamp = float(value)
+            if stamp > 10_000_000_000:
+                stamp /= 1000
+            return datetime.fromtimestamp(stamp, tz=timezone.utc)
+        parsed = datetime.fromisoformat(str(value).strip().replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            from zoneinfo import ZoneInfo
+            parsed = parsed.replace(tzinfo=ZoneInfo("Africa/Cairo"))
+        return parsed.astimezone(timezone.utc)
+    except (ValueError, TypeError, OverflowError, OSError):
+        return None
+
+
+def validate_quote_freshness(snapshot: dict, now: datetime | None = None, max_age_minutes: int = 30) -> dict:
+    """Reject missing, malformed, stale, or implausibly future provider timestamps."""
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    quotes = snapshot.get("quotes") or []
+    if not quotes:
+        return {"ok": False, "error": "لا توجد أسعار للتحقق من حداثتها"}
+    for quote in quotes:
+        stamp = parse_quote_timestamp(quote.get("as_of"))
+        if stamp is None:
+            return {"ok": False, "error": "توقيت السعر غير صالح أو غير متاح للسهم " + str(quote.get("code", ""))}
+        age = (now.astimezone(timezone.utc) - stamp).total_seconds() / 60
+        if age < -5:
+            return {"ok": False, "error": "توقيت سعر مستقبلي بشكل غير منطقي للسهم " + str(quote.get("code", ""))}
+        if age > max_age_minutes:
+            return {"ok": False, "error": "السعر قديم لأكثر من " + str(max_age_minutes) + " دقيقة للسهم " + str(quote.get("code", ""))}
+    return {"ok": True}
+
 def _num(value):
     try:
         number = float(value)
