@@ -37,8 +37,9 @@ on:
 
 concurrency:
   group: egx-daily-report-v2
-  # Prevent a stalled old test run from blocking the newest code revision.
-  cancel-in-progress: true
+  # Never cancel a run after it may have sent Telegram but before its state is committed.
+  # Cancellation in that gap can cause the next scheduled retry to send a duplicate.
+  cancel-in-progress: false
 
 permissions:
   contents: write
