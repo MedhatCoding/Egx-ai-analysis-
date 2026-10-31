@@ -138,8 +138,10 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Run offline engine tests
-        run: python tests/test_engine.py
+      - name: Run offline engine and opening-review tests
+        run: |
+          python tests/test_engine.py
+          python tests/test_opening_review.py
 
       - name: Diagnose published report freshness
         if: always()
