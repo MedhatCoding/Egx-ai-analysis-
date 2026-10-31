@@ -66,7 +66,7 @@ class OpeningReviewTests(unittest.TestCase):
 
     @patch("run_daily.fetch_live_quotes", return_value={
         "ok": True, "retrieved_at": "2026-10-28T11:00:00+00:00",
-        "quotes": [{"code": "TEST", "price": 10, "change_percent": 0, "as_of": "source-time"}],
+        "quotes": [{"code": "TEST", "price": 10, "change_percent": 0, "as_of": self.now.isoformat()}],
     })
     @patch("run_daily.send_message")
     def test_attempt_is_persisted_before_telegram_send(self, send, quotes):
@@ -78,6 +78,25 @@ class OpeningReviewTests(unittest.TestCase):
         self.assertEqual(result["status"], "sent")
         self.assertEqual(self.state.get("last_opening_review_date"), self.now.date().isoformat())
         send.assert_called_once()
+
+
+    def test_quote_timestamp_parser_accepts_iso_and_epoch(self):
+        from src.live_quotes import parse_quote_timestamp
+        iso = parse_quote_timestamp("2026-10-28T11:00:00+00:00")
+        epoch = parse_quote_timestamp(iso.timestamp())
+        self.assertEqual(iso, epoch)
+
+    def test_quote_freshness_rejects_missing_stale_and_future_timestamps(self):
+        from src.live_quotes import validate_quote_freshness
+        now = datetime(2026, 10, 28, 11, 0, tzinfo=timezone.utc)
+        base = {"ok": True, "quotes": [{"code": "T", "as_of": now.isoformat()}]}
+        self.assertTrue(validate_quote_freshness(base, now)["ok"])
+        stale = {"ok": True, "quotes": [{"code": "T", "as_of": "2026-10-28T10:00:00+00:00"}]}
+        self.assertFalse(validate_quote_freshness(stale, now)["ok"])
+        missing = {"ok": True, "quotes": [{"code": "T", "as_of": "unknown"}]}
+        self.assertFalse(validate_quote_freshness(missing, now)["ok"])
+        future = {"ok": True, "quotes": [{"code": "T", "as_of": "2026-10-28T12:00:00+00:00"}]}
+        self.assertFalse(validate_quote_freshness(future, now)["ok"])
 
 
 if __name__ == "__main__":
