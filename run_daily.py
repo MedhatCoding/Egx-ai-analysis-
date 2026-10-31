@@ -13,8 +13,8 @@ from src.telegram import send_message
 def opening_review(cfg, now):
     state = C.load_state()
     day = now.date().isoformat()
-    if state.get("last_opening_review_date") == day:
-        return {"status": "skipped", "detail": "مراجعة اليوم تمت"}
+    if state.get("opening_review_attempt_date") == day or state.get("last_opening_review_date") == day:
+        return {"status": "skipped", "detail": "تم تسجيل محاولة مراجعة اليوم؛ منعًا لتكرار رسالة محتملة"}
     path = C.SIGNALS / "latest.json"
     if not path.exists():
         return {"status": "not_sent", "detail": "لا يوجد تقرير توصيات"}
@@ -24,8 +24,8 @@ def opening_review(cfg, now):
         if generated.tzinfo is None:
             generated = generated.replace(tzinfo=ZoneInfo(cfg["market"]["timezone"]))
         age = (now - generated.astimezone(now.tzinfo)).total_seconds() / 60
-        if age < 0 or age > 180:
-            return {"status": "not_sent", "detail": "تقرير التوصيات غير حديث"}
+        if generated.astimezone(now.tzinfo).date() != now.date() or age < 0 or age > 180:
+            return {"status": "not_sent", "detail": "تقرير التوصيات ليس تقرير اليوم أو تجاوز عمره 180 دقيقة"}
     except Exception:
         return {"status": "not_sent", "detail": "تعذر التحقق من تاريخ التقرير"}
     picks = [p for p in report.get("picks", []) if p.get("signal") == "BUY"][:20]
@@ -62,6 +62,11 @@ def opening_review(cfg, now):
     token, chat = os.getenv("TELEGRAM_BOT_TOKEN", ""), os.getenv("TELEGRAM_CHAT_ID", "")
     if not token or not chat:
         return {"status": "not_sent", "detail": "بيانات Telegram غير مضبوطة"}
+    # Reserve the daily attempt before Telegram: prefer at-most-once delivery over duplicate alerts.
+    # An interrupted/ambiguous send requires manual inspection; automatic retries are blocked.
+    state["opening_review_attempt_date"] = day
+    state["opening_review_attempt_at"] = now.isoformat(timespec="seconds")
+    C.save_state(state)
     sent = send_message(token, chat, "\n\n".join(lines))
     state["last_opening_review_date"] = day
     state["last_opening_review_at"] = now.isoformat(timespec="seconds")
