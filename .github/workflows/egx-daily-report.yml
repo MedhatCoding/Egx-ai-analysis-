@@ -44,6 +44,8 @@ concurrency:
 permissions:
   contents: write
   actions: write
+  pages: write
+  id-token: write
 
 jobs:
   daily:
@@ -113,11 +115,28 @@ jobs:
             git push
           fi
 
-      - name: Publish updated report to PWA
+      # Deploy Pages in this workflow. A GITHUB_TOKEN-triggered push/dispatch
+      # does not reliably start a second workflow, so deployment stays in-run.
+      - name: Prepare PWA report data
         if: github.event_name != 'push' && inputs.dry_run != true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run pages.yml --ref main
+        run: |
+          mkdir -p docs/data
+          cp data/signals/latest.json docs/data/latest.json
+
+      - name: Configure GitHub Pages
+        if: github.event_name != 'push' && inputs.dry_run != true
+        uses: actions/configure-pages@v5
+
+      - name: Upload PWA artifact
+        if: github.event_name != 'push' && inputs.dry_run != true
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy PWA
+        if: github.event_name != 'push' && inputs.dry_run != true
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Run offline engine tests
         run: python tests/test_engine.py
