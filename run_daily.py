@@ -6,7 +6,7 @@ from datetime import datetime, time
 from zoneinfo import ZoneInfo
 
 from src import config as C, pipeline
-from src.live_quotes import fetch_live_quotes, compare_snapshot
+from src.live_quotes import fetch_live_quotes, compare_snapshot, validate_quote_freshness
 from src.telegram import send_message
 
 
@@ -36,6 +36,9 @@ def opening_review(cfg, now):
     snapshot = fetch_live_quotes([p["code"] for p in picks])
     if not snapshot.get("ok"):
         return {"status": "not_sent", "detail": snapshot.get("error", "فشل جلب الأسعار")}
+    freshness = validate_quote_freshness(snapshot, now=now, max_age_minutes=30)
+    if not freshness.get("ok"):
+        return {"status": "not_sent", "detail": freshness.get("error", "تعذر التحقق من حداثة الأسعار")}
     quotes = {q.get("code"): q for q in snapshot.get("quotes", [])}
     lines = [
         "🔎 <b>مراجعة GPT-Mi بعد ساعة من الافتتاح</b>",
