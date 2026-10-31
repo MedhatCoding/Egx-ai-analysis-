@@ -115,6 +115,10 @@ jobs:
             git push
           fi
 
+      - name: Run offline engine and opening-review tests
+        run: |
+          python tests/test_engine.py
+          python tests/test_opening_review.py
       # Deploy Pages in this workflow. A GITHUB_TOKEN-triggered push/dispatch
       # does not reliably start a second workflow, so deployment stays in-run.
       - name: Prepare PWA report data
@@ -138,10 +142,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Run offline engine and opening-review tests
-        run: |
-          python tests/test_engine.py
-          python tests/test_opening_review.py
 
       - name: Diagnose published report freshness
         if: always()
