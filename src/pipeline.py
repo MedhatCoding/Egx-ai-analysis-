@@ -53,6 +53,8 @@ def should_run(cfg: dict, now: datetime, state: dict, force: bool = False) -> tu
         return False, f"خارج نافذة الإرسال ({start}-{end} بتوقيت القاهرة)"
     if state.get("last_sent_date") == now.date().isoformat():
         return False, "تقرير اليوم اتبعت بالفعل"
+    if state.get("report_attempt_date") == now.date().isoformat():
+        return False, "تم تسجيل محاولة إرسال تقرير اليوم؛ منعًا للتكرار"
     return True, "ok"
 
 
@@ -378,6 +380,11 @@ def _execute(cfg: dict, now: datetime, state: dict, dry_run: bool, offline: bool
             if not token or not chat:
                 status, detail = "not_sent", "TELEGRAM_BOT_TOKEN أو TELEGRAM_CHAT_ID غير مضبوط في الـ Secrets."
             else:
+                # Reserve before Telegram to avoid duplicate delivery after interruption.
+                # Ambiguous failures require manual review; retries are blocked for this date.
+                state["report_attempt_date"] = now.date().isoformat()
+                state["report_attempt_at"] = now.isoformat(timespec="seconds")
+                C.save_state(state)
                 n = send_message(token, chat, rep["telegram_html"])
                 state["last_sent_date"] = now.date().isoformat()
                 status, detail = "sent", f"{n} رسالة"
