@@ -1144,6 +1144,17 @@ def test_personal_sharia_universe_includes_index_and_audited_extras_only():
                 path.write_bytes(backup)
 
 
+
+def test_report_attempt_guard_prevents_duplicate_daily_send():
+    from src.pipeline import should_run
+    from src import config as C
+    cfg = C.load_config()
+    now = datetime(2026, 10, 28, 9, 0, tzinfo=ZoneInfo("Africa/Cairo"))
+    state = {"report_attempt_date": now.date().isoformat()}
+    allowed, reason = should_run(cfg, now, state)
+    assert not allowed
+    assert "محاولة إرسال" in reason
+
 if __name__ == "__main__":
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_") and callable(f)]
     failed = 0
